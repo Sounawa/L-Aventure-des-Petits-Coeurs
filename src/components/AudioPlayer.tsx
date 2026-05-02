@@ -40,6 +40,7 @@ export default function AudioPlayer({ text, size = 'md', className = '' }: Audio
     setError(null);
 
     try {
+      // TTS API only available in dev/server mode, not on static GitHub Pages
       const response = await fetch('/api/tts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
