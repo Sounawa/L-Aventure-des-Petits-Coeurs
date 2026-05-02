@@ -7,7 +7,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trophy, Heart, Flame } from 'lucide-react';
+import { Trophy, Heart, Flame, Sparkles, BookOpen } from 'lucide-react';
 import FavoriteChapters from './FavoriteChapters';
 
 const practiceItems = [
@@ -32,9 +32,33 @@ const constellationPositions = [
   { x: 70, y: 83 },
 ];
 
+// Gratitude prompt suggestions
+const gratitudePrompts = [
+  "Aujourd'hui, je suis reconnaissant(e) pour...",
+  "Une chose qui m'a fait sourire...",
+  "Quelqu'un qui m'a aidé(e)...",
+  "Un moment de paix que j'ai ressenti...",
+  "Quelque chose de beau que j'ai vu...",
+  "Une qualité que j'apprécie chez quelqu'un...",
+  "Un plaisir simple de la journée...",
+  "Une leçon que j'ai apprise...",
+  "Quelqu'un à qui je veux dire merci...",
+  "Un moment où je me suis senti(e) aimé(e)...",
+];
+
+// Streak milestone definitions
+const streakMilestones = [
+  { days: 7, emoji: '🌟', label: '7 jours' },
+  { days: 14, emoji: '💫', label: '14 jours' },
+  { days: 30, emoji: '👑', label: '30 jours' },
+];
+
 export default function PracticeSection() {
-  const { practiceDays, updatePracticeDay, gratitudeEntries, addGratitudeEntry, totalStars, badges } = useAppStore();
+  const { practiceDays, updatePracticeDay, gratitudeEntries, addGratitudeEntry, totalStars, badges, setSection } = useAppStore();
   const [gratitudeText, setGratitudeText] = useState('');
+  const [currentPrompt, setCurrentPrompt] = useState(() => {
+    return gratitudePrompts[Math.floor(Math.random() * gratitudePrompts.length)];
+  });
 
   const today = new Date().toISOString().split('T')[0];
   const todayPractice = useMemo(() => {
@@ -119,46 +143,122 @@ export default function PracticeSection() {
       const items = gratitudeText.split('\n').filter(l => l.trim());
       addGratitudeEntry({ date: today, items: existing ? [...existing.items, ...items] : items });
       setGratitudeText('');
+      // Rotate to a new prompt
+      setCurrentPrompt(gratitudePrompts[Math.floor(Math.random() * gratitudePrompts.length)]);
     }
+  };
+
+  const rotatePrompt = () => {
+    const otherPrompts = gratitudePrompts.filter(p => p !== currentPrompt);
+    setCurrentPrompt(otherPrompts[Math.floor(Math.random() * otherPrompts.length)]);
   };
 
   const unlockedBadges = badges.filter(b => b.unlockedAt);
   const recentBadge = unlockedBadges.length > 0 ? unlockedBadges[unlockedBadges.length - 1] : null;
 
+  // Next milestone
+  const nextMilestone = streakMilestones.find(m => m.days > streak);
+
   return (
     <div className="flex flex-col gap-4">
-      <div className="text-center py-2">
+      <div className="text-center py-2 relative">
+        {/* Floating decorations */}
+        <motion.span
+          className="absolute -top-1 left-4 text-base floating-decoration"
+          animate={{ y: [0, -6, 0], rotate: [0, 15, 0] }}
+          transition={{ duration: 3, repeat: Infinity }}
+        >
+          ✨
+        </motion.span>
+        <motion.span
+          className="absolute -top-1 right-6 text-sm floating-decoration"
+          animate={{ y: [0, -8, 0], rotate: [0, -10, 0] }}
+          transition={{ duration: 3.5, repeat: Infinity, delay: 1 }}
+        >
+          🌟
+        </motion.span>
         <h2 className="text-2xl font-bold shimmer-text">⭐ Ma Pratique</h2>
         <p className="text-sm text-muted-foreground mt-1">Ton journal spirituel quotidien</p>
       </div>
 
-      {/* Streak indicator */}
-      {streak > 0 && (
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex items-center justify-center gap-2 bg-gradient-to-r from-orange-100 via-amber-100 to-yellow-100 dark:from-orange-900/20 dark:via-amber-900/20 dark:to-yellow-900/20 px-4 py-2.5 rounded-2xl border border-amber-200/50 dark:border-amber-700/30 shadow-sm"
-        >
+      {/* Enhanced Streak indicator - always visible */}
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className={`relative flex items-center justify-center gap-3 px-5 py-4 rounded-2xl border shadow-sm overflow-hidden ${
+          streak > 0 
+            ? 'bg-gradient-to-r from-orange-100 via-amber-100 to-yellow-100 dark:from-orange-900/20 dark:via-amber-900/20 dark:to-yellow-900/20 border-amber-200/50 dark:border-amber-700/30' 
+            : 'bg-gradient-to-r from-amber-50/50 to-yellow-50/50 dark:from-amber-900/10 dark:to-yellow-900/10 border-amber-100/30 dark:border-amber-800/20'
+        }`}
+      >
+        {/* Soft gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-amber-100/20 dark:via-amber-800/10 to-transparent pointer-events-none" />
+        
+        <div className="flex items-center gap-3 relative z-10">
+          {/* Fire emoji - bigger and more celebratory */}
           <motion.span
-            animate={{ scale: [1, 1.3, 1] }}
-            transition={{ duration: 1, repeat: Infinity }}
+            className="text-3xl"
+            animate={streak > 0 ? { 
+              scale: [1, 1.2, 1], 
+              rotate: [0, 5, -5, 0] 
+            } : {}}
+            transition={streak > 0 ? { duration: 1.5, repeat: Infinity } : {}}
           >
-            🔥
+            {streak > 0 ? '🔥' : '💫'}
           </motion.span>
-          <div className="flex items-center gap-1.5">
-            <Flame className="w-4 h-4 text-orange-500" />
-            <span className="text-sm font-bold text-gradient-gold">{streak} jour{streak > 1 ? 's' : ''}</span>
+          
+          <div className="flex flex-col">
+            <div className="flex items-center gap-2">
+              <Flame className="w-5 h-5 text-orange-500" />
+              <span className="text-xl font-bold text-gradient-gold">
+                {streak > 0 ? streak : '0'}
+              </span>
+              <span className="text-sm text-muted-foreground">
+                {streak > 1 ? 'jours de suite !' : streak === 1 ? 'jour de suite !' : 'Commence ta série !'}
+              </span>
+            </div>
+            
+            {/* Milestone indicators */}
+            {streak > 0 && (
+              <div className="flex items-center gap-2 mt-1">
+                {streakMilestones.map((milestone) => {
+                  const achieved = streak >= milestone.days;
+                  return (
+                    <motion.div
+                      key={milestone.days}
+                      className={`flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                        achieved 
+                          ? 'bg-gradient-to-r from-amber-200 to-yellow-200 dark:from-amber-700/40 dark:to-yellow-700/40 text-amber-800 dark:text-amber-200' 
+                          : 'bg-muted/30 text-muted-foreground'
+                      }`}
+                      animate={achieved ? { scale: [1, 1.05, 1] } : {}}
+                      transition={{ duration: 2, repeat: Infinity }}
+                    >
+                      <span>{milestone.emoji}</span>
+                      <span>{milestone.label}</span>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            )}
+            
+            {/* Next milestone encouragement */}
+            {nextMilestone && streak > 0 && (
+              <p className="text-[10px] text-muted-foreground mt-0.5">
+                Plus que {nextMilestone.days - streak} jour{nextMilestone.days - streak > 1 ? 's' : ''} pour {nextMilestone.emoji} {nextMilestone.label} !
+              </p>
+            )}
           </div>
-          <span className="text-xs text-muted-foreground">de suite !</span>
-        </motion.div>
-      )}
+        </div>
+      </motion.div>
 
-      {/* Progress overview card */}
-      <Card className="border-2 border-primary/10 overflow-hidden relative">
+      {/* Progress overview card - with better empty states */}
+      <Card className="border-2 border-primary/10 overflow-hidden relative card-pattern">
         <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-primary/8 to-transparent rounded-bl-full" />
         <div className="absolute top-0 left-0 w-16 h-16 bg-gradient-to-br from-secondary/8 to-transparent rounded-br-full" />
         <CardContent className="p-4">
           <div className="flex items-center justify-between mb-3">
+            {/* Stars */}
             <div className="flex items-center gap-2">
               <div className="w-10 h-10 bg-gradient-to-br from-amber-100 to-yellow-200 dark:from-amber-900/30 dark:to-yellow-800/30 rounded-xl flex items-center justify-center">
                 <span className="text-lg">⭐</span>
@@ -168,6 +268,7 @@ export default function PracticeSection() {
                 <p className="text-[10px] text-muted-foreground">étoiles collectées</p>
               </div>
             </div>
+            {/* Badges */}
             <div className="flex items-center gap-2">
               <div className="w-10 h-10 bg-gradient-to-br from-rose-100 to-pink-200 dark:from-rose-900/30 dark:to-pink-800/30 rounded-xl flex items-center justify-center">
                 <span className="text-lg">🏅</span>
@@ -179,12 +280,71 @@ export default function PracticeSection() {
             </div>
           </div>
           
+          {/* Better empty state for stars */}
+          {totalStars === 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 5 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="empty-state-card mt-2"
+            >
+              <motion.span 
+                className="text-4xl block mb-2"
+                animate={{ rotate: [0, 5, -5, 0] }}
+                transition={{ duration: 3, repeat: Infinity }}
+              >
+                📖
+              </motion.span>
+              <p className="text-sm font-medium text-foreground/80 mb-1">
+                Commence ta première pratique pour gagner des étoiles ! 🌟
+              </p>
+              <Button
+                size="sm"
+                className="mt-2 text-xs"
+                onClick={() => setSection('aventures')}
+                style={{ background: 'linear-gradient(135deg, #C9A227, #E8D44D)', color: '#3D2C1E' }}
+              >
+                <BookOpen className="w-3 h-3 mr-1" />
+                Aller aux Aventures
+              </Button>
+            </motion.div>
+          )}
+
+          {/* Better empty state for badges */}
+          {unlockedBadges.length === 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 5 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="empty-state-card mt-2"
+            >
+              <motion.span 
+                className="text-3xl block mb-2 sparkle-float"
+              >
+                ✨
+              </motion.span>
+              <p className="text-sm font-medium text-foreground/80 mb-1">
+                Explore les aventures pour débloquer des badges ! 🏅
+              </p>
+              <div className="flex justify-center gap-2 mt-2">
+                {['📖', '💎', '🌟', '🏆'].map((e, i) => (
+                  <motion.span
+                    key={i}
+                    className="text-lg opacity-40"
+                    animate={{ opacity: [0.2, 0.6, 0.2], y: [0, -3, 0] }}
+                    transition={{ duration: 2, repeat: Infinity, delay: i * 0.3 }}
+                  >
+                    {e}
+                  </motion.span>
+                ))}
+              </div>
+            </motion.div>
+          )}
+          
           {/* Recent badge highlight */}
           {recentBadge && (
             <motion.div
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
-              className="flex items-center gap-2 bg-gradient-to-r from-primary/8 to-secondary/8 rounded-xl p-2.5 border border-primary/15"
+              className="flex items-center gap-2 bg-gradient-to-r from-primary/8 to-secondary/8 rounded-xl p-2.5 border border-primary/15 badge-shine mt-2"
             >
               <span className="text-2xl">{recentBadge.emoji}</span>
               <div>
@@ -196,8 +356,8 @@ export default function PracticeSection() {
         </CardContent>
       </Card>
 
-      {/* Favorite Chapters */}
-      <Card className="border-2 border-rose-200/50 dark:border-rose-800/30 overflow-hidden">
+      {/* Favorite Chapters - with better empty state */}
+      <Card className="border-2 border-rose-200/50 dark:border-rose-800/30 overflow-hidden card-pattern">
         <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-rose-100/50 to-transparent dark:from-rose-900/20 dark:to-transparent rounded-bl-full" />
         <CardHeader className="pb-3">
           <CardTitle className="text-lg flex items-center gap-2">
@@ -211,7 +371,7 @@ export default function PracticeSection() {
       </Card>
 
       {/* Today's checklist */}
-      <Card className="border-2 border-primary/10 overflow-hidden">
+      <Card className="border-2 border-primary/10 overflow-hidden card-pattern">
         <CardHeader className="pb-3">
           <CardTitle className="text-lg flex items-center gap-2">
             <span>📋</span>
@@ -222,15 +382,18 @@ export default function PracticeSection() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          {/* Progress bar with gradient */}
-          <div className="w-full bg-muted rounded-full h-2.5 mb-4 overflow-hidden">
+          {/* Progress bar with gradient shimmer and percentage */}
+          <div className="w-full bg-muted rounded-full h-3 mb-1 overflow-hidden relative">
             <motion.div
-              className="gradient-progress rounded-full h-2.5"
+              className="gradient-progress-shimmer rounded-full h-3"
               initial={{ width: 0 }}
               animate={{ width: `${(completedCount / 5) * 100}%` }}
               transition={{ duration: 0.3 }}
             />
           </div>
+          <p className="text-[10px] text-muted-foreground text-right mb-4">
+            {Math.round((completedCount / 5) * 100)}% complété
+          </p>
 
           <div className="space-y-2">
             {practiceItems.map((item, idx) => {
@@ -238,10 +401,10 @@ export default function PracticeSection() {
               return (
                 <motion.label
                   key={item.id}
-                  className={`flex items-center gap-3 p-2.5 rounded-xl cursor-pointer transition-all ${
+                  className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all ${
                     isChecked 
                       ? 'bg-gradient-to-r from-primary/8 to-primary/5 border border-primary/15' 
-                      : 'hover:bg-muted/50'
+                      : 'hover:bg-muted/50 border border-transparent'
                   }`}
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -253,7 +416,15 @@ export default function PracticeSection() {
                   />
                   <span className="text-lg">{item.emoji}</span>
                   <span className={`text-sm flex-1 ${isChecked ? 'line-through text-muted-foreground' : ''}`}>{item.label}</span>
-                  {isChecked && <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }} className="text-xs text-primary">✓</motion.span>}
+                  {isChecked && (
+                    <motion.span 
+                      initial={{ scale: 0 }} 
+                      animate={{ scale: 1 }} 
+                      className="text-xs text-primary font-bold"
+                    >
+                      ✓
+                    </motion.span>
+                  )}
                 </motion.label>
               );
             })}
@@ -265,8 +436,23 @@ export default function PracticeSection() {
                 initial={{ opacity: 0, scale: 0.8, height: 0 }}
                 animate={{ opacity: 1, scale: 1, height: 'auto' }}
                 exit={{ opacity: 0, scale: 0.8 }}
-                className="mt-4 bg-gradient-to-r from-amber-50 via-yellow-50 to-amber-50 dark:from-amber-900/15 dark:via-yellow-900/15 dark:to-amber-900/15 rounded-xl p-4 text-center border border-amber-200/40 dark:border-amber-700/20"
+                className="mt-4 bg-gradient-to-r from-amber-50 via-yellow-50 to-amber-50 dark:from-amber-900/15 dark:via-yellow-900/15 dark:to-amber-900/15 rounded-xl p-4 text-center border border-amber-200/40 dark:border-amber-700/20 relative overflow-hidden"
               >
+                {/* Floating celebration sparkles */}
+                <motion.span
+                  className="absolute top-1 left-3 text-xs"
+                  animate={{ y: [0, -8, 0], opacity: [0.3, 0.8, 0.3] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                >
+                  ✨
+                </motion.span>
+                <motion.span
+                  className="absolute top-1 right-3 text-xs"
+                  animate={{ y: [0, -8, 0], opacity: [0.3, 0.8, 0.3] }}
+                  transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
+                >
+                  🌟
+                </motion.span>
                 <p className="text-base font-bold text-gradient-gold">🌟 Bravo ! Journée complétée ! +5 étoiles 🌟</p>
                 <p className="text-xs text-muted-foreground mt-1">Tu es un vrai petit sage !</p>
               </motion.div>
@@ -275,8 +461,8 @@ export default function PracticeSection() {
         </CardContent>
       </Card>
 
-      {/* Weekly view with colored dots and emoji indicators */}
-      <Card className="border-2 border-primary/10 overflow-hidden">
+      {/* Weekly view - enhanced with completed count and prominent stars */}
+      <Card className="border-2 border-primary/10 overflow-hidden card-pattern">
         <CardHeader className="pb-3">
           <CardTitle className="text-lg flex items-center gap-2">
             <span>📅</span>
@@ -296,20 +482,20 @@ export default function PracticeSection() {
                 <div
                   key={day}
                   className={`flex flex-col items-center gap-1 p-2 rounded-xl transition-all ${
-                    isToday ? 'bg-gradient-to-b from-primary/10 to-primary/5 border-2 border-primary/30 shadow-sm' : 
+                    isToday ? 'bg-gradient-to-b from-primary/10 to-primary/5 border-2 border-primary/30 shadow-sm pulse-ring' : 
                     completed === 5 ? 'bg-gradient-to-b from-amber-50/80 to-yellow-50/80 dark:from-amber-900/10 dark:to-yellow-900/10 border border-amber-200/30 dark:border-amber-700/20' : 
                     completed > 0 ? 'bg-primary/5 border border-primary/10' : ''
                   }`}
                 >
                   <span className="text-[10px] text-muted-foreground">{dayEmojis[i]}</span>
                   <span className="text-[10px] sm:text-xs text-muted-foreground font-medium">{dayNames[i]}</span>
-                  <div className="w-9 h-9 rounded-full flex items-center justify-center relative">
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center relative">
                     {isFuture ? (
                       <span className="text-muted-foreground/40 text-xs">—</span>
                     ) : completed === 5 ? (
                       <motion.span
-                        className="text-lg"
-                        animate={{ rotate: [0, 10, -10, 0] }}
+                        className="text-2xl"
+                        animate={{ rotate: [0, 10, -10, 0], scale: [1, 1.15, 1] }}
                         transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
                       >
                         ⭐
@@ -317,16 +503,25 @@ export default function PracticeSection() {
                     ) : completed > 0 ? (
                       <div className="flex flex-wrap gap-0.5 justify-center items-center w-full h-full">
                         {Array.from({ length: completed }).map((_, j) => (
-                          <span key={j} className="w-2 h-2 rounded-full bg-primary/60" />
+                          <span key={j} className="w-2.5 h-2.5 rounded-full bg-primary/60" />
                         ))}
                         {Array.from({ length: 5 - completed }).map((_, j) => (
-                          <span key={j} className="w-2 h-2 rounded-full bg-muted/40" />
+                          <span key={j} className="w-2.5 h-2.5 rounded-full bg-muted/40" />
                         ))}
                       </div>
                     ) : (
                       <span className="text-muted-foreground/30 text-xs">·</span>
                     )}
                   </div>
+                  {/* Completed count below each day */}
+                  {!isFuture && (
+                    <span className={`text-[9px] font-medium ${
+                      completed === 5 ? 'text-amber-600 dark:text-amber-400' : 
+                      completed > 0 ? 'text-primary' : 'text-muted-foreground/40'
+                    }`}>
+                      {completed}/5
+                    </span>
+                  )}
                 </div>
               );
             })}
@@ -334,28 +529,28 @@ export default function PracticeSection() {
         </CardContent>
       </Card>
 
-      {/* Badges collection */}
-      {unlockedBadges.length > 0 && (
-        <Card className="border-2 border-primary/10 overflow-hidden">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-lg flex items-center gap-2">
-              <Trophy className="w-5 h-5 text-primary" />
-              Mes Badges
-              <span className="text-xs font-normal text-muted-foreground ml-auto">
-                {unlockedBadges.length}/{badges.length}
-              </span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+      {/* Badges collection - with shine animation on unlocked */}
+      <Card className="border-2 border-primary/10 overflow-hidden card-pattern">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-lg flex items-center gap-2">
+            <Trophy className="w-5 h-5 text-primary" />
+            Mes Badges
+            <span className="text-xs font-normal text-muted-foreground ml-auto">
+              {unlockedBadges.length}/{badges.length}
+            </span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {unlockedBadges.length > 0 ? (
             <div className="flex flex-wrap gap-2">
               {badges.map((badge) => {
                 const isUnlocked = !!badge.unlockedAt;
                 return (
                   <motion.div
                     key={badge.id}
-                    className={`flex flex-col items-center p-2 rounded-xl w-16 text-center transition-all ${
+                    className={`flex flex-col items-center p-2.5 rounded-xl w-16 text-center transition-all ${
                       isUnlocked
-                        ? 'bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20'
+                        ? 'bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20 badge-shine'
                         : 'bg-muted/20 border border-border/30 opacity-40'
                     }`}
                     whileHover={isUnlocked ? { scale: 1.1 } : {}}
@@ -366,15 +561,26 @@ export default function PracticeSection() {
                 );
               })}
             </div>
-          </CardContent>
-        </Card>
-      )}
+          ) : (
+            <div className="empty-state-card">
+              <motion.span 
+                className="text-3xl block mb-2 sparkle-float"
+              >
+                ✨
+              </motion.span>
+              <p className="text-sm font-medium text-foreground/80">
+                Explore les aventures pour débloquer des badges ! 🏅
+              </p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Star constellation with visual constellation pattern */}
-      <Card className="border-2 border-primary/10 overflow-hidden">
+      <Card className="border-2 border-primary/10 overflow-hidden card-pattern">
         <CardHeader className="pb-3">
           <CardTitle className="text-lg flex items-center gap-2">
-            <span>🌟</span>
+            <Sparkles className="w-5 h-5 text-primary" />
             Tes étoiles
           </CardTitle>
         </CardHeader>
@@ -430,23 +636,43 @@ export default function PracticeSection() {
               )}
             </div>
           ) : (
-            <p className="text-sm text-muted-foreground text-center py-8">
-              Complète des activités pour gagner des étoiles ! ✨
-            </p>
+            <div className="empty-state-card py-8">
+              <motion.span 
+                className="text-4xl block mb-3"
+                animate={{ rotate: [0, 5, -5, 0] }}
+                transition={{ duration: 3, repeat: Infinity }}
+              >
+                📖
+              </motion.span>
+              <p className="text-sm font-medium text-foreground/80 mb-1">
+                Commence ta première pratique pour gagner des étoiles ! 🌟
+              </p>
+              <Button
+                size="sm"
+                className="mt-2 text-xs"
+                onClick={() => setSection('aventures')}
+                style={{ background: 'linear-gradient(135deg, #C9A227, #E8D44D)', color: '#3D2C1E' }}
+              >
+                <BookOpen className="w-3 h-3 mr-1" />
+                Aller aux Aventures
+              </Button>
+            </div>
           )}
           {totalStars > 50 && (
             <p className="text-center text-xs text-muted-foreground mt-2">
               ...et {totalStars - 50} autres ! 🌟
             </p>
           )}
-          <p className="text-center text-sm text-muted-foreground mt-2">
-            Total : <span className="font-bold text-gradient-gold">{totalStars}</span> ⭐
-          </p>
+          {totalStars > 0 && (
+            <p className="text-center text-sm text-muted-foreground mt-2">
+              Total : <span className="font-bold text-gradient-gold">{totalStars}</span> ⭐
+            </p>
+          )}
         </CardContent>
       </Card>
 
-      {/* Gratitude journal - enhanced */}
-      <Card className="border-2 border-primary/10 overflow-hidden">
+      {/* Gratitude journal - enhanced with prompt system */}
+      <Card className="border-2 border-primary/10 overflow-hidden card-pattern">
         <CardHeader className="pb-3">
           <CardTitle className="text-lg flex items-center gap-2">
             <span>💛</span>
@@ -454,6 +680,24 @@ export default function PracticeSection() {
           </CardTitle>
         </CardHeader>
         <CardContent>
+          {/* Prompt suggestion */}
+          <motion.div
+            key={currentPrompt}
+            initial={{ opacity: 0, y: 5 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex items-center gap-2 bg-gradient-to-r from-amber-50/80 to-yellow-50/80 dark:from-amber-900/15 dark:to-yellow-900/15 rounded-xl p-3 border border-amber-200/30 dark:border-amber-700/15 mb-3"
+          >
+            <span className="text-base flex-shrink-0">💡</span>
+            <p className="text-xs text-foreground/70 flex-1 italic">{currentPrompt}</p>
+            <button
+              onClick={rotatePrompt}
+              className="text-[10px] text-primary hover:text-primary/80 font-medium flex-shrink-0 px-2 py-1 rounded-lg hover:bg-primary/10 transition-colors"
+              aria-label="Changer de suggestion"
+            >
+              🔄
+            </button>
+          </motion.div>
+          
           <div className="relative">
             <Textarea
               value={gratitudeText}

@@ -441,3 +441,172 @@
 .nav-pulse {
   animation: nav-pulse 2s ease-in-out infinite;
 }
+
+/* ===== STYLING POLISH UTILITIES ===== */
+
+/* Beautiful empty state with dashed border and subtle gradient */
+.empty-state-card {
+  position: relative;
+  border: 2px dashed oklch(0.55 0.12 80 / 25%);
+  background: linear-gradient(
+    135deg,
+    oklch(0.97 0.01 85 / 50%),
+    oklch(0.95 0.02 80 / 30%),
+    oklch(0.97 0.01 85 / 50%)
+  );
+  border-radius: 1rem;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.dark .empty-state-card {
+  border: 2px dashed oklch(0.75 0.14 80 / 15%);
+  background: linear-gradient(
+    135deg,
+    oklch(0.20 0.03 280 / 50%),
+    oklch(0.18 0.04 280 / 30%),
+    oklch(0.20 0.03 280 / 50%)
+  );
+}
+
+/* Floating decoration element with subtle animation */
+.floating-decoration {
+  animation: float-decoration 4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes float-decoration {
+  0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.6; }
+  25% { transform: translateY(-6px) rotate(5deg); opacity: 0.8; }
+  50% { transform: translateY(-10px) rotate(-3deg); opacity: 1; }
+  75% { transform: translateY(-4px) rotate(3deg); opacity: 0.7; }
+}
+
+/* Shine animation for unlocked badges */
+.badge-shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.badge-shine::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent 40%,
+    oklch(0.90 0.08 80 / 30%) 45%,
+    oklch(0.95 0.06 85 / 50%) 50%,
+    oklch(0.90 0.08 80 / 30%) 55%,
+    transparent 60%
+  );
+  animation: badge-shine-move 3s ease-in-out infinite;
+}
+
+@keyframes badge-shine-move {
+  0% { transform: translateX(-100%) rotate(25deg); }
+  50%, 100% { transform: translateX(100%) rotate(25deg); }
+}
+
+/* Subtle repeating pattern background for cards */
+.card-pattern {
+  background-image:
+    radial-gradient(circle at 20% 80%, oklch(0.55 0.12 80 / 4%) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, oklch(0.65 0.14 175 / 3%) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, oklch(0.65 0.15 350 / 2%) 0%, transparent 50%);
+  background-size: 100% 100%;
+}
+
+.dark .card-pattern {
+  background-image:
+    radial-gradient(circle at 20% 80%, oklch(0.75 0.14 80 / 6%) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, oklch(0.65 0.14 175 / 5%) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, oklch(0.65 0.15 350 / 4%) 0%, transparent 50%);
+}
+
+/* Pulsing ring effect for current/active items */
+.pulse-ring {
+  position: relative;
+}
+
+.pulse-ring::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: inherit;
+  border: 2px solid oklch(0.55 0.12 80 / 40%);
+  animation: pulse-ring-anim 2s ease-in-out infinite;
+}
+
+@keyframes pulse-ring-anim {
+  0%, 100% { transform: scale(1); opacity: 0.4; }
+  50% { transform: scale(1.08); opacity: 0; }
+}
+
+/* Sparkle float for decorative elements */
+@keyframes sparkle-float {
+  0%, 100% { transform: translateY(0) scale(1); opacity: 0.5; }
+  50% { transform: translateY(-12px) scale(1.2); opacity: 1; }
+}
+
+.sparkle-float {
+  animation: sparkle-float 2.5s ease-in-out infinite;
+}
+
+/* Gradient progress bar with shimmer */
+.gradient-progress-shimmer {
+  background: linear-gradient(90deg, oklch(0.55 0.12 80), oklch(0.75 0.14 175), oklch(0.65 0.15 350), oklch(0.55 0.12 80));
+  background-size: 300% 100%;
+  animation: gradient-shift 2s ease infinite;
+  position: relative;
+  overflow: hidden;
+}
+
+.gradient-progress-shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 0%, oklch(1 0 0 / 30%) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmer-move 1.5s linear infinite;
+}
+
+@keyframes shimmer-move {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Station completion shimmer/particle */
+@keyframes station-shimmer {
+  0%, 100% { box-shadow: 0 0 0 0 oklch(0.55 0.12 80 / 0%); }
+  50% { box-shadow: 0 0 15px 5px oklch(0.55 0.12 80 / 20%), 0 0 30px 10px oklch(0.75 0.14 80 / 10%); }
+}
+
+.station-complete-shimmer {
+  animation: station-shimmer 2.5s ease-in-out infinite;
+}
+
+/* Animated connection line dots */
+@keyframes move-dot {
+  0% { left: 0%; opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { left: 100%; opacity: 0; }
+}
+
+.connection-dot {
+  animation: move-dot 2s ease-in-out infinite;
+}
+
+/* Welcome card border glow animation */
+@keyframes border-glow {
+  0%, 100% { border-color: oklch(0.55 0.12 80 / 15%); box-shadow: 0 0 5px oklch(0.55 0.12 80 / 5%); }
+  50% { border-color: oklch(0.75 0.14 80 / 30%); box-shadow: 0 0 15px oklch(0.55 0.12 80 / 10%); }
+}
+
+.welcome-glow {
+  animation: border-glow 3s ease-in-out infinite;
+}

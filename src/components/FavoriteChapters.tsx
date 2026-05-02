@@ -53,16 +53,35 @@ export default function FavoriteChapters() {
 
   if (favoriteChapters.length === 0) {
     return (
-      <div className="text-center py-6">
+      <div className="text-center py-4">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-gradient-to-br from-rose-50 to-pink-50 dark:from-rose-900/20 dark:to-pink-900/20 rounded-2xl p-6 border-2 border-rose-200/50 dark:border-rose-800/30"
+          className="empty-state-card"
         >
-          <span className="text-4xl block mb-3">💜</span>
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            Tu n&apos;as pas encore de chapitres favoris.<br />
-            Ajoutes-en en cliquant sur le cœur ! 💜
+          <motion.span 
+            className="text-4xl block mb-2"
+            animate={{ rotate: [0, 5, -5, 0], scale: [1, 1.05, 1] }}
+            transition={{ duration: 3, repeat: Infinity }}
+          >
+            💜
+          </motion.span>
+          {/* Decorative sparkles around heart */}
+          <motion.span
+            className="absolute top-2 right-4 text-sm sparkle-float"
+          >
+            ✨
+          </motion.span>
+          <motion.span
+            className="absolute bottom-3 left-4 text-xs sparkle-float"
+            animate={{ y: [0, -8, 0], opacity: [0.3, 0.8, 0.3] }}
+            transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
+          >
+            ✦
+          </motion.span>
+          <p className="text-sm font-medium text-foreground/80 leading-relaxed">
+            Clique sur le cœur d&apos;un chapitre<br />
+            pour l&apos;ajouter ici ! 💜
           </p>
         </motion.div>
       </div>

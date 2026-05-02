@@ -7,10 +7,10 @@ import { useState } from 'react';
 import SettingsPanel from './SettingsPanel';
 
 const navItems: { id: Section; label: string; icon: React.ReactNode; emoji: string }[] = [
-  { id: 'accueil', label: 'Accueil', icon: <Home className="w-5 h-5" />, emoji: '🏠' },
-  { id: 'aventures', label: 'Aventures', icon: <BookOpen className="w-5 h-5" />, emoji: '📖' },
-  { id: 'pratique', label: 'Pratique', icon: <Star className="w-5 h-5" />, emoji: '⭐' },
-  { id: 'activites', label: 'Activités', icon: <Gamepad2 className="w-5 h-5" />, emoji: '🎮' },
+  { id: 'accueil', label: 'Accueil', icon: <Home className="w-4 h-4" />, emoji: '🏠' },
+  { id: 'aventures', label: 'Aventures', icon: <BookOpen className="w-4 h-4" />, emoji: '📖' },
+  { id: 'pratique', label: 'Pratique', icon: <Star className="w-4 h-4" />, emoji: '⭐' },
+  { id: 'activites', label: 'Activités', icon: <Gamepad2 className="w-4 h-4" />, emoji: '🎮' },
 ];
 
 function BadgePanel() {
@@ -22,10 +22,10 @@ function BadgePanel() {
     <>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative flex items-center gap-1 bg-primary/10 px-2 py-1 rounded-full hover:bg-primary/20 transition-colors"
+        className="relative flex items-center gap-1 bg-primary/10 px-2 py-1 rounded-full hover:bg-primary/20 transition-all"
         aria-label="Badges"
       >
-        <Trophy className="w-3.5 h-3.5 text-primary" />
+        <Trophy className="w-4 h-4 text-primary" />
         <span className="text-[10px] font-bold text-primary">{unlockedCount}</span>
         {unlockedCount > 0 && (
           <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-green-400 rounded-full border border-background" />
@@ -54,7 +54,7 @@ function BadgePanel() {
                     <Trophy className="w-4 h-4" />
                     Mes Badges
                   </h3>
-                  <button onClick={() => setIsOpen(false)} className="text-muted-foreground hover:text-foreground text-lg">
+                  <button onClick={() => setIsOpen(false)} className="text-muted-foreground hover:text-foreground text-lg transition-colors">
                     ✕
                   </button>
                 </div>
@@ -78,7 +78,7 @@ function BadgePanel() {
                         key={badge.id}
                         className={`p-3 rounded-xl border text-center transition-all ${
                           isUnlocked
-                            ? 'bg-gradient-to-br from-primary/10 to-primary/5 border-primary/30'
+                            ? 'bg-gradient-to-br from-primary/10 to-primary/5 border-primary/30 badge-shine'
                             : 'bg-muted/30 border-border/50 opacity-50'
                         }`}
                         whileTap={isUnlocked ? { scale: 0.95 } : {}}
@@ -125,43 +125,43 @@ export default function Navigation() {
             </div>
           </div>
           <div className="flex items-center gap-1.5">
-            {/* Favorites indicator */}
+            {/* Favorites indicator - consistent icon size */}
             {favoriteChapters.length > 0 && (
               <div className="flex items-center gap-0.5 bg-gradient-to-r from-rose-50 to-pink-50 dark:from-rose-900/20 dark:to-pink-900/20 px-1.5 py-1 rounded-full border border-rose-200/40 dark:border-rose-700/20">
-                <Heart className="w-3 h-3 text-rose-400 fill-rose-400" />
+                <Heart className="w-4 h-4 text-rose-400 fill-rose-400" />
                 <span className="text-[10px] font-bold text-rose-500">{favoriteChapters.length}</span>
               </div>
             )}
 
-            {/* Badges */}
+            {/* Badges - consistent icon size */}
             <BadgePanel />
 
-            {/* Star count with gold glow */}
+            {/* Star count with gold glow - consistent icon size */}
             <div className="flex items-center gap-1 bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/20 px-2.5 py-1 rounded-full border border-amber-200/40 dark:border-amber-700/20 glow-gold">
               <span className="text-yellow-500 text-xs">⭐</span>
               <span className="font-bold text-gradient-gold text-xs">{totalStars}</span>
             </div>
 
-            {/* Dark mode toggle */}
+            {/* Dark mode toggle - consistent icon size */}
             <button
               onClick={toggleDarkMode}
-              className="p-1.5 rounded-full bg-primary/10 hover:bg-primary/20 transition-colors"
+              className="p-1.5 rounded-full bg-primary/10 hover:bg-primary/20 transition-all hover:scale-105"
               aria-label={darkMode ? 'Mode jour' : 'Mode nuit'}
             >
               {darkMode ? (
-                <Sun className="w-3.5 h-3.5 text-amber-400" />
+                <Sun className="w-4 h-4 text-amber-400" />
               ) : (
-                <Moon className="w-3.5 h-3.5 text-primary" />
+                <Moon className="w-4 h-4 text-primary" />
               )}
             </button>
 
-            {/* Settings */}
+            {/* Settings - consistent icon size */}
             <SettingsPanel />
           </div>
         </div>
       </div>
 
-      {/* Bottom navigation - polished */}
+      {/* Bottom navigation - polished with active glow and transitions */}
       <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-border/50 safe-area-bottom shadow-[0_-2px_10px_rgba(0,0,0,0.05)]"
         style={{
           background: darkMode
@@ -178,14 +178,15 @@ export default function Navigation() {
               <button
                 key={item.id}
                 onClick={() => setSection(item.id)}
-                className="flex flex-col items-center justify-center py-2 px-3 sm:px-6 min-w-[64px] relative rounded-xl transition-all"
+                className="flex flex-col items-center justify-center py-2 px-3 sm:px-6 min-w-[64px] relative rounded-xl transition-all duration-200"
                 aria-label={item.label}
               >
-                {/* Active tab background with rounded corners */}
+                {/* Active tab background with rounded corners and subtle glow */}
                 {isActive && (
                   <motion.div
                     layoutId="navBg"
                     className="absolute inset-0 bg-primary/10 rounded-xl border border-primary/15"
+                    style={{ boxShadow: '0 0 12px oklch(0.55 0.12 80 / 10%)' }}
                     transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                   />
                 )}
@@ -195,11 +196,12 @@ export default function Navigation() {
                   <motion.div
                     layoutId="navIndicator"
                     className="absolute -top-1 w-10 h-1 bg-primary rounded-full"
+                    style={{ boxShadow: '0 0 8px oklch(0.55 0.12 80 / 30%)' }}
                     transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                   />
                 )}
 
-                <span className={`transition-colors relative z-10 ${isActive ? 'text-primary' : 'text-muted-foreground'}`}>
+                <span className={`transition-all duration-200 relative z-10 ${isActive ? 'text-primary' : 'text-muted-foreground'}`}>
                   {isActive ? (
                     <motion.span
                       initial={{ scale: 1 }}
@@ -213,7 +215,7 @@ export default function Navigation() {
                     item.icon
                   )}
                 </span>
-                <span className={`text-[10px] sm:text-xs mt-0.5 transition-colors relative z-10 ${isActive ? 'text-primary font-bold' : 'text-muted-foreground'}`}>
+                <span className={`text-[10px] sm:text-xs mt-0.5 transition-all duration-200 relative z-10 ${isActive ? 'text-primary font-bold' : 'text-muted-foreground'}`}>
                   {item.label}
                 </span>
 

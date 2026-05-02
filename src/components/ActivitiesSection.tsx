@@ -9,6 +9,7 @@ import BreathingExercise from './BreathingExercise';
 import GratitudeJournal from './GratitudeJournal';
 import DrawingCanvas from './DrawingCanvas';
 import MemoryGame from './MemoryGame';
+import WordScramble from './WordScramble';
 
 // ---- Quiz Game ----
 const quizQuestions = [
@@ -244,12 +245,13 @@ export default function ActivitiesSection() {
   const [activeActivity, setActiveActivity] = useState<string | null>(null);
 
   const activities = [
-    { id: 'quiz', name: 'Quiz des Trésors', emoji: '🏆', desc: '10 questions sur les trésors du cœur', color: 'from-amber-100 to-yellow-200', darkColor: 'from-amber-900/30 to-yellow-800/30', accent: 'amber', isNew: false },
-    { id: 'coloring', name: 'Coloriage', emoji: '🎨', desc: 'Colorie des formes magiques', color: 'from-pink-100 to-rose-200', darkColor: 'from-pink-900/30 to-rose-800/30', accent: 'pink', isNew: false },
-    { id: 'drawing', name: 'Dessin Libre', emoji: '✏️', desc: 'Dessine avec des pinceaux magiques', color: 'from-teal-100 to-cyan-200', darkColor: 'from-teal-900/30 to-cyan-800/30', accent: 'teal', isNew: false },
-    { id: 'memory', name: 'Jeu de Mémoire', emoji: '🧩', desc: 'Trouve les paires cachées', color: 'from-purple-100 to-violet-200', darkColor: 'from-purple-900/30 to-violet-800/30', accent: 'purple', isNew: true },
-    { id: 'breathing', name: 'Respiration', emoji: '🌬️', desc: 'Exercice de respiration 4-2-6', color: 'from-blue-100 to-sky-200', darkColor: 'from-blue-900/30 to-sky-800/30', accent: 'blue', isNew: false },
-    { id: 'journal', name: 'Gratitude', emoji: '💛', desc: 'Note ce pour quoi tu es reconnaissant(e)', color: 'from-orange-100 to-amber-200', darkColor: 'from-orange-900/30 to-amber-800/30', accent: 'orange', isNew: false },
+    { id: 'quiz', name: 'Quiz des Trésors', emoji: '🏆', desc: '10 questions sur les trésors du cœur', duration: '10 min', color: 'from-amber-100 to-yellow-200', darkColor: 'from-amber-900/30 to-yellow-800/30', accent: 'amber', isNew: false },
+    { id: 'coloring', name: 'Coloriage', emoji: '🎨', desc: 'Colorie des formes magiques', duration: '5 min', color: 'from-pink-100 to-rose-200', darkColor: 'from-pink-900/30 to-rose-800/30', accent: 'pink', isNew: false },
+    { id: 'drawing', name: 'Dessin Libre', emoji: '✏️', desc: 'Dessine avec des pinceaux magiques', duration: '10 min', color: 'from-teal-100 to-cyan-200', darkColor: 'from-teal-900/30 to-cyan-800/30', accent: 'teal', isNew: false },
+    { id: 'memory', name: 'Jeu de Mémoire', emoji: '🧩', desc: 'Trouve les paires cachées', duration: '5 min', color: 'from-purple-100 to-violet-200', darkColor: 'from-purple-900/30 to-violet-800/30', accent: 'purple', isNew: false },
+    { id: 'breathing', name: 'Respiration', emoji: '🌬️', desc: 'Exercice de respiration 4-2-6', duration: '3 min', color: 'from-blue-100 to-sky-200', darkColor: 'from-blue-900/30 to-sky-800/30', accent: 'blue', isNew: false },
+    { id: 'journal', name: 'Gratitude', emoji: '💛', desc: 'Note ce pour quoi tu es reconnaissant(e)', duration: '5 min', color: 'from-orange-100 to-amber-200', darkColor: 'from-orange-900/30 to-amber-800/30', accent: 'orange', isNew: false },
+    { id: 'wordscramble', name: 'Mots Mélangés', emoji: '🔤', desc: 'Remets les lettres dans l\'ordre !', duration: '8 min', color: 'from-rose-100 to-pink-200', darkColor: 'from-rose-900/30 to-pink-800/30', accent: 'rose', isNew: true },
   ];
 
   return (
@@ -287,31 +289,35 @@ export default function ActivitiesSection() {
             <motion.button
               key={act.id}
               onClick={() => setActiveActivity(act.id)}
-              className={`relative bg-gradient-to-br ${act.color} dark:${act.darkColor} rounded-2xl p-4 sm:p-5 text-center border-2 border-white/40 dark:border-white/10 shadow-md hover:shadow-xl transition-all card-hover-enhanced overflow-hidden`}
+              className={`relative bg-gradient-to-br ${act.color} dark:${act.darkColor} rounded-2xl p-4 sm:p-5 text-center border-2 border-white/40 dark:border-white/10 shadow-md hover:shadow-xl transition-all card-hover-enhanced overflow-hidden min-h-[140px] sm:min-h-[160px] flex flex-col items-center justify-center`}
               whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.96 }}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.05 }}
             >
-              {/* New badge for Memory Game */}
+              {/* Enhanced NOUVEAU badge */}
               {act.isNew && (
                 <motion.span
-                  className="absolute -top-0 -right-0 bg-gradient-to-r from-rose-400 to-pink-500 text-white text-[8px] font-bold px-2 py-0.5 rounded-bl-xl rounded-tr-2xl shadow-sm"
-                  animate={{ scale: [1, 1.1, 1] }}
+                  className="absolute top-0 right-0 bg-gradient-to-r from-yellow-400 via-orange-400 to-rose-400 text-white text-[9px] sm:text-[10px] font-extrabold px-3 py-1 rounded-bl-xl rounded-tr-2xl shadow-lg border border-yellow-300/50 tracking-wide"
+                  animate={{ scale: [1, 1.08, 1] }}
                   transition={{ duration: 1.5, repeat: Infinity }}
                 >
-                  NOUVEAU
+                  ✨ NOUVEAU
                 </motion.span>
               )}
               <span className="text-3xl sm:text-4xl block">{act.emoji}</span>
               <p className="text-sm sm:text-base font-bold mt-2">{act.name}</p>
               <p className="text-[10px] sm:text-xs text-foreground/60 mt-1">{act.desc}</p>
+              {/* Duration hint */}
+              <span className="text-[9px] sm:text-[10px] text-foreground/40 mt-1.5 font-medium flex items-center gap-0.5">
+                ⏱️ {act.duration}
+              </span>
             </motion.button>
           ))}
         </div>
       ) : (
-        <Card className="border-2 border-primary/10 gradient-border overflow-hidden">
+        <Card className="border-2 border-primary/10 gradient-border overflow-hidden card-pattern">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <CardTitle className="text-lg flex items-center gap-2">
@@ -328,6 +334,7 @@ export default function ActivitiesSection() {
             {activeActivity === 'coloring' && <ColoringBook />}
             {activeActivity === 'drawing' && <DrawingCanvas />}
             {activeActivity === 'memory' && <MemoryGame />}
+            {activeActivity === 'wordscramble' && <WordScramble />}
             {activeActivity === 'breathing' && <BreathingExercise />}
             {activeActivity === 'journal' && <GratitudeJournal />}
           </CardContent>

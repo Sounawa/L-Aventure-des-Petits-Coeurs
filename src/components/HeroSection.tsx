@@ -74,8 +74,8 @@ export default function HeroSection() {
         />
       ))}
 
-      {/* Content */}
-      <div className="relative z-10 flex flex-col items-center gap-5 max-w-lg mx-auto">
+      {/* Content — increased gaps between elements */}
+      <div className="relative z-10 flex flex-col items-center gap-7 max-w-lg mx-auto">
         {/* Mirror emoji with animation and glow ring */}
         <motion.div
           initial={{ scale: 0, rotate: -180 }}
@@ -114,33 +114,34 @@ export default function HeroSection() {
           </motion.span>
         </motion.div>
 
-        {/* Title */}
+        {/* Title — with more space below */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
+          className="mt-2"
         >
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold shimmer-text">
             L&apos;Alchimie du Miroir
           </h1>
         </motion.div>
 
-        {/* Subtitle */}
+        {/* Subtitle — with more space below */}
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.7 }}
-          className="text-xl sm:text-2xl font-semibold text-foreground/80"
+          className="text-xl sm:text-2xl font-semibold text-foreground/80 mb-2"
         >
           ✨ L&apos;Aventure des Petits Cœurs ✨
         </motion.p>
 
-        {/* Welcome card with glass-card style */}
+        {/* Welcome card with glass-card style and glow animation */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.9 }}
-          className="w-full glass-card rounded-2xl p-5 sm:p-6 gradient-border card-hover"
+          className="w-full glass-card rounded-2xl p-5 sm:p-6 gradient-border card-hover welcome-glow"
         >
           <div className="flex items-start justify-between gap-2 mb-2">
             <p className="text-[10px] text-primary font-semibold uppercase tracking-wider">Message de bienvenue</p>
@@ -185,41 +186,33 @@ export default function HeroSection() {
           </motion.span>
         </motion.button>
 
-        {/* Feature cards - more visually appealing with gradients */}
+        {/* Feature cards - taller with more padding and hover description */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.3 }}
-          className="grid grid-cols-4 gap-2 mt-2 w-full"
+          className="grid grid-cols-4 gap-2 mt-1 w-full"
         >
-          <motion.div
-            className="bg-gradient-to-br from-amber-50 to-yellow-100 dark:from-amber-900/20 dark:to-yellow-800/20 rounded-xl p-3 border border-amber-200/50 dark:border-amber-700/30 text-center card-hover-enhanced"
-            whileHover={{ scale: 1.05 }}
-          >
-            <span className="text-2xl sm:text-3xl block">📖</span>
-            <p className="text-[10px] sm:text-xs font-bold mt-1.5 text-gradient-gold">3 Aventures</p>
-          </motion.div>
-          <motion.div
-            className="bg-gradient-to-br from-teal-50 to-cyan-100 dark:from-teal-900/20 dark:to-cyan-800/20 rounded-xl p-3 border border-teal-200/50 dark:border-teal-700/30 text-center card-hover-enhanced"
-            whileHover={{ scale: 1.05 }}
-          >
-            <span className="text-2xl sm:text-3xl block">🎮</span>
-            <p className="text-[10px] sm:text-xs font-bold mt-1.5 text-gradient-teal">6 Activités</p>
-          </motion.div>
-          <motion.div
-            className="bg-gradient-to-br from-pink-50 to-rose-100 dark:from-pink-900/20 dark:to-rose-800/20 rounded-xl p-3 border border-pink-200/50 dark:border-pink-700/30 text-center card-hover-enhanced"
-            whileHover={{ scale: 1.05 }}
-          >
-            <span className="text-2xl sm:text-3xl block">🏅</span>
-            <p className="text-[10px] sm:text-xs font-bold mt-1.5 text-gradient-rose">14 Badges</p>
-          </motion.div>
-          <motion.div
-            className="bg-gradient-to-br from-purple-50 to-indigo-100 dark:from-purple-900/20 dark:to-indigo-800/20 rounded-xl p-3 border border-purple-200/50 dark:border-purple-700/30 text-center card-hover-enhanced"
-            whileHover={{ scale: 1.05 }}
-          >
-            <span className="text-2xl sm:text-3xl block">🤲</span>
-            <p className="text-[10px] sm:text-xs font-bold mt-1.5 text-gradient-gold">Prière</p>
-          </motion.div>
+          {[
+            { emoji: '📖', label: '3 Aventures', desc: 'Explore des mondes magiques', gradient: 'from-amber-50 to-yellow-100 dark:from-amber-900/20 dark:to-yellow-800/20', border: 'border-amber-200/50 dark:border-amber-700/30', textClass: 'text-gradient-gold' },
+            { emoji: '🎮', label: '7 Activités', desc: 'Joue et apprends en t\'amusant', gradient: 'from-teal-50 to-cyan-100 dark:from-teal-900/20 dark:to-cyan-800/20', border: 'border-teal-200/50 dark:border-teal-700/30', textClass: 'text-gradient-teal' },
+            { emoji: '🏅', label: '15 Badges', desc: 'Collecte des récompenses', gradient: 'from-pink-50 to-rose-100 dark:from-pink-900/20 dark:to-rose-800/20', border: 'border-pink-200/50 dark:border-pink-700/30', textClass: 'text-gradient-rose' },
+            { emoji: '🤲', label: 'Prière', desc: 'Apprends à prier avec le cœur', gradient: 'from-purple-50 to-indigo-100 dark:from-purple-900/20 dark:to-indigo-800/20', border: 'border-purple-200/50 dark:border-purple-700/30', textClass: 'text-gradient-gold' },
+          ].map((card, idx) => (
+            <motion.div
+              key={idx}
+              className={`bg-gradient-to-br ${card.gradient} rounded-xl p-4 border ${card.border} text-center card-hover-enhanced relative group`}
+              whileHover={{ scale: 1.05 }}
+            >
+              <span className="text-2xl sm:text-3xl block">{card.emoji}</span>
+              <p className={`text-[10px] sm:text-xs font-bold mt-2 ${card.textClass}`}>{card.label}</p>
+              {/* Hover description popup */}
+              <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-foreground/90 text-background text-[9px] px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-20">
+                {card.desc}
+                <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-foreground/90" />
+              </div>
+            </motion.div>
+          ))}
         </motion.div>
 
         {/* Daily Inspiration Card */}

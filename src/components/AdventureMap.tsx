@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import { useAppStore, type AdventureId } from '@/lib/store';
 import { useMemo } from 'react';
-import { Check } from 'lucide-react';
+import { Check, Lock } from 'lucide-react';
 
 interface AdventureStation {
   id: AdventureId;
@@ -72,12 +72,10 @@ export default function AdventureMap() {
     return (advId: AdventureId): boolean => {
       if (advId === 'miroir') return true; // Always unlocked
       if (advId === 'tresors') {
-        // Unlock after completing 3 chapters of miroir
         const miroirCompleted = [1, 2, 3, 4, 5].filter(i => chaptersProgress[`miroir-${i}`]?.activityCompleted).length;
         return miroirCompleted >= 3;
       }
       if (advId === 'lumiere') {
-        // Unlock after collecting 3 treasures
         const allTreasures = ['gratitude', 'patience', 'gentillesse', 'courage', 'honnêteté', 'amour'];
         const tresorsCollected = allTreasures.filter(t => treasuresProgress[t]?.collected).length;
         return tresorsCollected >= 3;
@@ -111,14 +109,25 @@ export default function AdventureMap() {
                 {/* Glow ring for current adventure */}
                 {isCurrent && unlocked && (
                   <motion.div
-                    className={`absolute -inset-3 rounded-full bg-gradient-to-br ${station.bgColor} blur-md ${station.glowColor}`}
-                    animate={{ scale: [1, 1.15, 1], opacity: [0.5, 0.8, 0.5] }}
+                    className={`absolute -inset-4 rounded-full bg-gradient-to-br ${station.bgColor} blur-lg ${station.glowColor}`}
+                    animate={{ scale: [1, 1.2, 1], opacity: [0.4, 0.7, 0.4] }}
                     transition={{ duration: 2, repeat: Infinity }}
                   />
                 )}
 
-                {/* Circle node */}
-                <div className={`relative w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br ${station.bgColor} border-2 ${isCurrent && unlocked ? station.borderColor : 'border-border/50'} flex items-center justify-center shadow-md overflow-hidden`}>
+                {/* Circle node — bigger for better visibility */}
+                <div className={`relative w-18 h-18 sm:w-22 sm:h-22 rounded-2xl bg-gradient-to-br ${station.bgColor} border-2 ${
+                  isCurrent && unlocked ? station.borderColor : 'border-border/50'
+                } flex items-center justify-center shadow-md overflow-hidden ${
+                  isComplete && unlocked ? 'station-complete-shimmer' : ''
+                }`}
+                  style={{ width: '72px', height: '72px' }}
+                >
+                  {/* Dark overlay for locked stations */}
+                  {!unlocked && (
+                    <div className="absolute inset-0 bg-background/60 dark:bg-background/70 rounded-2xl z-10" />
+                  )}
+                  
                   {/* Progress arc background */}
                   <div className="absolute inset-0 flex items-center justify-center">
                     <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 100 100">
@@ -127,7 +136,7 @@ export default function AdventureMap() {
                         fill="none"
                         stroke="currentColor"
                         className="text-primary/10"
-                        strokeWidth="4"
+                        strokeWidth="5"
                       />
                       {unlocked && progress > 0 && (
                         <motion.circle
@@ -135,7 +144,7 @@ export default function AdventureMap() {
                           fill="none"
                           stroke="currentColor"
                           className="text-primary"
-                          strokeWidth="4"
+                          strokeWidth="5"
                           strokeLinecap="round"
                           strokeDasharray={`${2 * Math.PI * 42}`}
                           initial={{ strokeDashoffset: 2 * Math.PI * 42 }}
@@ -152,17 +161,22 @@ export default function AdventureMap() {
                       initial={{ scale: 0, rotate: -180 }}
                       animate={{ scale: 1, rotate: 0 }}
                       transition={{ type: 'spring', stiffness: 200 }}
+                      className="relative z-20"
                     >
-                      <Check className={`w-7 h-7 ${station.color}`} />
+                      <Check className="w-8 h-8" strokeWidth={3} />
+                      <span className="absolute -top-1 -right-1 text-xs">🎉</span>
                     </motion.div>
                   ) : !unlocked ? (
-                    <span className="text-2xl opacity-50">🔒</span>
+                    <div className="relative z-20 flex flex-col items-center gap-0.5">
+                      <Lock className="w-6 h-6 text-muted-foreground/50" />
+                      <span className="text-[8px] text-muted-foreground/60 font-bold">Verrouillé</span>
+                    </div>
                   ) : (
-                    <span className="text-2xl sm:text-3xl">{station.emoji}</span>
+                    <span className="text-2xl sm:text-3xl relative z-20">{station.emoji}</span>
                   )}
                 </div>
 
-                {/* Label */}
+                {/* Label with progress — bigger and bolder */}
                 <div className="text-center max-w-[80px] sm:max-w-[100px]">
                   <p className={`text-[10px] sm:text-xs font-bold leading-tight ${
                     isCurrent && unlocked ? station.color : unlocked ? 'text-foreground/70' : 'text-muted-foreground/50'
@@ -170,40 +184,59 @@ export default function AdventureMap() {
                     {station.title}
                   </p>
                   {unlocked && (
-                    <p className={`text-[9px] mt-0.5 ${progress > 0 ? 'text-primary' : 'text-muted-foreground'}`}>
-                      {progress}/{station.totalItems}
-                      {isComplete && ' 🎉'}
-                    </p>
+                    <div className="mt-1">
+                      <p className={`text-xs sm:text-sm font-extrabold ${progress > 0 ? 'text-primary' : 'text-muted-foreground'}`}>
+                        {progress}/{station.totalItems}
+                        {isComplete && ' 🎉'}
+                      </p>
+                      {/* Mini progress bar below station */}
+                      <div className="w-full bg-muted/50 rounded-full h-1.5 mt-1 overflow-hidden">
+                        <motion.div
+                          className="gradient-progress rounded-full h-1.5"
+                          initial={{ width: 0 }}
+                          animate={{ width: `${percent}%` }}
+                          transition={{ duration: 0.5 }}
+                        />
+                      </div>
+                    </div>
                   )}
                   {!unlocked && (
-                    <p className="text-[9px] text-muted-foreground/60 mt-0.5">
+                    <p className="text-[9px] text-muted-foreground/60 mt-0.5 flex items-center justify-center gap-0.5">
+                      <Lock className="w-2.5 h-2.5" />
                       Verrouillé
                     </p>
                   )}
                 </div>
               </motion.button>
 
-              {/* Connection line to next station */}
+              {/* Connection line to next station — thicker with animated dots */}
               {index < stations.length - 1 && (
                 <div className="flex-1 flex items-center justify-center px-1 sm:px-2 relative min-w-[30px] sm:min-w-[50px]">
-                  {/* Dashed line */}
-                  <div className="w-full h-0.5 bg-gradient-to-r from-border/60 to-border/40 relative overflow-hidden">
+                  {/* Base line — thicker */}
+                  <div className="w-full h-1 bg-gradient-to-r from-border/60 to-border/40 relative overflow-hidden rounded-full">
                     {/* Animated progress fill */}
                     {isComplete && (
                       <motion.div
-                        className={`absolute inset-y-0 left-0 bg-gradient-to-r ${station.bgColor}`}
+                        className={`absolute inset-y-0 left-0 bg-gradient-to-r ${station.bgColor} rounded-full`}
                         initial={{ width: 0 }}
                         animate={{ width: '100%' }}
                         transition={{ duration: 0.8, delay: 0.3 }}
                       />
                     )}
-                    {/* Moving dot */}
+                    {/* Animated dots moving along the line */}
                     {isCurrent && unlocked && (
-                      <motion.div
-                        className={`absolute top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-primary`}
-                        animate={{ left: ['0%', '100%'] }}
-                        transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-                      />
+                      <>
+                        <motion.div
+                          className="absolute top-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full bg-primary shadow-sm shadow-primary/30"
+                          animate={{ left: ['0%', '100%'] }}
+                          transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+                        />
+                        <motion.div
+                          className="absolute top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-primary/50"
+                          animate={{ left: ['0%', '100%'] }}
+                          transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
+                        />
+                      </>
                     )}
                   </div>
                 </div>
@@ -218,7 +251,7 @@ export default function AdventureMap() {
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="text-center text-xs text-muted-foreground mt-3"
+          className="text-center text-xs text-muted-foreground mt-4"
         >
           🔓 Complète 3 chapitres du Miroir pour débloquer les Trésors
         </motion.p>
@@ -227,7 +260,7 @@ export default function AdventureMap() {
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="text-center text-xs text-muted-foreground mt-3"
+          className="text-center text-xs text-muted-foreground mt-4"
         >
           🔓 Collecte 3 trésors pour débloquer la Lumière
         </motion.p>

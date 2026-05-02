@@ -6,6 +6,7 @@ import { useAppStore } from '@/lib/store';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Moon, Sun, Volume2, VolumeX, RotateCcw, BarChart3, Info, X, Sparkles, Star, Trophy, BookOpen, Flame } from 'lucide-react';
+import ParentCorner from './ParentCorner';
 
 export default function SettingsPanel() {
   const [isOpen, setIsOpen] = useState(false);
@@ -188,6 +189,9 @@ export default function SettingsPanel() {
                       </div>
                     </CardContent>
                   </Card>
+
+                  {/* Parent Corner */}
+                  <ParentCorner />
 
                   {/* Reset Progress */}
                   <Card className="border-2 border-red-200/50 dark:border-red-800/30">

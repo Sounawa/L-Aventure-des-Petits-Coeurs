@@ -672,3 +672,221 @@ Stage Summary:
 6. **Arabic font** — Custom Arabic font for better rendering
 7. **More illustrations** — AI-generated images for each chapter
 8. **Performance optimization** — Lazy loading for heavy components
+
+---
+
+## Task 4-b (Features Agent): Word Scramble Game + Parent Corner
+
+### Date: 2026-05-03
+
+### Task ID: 4-b
+
+### New Features Added
+
+1. **🔤 Word Scramble Game** (`src/components/WordScramble.tsx`)
+   - 12 spiritual French words to unscramble: Miroir, Cœur, Lumière, Patience, Gentillesse, Gratitude, Courage, Amour, Paix, Sagesse, Prière, Espoir
+   - Each word displayed with letters scrambled; player taps tiles to place in correct order
+   - Empty answer slots showing word length (dashed borders)
+   - Tap a placed letter to remove it from the answer
+   - Hint system: emoji + text hint appears after 5 seconds (e.g., 🪞 "Un objet qui reflète ton image")
+   - Star rating per word: ⭐⭐⭐ without hint, ⭐⭐ with hint, ⭐ after 2+ attempts
+   - Progress through all 12 words with word counter ("Mot 3/12")
+   - Animated progress bar showing overall progress
+   - Green glow on correct answer, shake animation on wrong attempt
+   - Win screen with confetti (25 animated pieces), final score display, star rating (3-star scale)
+   - Awards 2 stars to store on completion
+   - "Rejouer" button to restart the game
+   - Rose/pink gradient theme matching the Mots Mélangés card
+   - Responsive design with scaled tiles for mobile
+
+2. **👨‍👩‍👧‍👦 Parent Corner** (`src/components/ParentCorner.tsx`)
+   - Full-screen overlay modal with rose gradient header
+   - 7 expandable FAQ-style sections (accordion with AnimatePresence):
+     - **À propos** — App description, inspired by "L'Alchimie du Miroir", adapted for ages 6-12
+     - **Valeurs éducatives** — 6 values with emojis (Spiritualité, Gratitude, Bienveillance, Courage, Sérénité, Sagesse)
+     - **Sources du contenu** — 4 original websites listed with URLs
+     - **Confidentialité** — Privacy note: all data stays on device (localStorage), no tracking, no ads
+     - **Âge recommandé** — 6-12 ans recommendation
+     - **Conseils pour les parents** — 5 practical tips (Pratiquez ensemble, Discutez des histoires, Célébrez les progrès, Utilisez le mode nuit, Une routine quotidienne)
+     - **Compatible tous appareils** — Browser/device compatibility info
+   - Professional design (less playful than the rest of the app)
+   - Lock icon + "Pour les parents" label on trigger button
+   - Scrollable content area
+   - Dark mode support throughout
+   - Integrated in SettingsPanel between Stats and Reset Progress cards
+
+3. **Store Changes** (`src/lib/store.ts`)
+   - Added `wordScrambleCompleted: boolean` (default: false)
+   - Added `wordScrambleBestScore: number` (default: 0)
+   - Added `setWordScrambleCompleted(score: number)` action — awards 2 stars, updates best score
+   - Added `word_wizard` badge: 🔤 "Magicien des Mots" — unlocked when wordScrambleCompleted is true
+   - Updated `saveState()` to persist `wordScrambleCompleted` and `wordScrambleBestScore`
+   - Updated `resetProgress()` to reset word scramble state
+   - Updated `checkAndUnlockBadges()` to check `wordScrambleCompleted` for `word_wizard` badge
+   - Total badges: 15 (was 14)
+
+### Files Created
+- `src/components/WordScramble.tsx` — Full word scramble game with 12 words, hints, star rating, confetti win screen
+- `src/components/ParentCorner.tsx` — Parent information panel with expandable sections, privacy info, tips
+
+### Files Modified
+- `src/lib/store.ts` — Added wordScrambleCompleted, wordScrambleBestScore, setWordScrambleCompleted, word_wizard badge, persistence
+- `src/components/ActivitiesSection.tsx` — Added Mots Mélangés as 7th activity (🔤, rose gradient, NOUVEAU badge), imported WordScramble, changed grid to 2-col/3-col responsive
+- `src/components/SettingsPanel.tsx` — Added ParentCorner import and rendered between Stats and Reset cards
+
+### Technical Details
+- WordScramble: hint timer uses `useEffect` with `setTimeout` (no setState in effect body — compliant with React 19 rules)
+- `completedRef` guard prevents double-awarding stars on game finish
+- Letter removal from slots properly updates `usedIndices` by finding and removing the matching scrambled tile index
+- ParentCorner uses `ExpandableSection` sub-component with AnimatePresence for accordion behavior
+- Both components are fully `'use client'` with dark mode support
+- All text in French, responsive design, framer-motion animations
+
+### Lint Status
+- ✅ Zero errors
+
+### Compilation
+- ✅ Clean, no errors
+
+---
+
+## Task 4-a: Styling Polish Agent
+
+### Date: 2026-05-03
+
+### Task ID: 4-a (Styling Polish)
+
+### Summary
+Comprehensive styling overhaul across 6 components + CSS utilities, addressing VLM-identified issues at 7/10 rating. All changes maintain dark mode support, French text, framer-motion animations, and responsive design.
+
+### CSS Utilities Added (`src/app/globals.css`)
+
+1. **`.empty-state-card`** — Beautiful empty state with dashed border and subtle gradient (light + dark)
+2. **`.floating-decoration`** — Floating decoration with rotate + translateY animation
+3. **`.badge-shine`** — Shine sweep animation for unlocked badges (diagonal light sweep)
+4. **`.card-pattern`** — Subtle radial gradient pattern background for cards (3-layer gradient)
+5. **`.pulse-ring`** — Pulsing ring effect for current/active items (expanding + fading ring)
+6. **`.sparkle-float`** — Sparkle floating animation (y + scale + opacity)
+7. **`.gradient-progress-shimmer`** — Gradient progress bar with shimmer overlay
+8. **`.station-complete-shimmer`** — Station completion glow/particle effect
+9. **`.connection-dot`** — Animated dot moving along connection lines
+10. **`.welcome-glow`** — Welcome card border glow animation
+
+### PracticeSection (`src/components/PracticeSection.tsx`) — MAJOR OVERHAUL
+
+1. **Better empty states**:
+   - Stars (0): Illustrated empty state with 📖 emoji, "Commence ta première pratique pour gagner des étoiles ! 🌟", and actionable "Aller aux Aventures" button with BookOpen icon
+   - Badges (0): Sparkle animation with "Explore les aventures pour débloquer des badges ! 🏅" and animated faded emojis
+   - Favorites: Enhanced empty state with "Clique sur le cœur d'un chapitre pour l'ajouter ici ! 💜" (in FavoriteChapters.tsx)
+
+2. **Enhanced streak indicator**:
+   - Always visible (even at 0 streak with 💫 emoji)
+   - Bigger fire emoji (text-3xl) with rotation animation
+   - Milestone badges: 7-day 🌟, 14-day 💫, 30-day 👑
+   - "Plus que X jours pour [milestone]!" encouragement text
+   - Gradient background and decorative overlay
+
+3. **Progress bar improvements**:
+   - Gradient shimmer progress bar with `gradient-progress-shimmer` class
+   - Percentage text below ("X% complété")
+   - Thicker bar (h-3)
+
+4. **Weekly view improvements**:
+   - Completed count below each day (e.g., "3/5")
+   - Bigger star emoji (text-2xl) for perfect days with rotation animation
+   - `pulse-ring` effect on today's column
+   - Larger dots (w-2.5 h-2.5)
+
+5. **Gratitude journal prompt system**:
+   - 10 rotating prompt suggestions in French
+   - Prompt card with 💡 emoji and italic text
+   - 🔄 button to rotate to a new prompt
+   - Prompts rotate after each entry submission
+   - Examples: "Aujourd'hui, je suis reconnaissant(e) pour...", "Une chose qui m'a fait sourire...", "Quelqu'un qui m'a aidé(e)..."
+
+6. **Badges collection always visible** (not conditional on unlockedBadges.length)
+   - Empty state shown when 0 badges with sparkle animation
+   - `badge-shine` animation on unlocked badges
+
+7. **Floating decorations**: ✨ and 🌟 sparkles in section header
+8. **`card-pattern` class** on all cards for subtle background texture
+9. **Sparkles import** from lucide-react for constellation card
+
+### ActivitiesSection (`src/components/ActivitiesSection.tsx`) — CARD CONSISTENCY
+
+1. **Uniform card heights**: `min-h-[140px] sm:min-h-[160px]` with `flex flex-col items-center justify-center`
+2. **Better NOUVEAU badge**:
+   - Brighter gradient: `from-yellow-400 via-orange-400 to-rose-400`
+   - Larger text: `text-[9px] sm:text-[10px] font-extrabold`
+   - Added border: `border border-yellow-300/50`
+   - ✨ emoji before text: "✨ NOUVEAU"
+   - Wider padding: `px-3 py-1`
+   - Letter-spacing: `tracking-wide`
+3. **Activity duration hints**: Added `duration` field to each activity ("5 min", "10 min", "3 min" etc.)
+   - Displayed as "⏱️ 5 min" below description
+4. **Activity detail card**: Added `card-pattern` class for subtle background texture
+
+### AdventureMap (`src/components/AdventureMap.tsx`) — CLEARER LOCKS & PROGRESS
+
+1. **Bigger station nodes**: `72px × 72px` (was implicit smaller size)
+2. **Better locked state**:
+   - Dark overlay on locked stations: `bg-background/60 dark:bg-background/70`
+   - Lock icon from lucide-react (`Lock` component) instead of emoji — w-6 h-6
+   - "Verrouillé" text below lock icon in `text-[8px]` bold
+3. **Larger progress indicators**:
+   - Progress fraction in `text-xs sm:text-sm font-extrabold` (was text-[9px])
+   - Mini progress bar below each station with `gradient-progress` class
+   - Thicker SVG circle stroke (strokeWidth 5, was 4)
+4. **Better connection lines**:
+   - Thicker: `h-1` (was h-0.5)
+   - `rounded-full` for smoother appearance
+   - Two animated dots on current path (w-2.5 primary + w-1.5 primary/50 with 0.5s delay)
+5. **Completion celebration**:
+   - `station-complete-shimmer` class on completed stations (pulsing glow)
+   - 🎉 emoji on checkmark
+6. **"Verrouillé" with Lock icon** in label below station
+
+### HeroSection (`src/components/HeroSection.tsx`) — SPACING & HIERARCHY
+
+1. **Better spacing**: Increased gap from `gap-5` to `gap-7` between elements
+2. **Added `mt-2`** below title for more breathing room
+3. **Added `mb-2`** below subtitle
+4. **Feature cards — taller with more padding**:
+   - Increased padding from `p-3` to `p-4`
+   - Added `mt-2` below emoji for more space
+   - **Hover description popup**: Tooltip that appears on hover showing description text
+   - Cards refactored to array for cleaner code with `desc` field
+5. **Welcome card glow**: Added `welcome-glow` class for animated border glow effect
+
+### Navigation (`src/components/Navigation.tsx`) — ICON CONSISTENCY
+
+1. **Consistent icon sizes**: All nav item icons changed from `w-5 h-5` to `w-4 h-4`
+2. **All top bar icons**: Standardized to `w-4 h-4` (Trophy, Heart, Sun, Moon)
+3. **Better active state**:
+   - Added `boxShadow: '0 0 12px oklch(0.55 0.12 80 / 10%)'` on active tab background
+   - Added `boxShadow: '0 0 8px oklch(0.55 0.12 80 / 30%)'` on top indicator bar
+4. **Smoother transitions**: Added `transition-all duration-200` to nav buttons
+5. **Dark mode toggle**: Added `hover:scale-105` on hover
+6. **Badge panel**: `badge-shine` class on unlocked badges, `transition-colors` on close button
+
+### FavoriteChapters (`src/components/FavoriteChapters.tsx`) — BETTER EMPTY STATE
+
+1. **Replaced plain empty state** with `empty-state-card` class
+2. **Animated 💜 emoji** with rotation + scale animation
+3. **Decorative sparkle elements** (✨ and ✦) with floating animations
+4. **Better French text**: "Clique sur le cœur d'un chapitre pour l'ajouter ici ! 💜"
+
+### Files Modified
+- `src/app/globals.css` — Added 10 new CSS utilities and animations
+- `src/components/PracticeSection.tsx` — Major overhaul: empty states, streak milestones, progress bars, journal prompts, decorations
+- `src/components/ActivitiesSection.tsx` — Card consistency, enhanced NOUVEAU badge, duration hints, card-pattern
+- `src/components/AdventureMap.tsx` — Bigger locks, progress bars, connection lines, completion shimmer, Lock icon
+- `src/components/HeroSection.tsx` — Spacing, feature card hover popups, welcome-glow
+- `src/components/Navigation.tsx` — Icon consistency (w-4 h-4), active glow, transition-all
+- `src/components/FavoriteChapters.tsx` — Better empty state with sparkle decorations
+
+### Lint Status
+- ✅ Zero errors
+
+### Compilation
+- ✅ Clean, compiles without errors
