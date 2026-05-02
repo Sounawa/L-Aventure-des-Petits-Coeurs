@@ -50,14 +50,15 @@ export default function ChapterCard({ data }: { data: ChapterData }) {
     markActivityCompleted(data.adventureId as 'miroir' | 'tresors' | 'lumiere', data.chapterNum);
   };
 
+  // Determine card styling based on state
+  const cardStyle = progress.activityCompleted
+    ? 'gradient-border border-transparent bg-primary/5'
+    : progress.read
+    ? 'border-secondary/30 bg-secondary/5 border-2'
+    : 'border-border/50 border-2';
+
   return (
-    <Card className={`border-2 overflow-hidden transition-all ${
-      progress.activityCompleted 
-        ? 'border-primary/40 bg-primary/5' 
-        : progress.read 
-        ? 'border-secondary/30 bg-secondary/5' 
-        : 'border-border/50'
-    }`}>
+    <Card className={`overflow-hidden transition-all ${cardStyle}`}>
       {/* Chapter header - always visible */}
       <div
         role="button"
@@ -70,7 +71,7 @@ export default function ChapterCard({ data }: { data: ChapterData }) {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <motion.span 
-                className="text-2xl w-10 h-10 flex items-center justify-center rounded-xl bg-primary/10"
+                className="text-2xl w-10 h-10 flex items-center justify-center rounded-xl bg-gradient-to-br from-primary/15 to-primary/5 border border-primary/10"
                 animate={progress.activityCompleted ? { rotate: [0, 5, -5, 0] } : {}}
                 transition={{ duration: 0.5, repeat: progress.activityCompleted ? 2 : 0 }}
               >
@@ -80,11 +81,26 @@ export default function ChapterCard({ data }: { data: ChapterData }) {
                 <CardTitle className="text-base sm:text-lg">
                   Chapitre {data.chapterNum} : {data.title}
                 </CardTitle>
-                {progress.activityCompleted && (
-                  <span className="text-[10px] bg-primary/20 text-primary px-2 py-0.5 rounded-full font-medium">
-                    ✨ Complété
-                  </span>
-                )}
+                {/* Progress indicator */}
+                <div className="flex items-center gap-1.5 mt-1">
+                  <div className="flex items-center gap-0.5">
+                    <span className={`w-2 h-2 rounded-full ${progress.read ? 'bg-primary' : 'bg-muted-foreground/20'}`} />
+                    <span className={`w-2 h-2 rounded-full ${progress.activityCompleted ? 'bg-primary' : 'bg-muted-foreground/20'}`} />
+                  </div>
+                  {progress.activityCompleted ? (
+                    <span className="text-[10px] bg-gradient-to-r from-amber-100 to-yellow-100 dark:from-amber-900/30 dark:to-yellow-900/30 text-primary px-2 py-0.5 rounded-full font-medium border border-amber-200/40 dark:border-amber-700/20">
+                      ✨ Complété
+                    </span>
+                  ) : progress.read ? (
+                    <span className="text-[10px] bg-secondary/15 text-secondary-foreground px-2 py-0.5 rounded-full font-medium">
+                      📖 Lu
+                    </span>
+                  ) : (
+                    <span className="text-[10px] bg-muted/50 text-muted-foreground px-2 py-0.5 rounded-full font-medium">
+                      Nouveau
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
             <div className="flex items-center gap-1">
@@ -95,25 +111,30 @@ export default function ChapterCard({ data }: { data: ChapterData }) {
                 aria-label={isFav ? 'Retirer des favoris' : 'Ajouter aux favoris'}
               >
                 {isFav ? (
-                  <span className="text-lg">❤️</span>
+                  <motion.span className="text-lg" animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 0.3 }}>❤️</motion.span>
                 ) : (
                   <span className="text-lg">🤍</span>
                 )}
               </motion.button>
-              {expanded ? <ChevronUp className="w-5 h-5 text-muted-foreground" /> : <ChevronDown className="w-5 h-5 text-muted-foreground" />}
+              <motion.div
+                animate={{ rotate: expanded ? 180 : 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <ChevronDown className="w-5 h-5 text-muted-foreground" />
+              </motion.div>
             </div>
           </div>
         </CardHeader>
       </div>
 
-      {/* Expanded content */}
+      {/* Expanded content with better animation */}
       <AnimatePresence>
         {expanded && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.4, ease: [0.04, 0.62, 0.23, 0.98] }}
           >
             <CardContent className="pt-0">
               {/* Illustration */}
@@ -132,15 +153,17 @@ export default function ChapterCard({ data }: { data: ChapterData }) {
                   </div>
                 )}
                 {/* Gradient overlay at bottom */}
-                <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-background to-transparent" />
-                {/* Chapter number badge */}
-                <div className="absolute top-3 left-3 bg-primary/90 text-primary-foreground text-xs font-bold px-2.5 py-1 rounded-full shadow-md">
+                <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-card to-transparent" />
+                {/* Chapter number badge with gradient */}
+                <div className="absolute top-3 left-3 text-xs font-bold px-2.5 py-1 rounded-full shadow-md text-white"
+                  style={{ background: 'linear-gradient(135deg, #C9A227, #E8D44D)' }}
+                >
                   Chapitre {data.chapterNum}
                 </div>
               </div>
 
               {/* Story with audio */}
-              <div className="bg-primary/5 rounded-xl p-4 mb-4 border border-primary/10">
+              <div className="bg-gradient-to-r from-amber-50/50 to-yellow-50/50 dark:from-amber-900/8 dark:to-yellow-900/8 rounded-xl p-4 mb-4 border border-amber-200/30 dark:border-amber-700/15">
                 <div className="flex items-start justify-between gap-2 mb-2">
                   <p className="text-xs text-primary font-semibold uppercase tracking-wider">Histoire</p>
                   <AudioPlayer text={data.story} size="sm" />
@@ -151,23 +174,24 @@ export default function ChapterCard({ data }: { data: ChapterData }) {
               </div>
 
               {/* Lesson */}
-              <div className="bg-secondary/10 rounded-xl p-4 mb-4 border border-secondary/20">
+              <div className="bg-gradient-to-r from-teal-50/50 to-cyan-50/50 dark:from-teal-900/8 dark:to-cyan-900/8 rounded-xl p-4 mb-4 border border-teal-200/30 dark:border-teal-700/15">
                 <p className="text-sm font-medium text-foreground/80 flex items-start gap-2">
-                  <Sparkles className="w-4 h-4 text-secondary flex-shrink-0 mt-0.5" />
+                  <Sparkles className="w-4 h-4 text-teal-500 flex-shrink-0 mt-0.5" />
                   <span>{data.lesson}</span>
                 </p>
               </div>
 
-              {/* Activity toggle */}
+              {/* Activity toggle with better styling */}
               <Button
                 onClick={() => setShowActivity(!showActivity)}
                 variant="outline"
                 className="w-full mb-3 border-primary/20 hover:bg-primary/10 hover:text-primary transition-all"
+                style={showActivity ? { background: 'linear-gradient(135deg, rgba(201, 162, 39, 0.1), rgba(232, 212, 77, 0.1))' } : {}}
               >
                 {showActivity ? '🔼 Cacher l\'activité' : `🎮 ${data.activityLabel}`}
               </Button>
 
-              {/* Activity content */}
+              {/* Activity content with engaging styling */}
               <AnimatePresence>
                 {showActivity && (
                   <motion.div
@@ -176,17 +200,27 @@ export default function ChapterCard({ data }: { data: ChapterData }) {
                     exit={{ height: 0, opacity: 0 }}
                     transition={{ duration: 0.3 }}
                   >
-                    <div className="border-2 border-dashed border-primary/20 rounded-xl p-4 bg-primary/5">
-                      {data.activity}
-                      {!progress.activityCompleted && (
-                        <Button
-                          onClick={handleActivityComplete}
-                          className="w-full mt-4 pulse-gold"
-                          size="sm"
-                        >
-                          ✨ J&apos;ai terminé l&apos;activité ! (+2 ⭐)
-                        </Button>
-                      )}
+                    <div className="rounded-xl p-4 relative overflow-hidden"
+                      style={{ background: 'linear-gradient(135deg, rgba(201, 162, 39, 0.05), rgba(20, 184, 166, 0.05))' }}
+                    >
+                      {/* Decorative corner elements */}
+                      <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-bl from-primary/5 to-transparent rounded-bl-2xl" />
+                      <div className="absolute bottom-0 left-0 w-16 h-16 bg-gradient-to-tr from-secondary/5 to-transparent rounded-tr-2xl" />
+                      
+                      {/* Dashed border overlay */}
+                      <div className="border-2 border-dashed border-primary/20 rounded-lg p-3">
+                        {data.activity}
+                        {!progress.activityCompleted && (
+                          <Button
+                            onClick={handleActivityComplete}
+                            className="w-full mt-4 pulse-gold"
+                            size="sm"
+                            style={{ background: 'linear-gradient(135deg, #C9A227, #E8D44D)', color: '#3D2C1E' }}
+                          >
+                            ✨ J&apos;ai terminé l&apos;activité ! (+2 ⭐)
+                          </Button>
+                        )}
+                      </div>
                     </div>
                   </motion.div>
                 )}

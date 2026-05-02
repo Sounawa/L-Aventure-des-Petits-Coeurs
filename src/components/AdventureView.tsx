@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { useAppStore, type AdventureId } from '@/lib/store';
 import AdventureSelector from './AdventureSelector';
+import AdventureMap from './AdventureMap';
 import ChapterCard from './ChapterCard';
 import MirrorInteraction from './MirrorInteraction';
 import BreathingExercise from './BreathingExercise';
@@ -561,6 +562,19 @@ export default function AdventureView() {
 
   return (
     <div className="flex flex-col gap-4">
+      {/* Adventure Map - visual journey */}
+      <Card className="border-2 border-primary/10">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-lg flex items-center gap-2">
+            <span>🗺️</span>
+            Carte de l&apos;Aventure
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="pt-0">
+          <AdventureMap />
+        </CardContent>
+      </Card>
+
       <AdventureSelector />
 
       <motion.div

@@ -5,6 +5,7 @@ import { useAppStore } from '@/lib/store';
 import Image from 'next/image';
 import AudioPlayer from './AudioPlayer';
 import DailyInspiration from './DailyInspiration';
+import WordOfTheDay from './WordOfTheDay';
 
 export default function HeroSection() {
   const { setSection, totalStars, badges, userName } = useAppStore();
@@ -15,17 +16,22 @@ export default function HeroSection() {
 
   return (
     <div className="relative min-h-[85vh] flex flex-col items-center justify-center text-center px-4 overflow-hidden">
-      {/* Background image with overlay */}
+      {/* Gradient mesh background */}
       <div className="absolute inset-0 z-0">
         <Image
           src="/images/magic-mirror-hero.png"
           alt="Miroir magique doré"
           fill
           sizes="(max-width: 640px) 100vw, 672px"
-          className="object-cover opacity-15"
+          className="object-cover opacity-10"
           priority
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/70 to-background" />
+        {/* Gradient mesh layers */}
+        <div className="absolute inset-0 bg-gradient-to-b from-amber-50/60 via-background/80 to-background" />
+        <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-gradient-to-br from-amber-200/20 via-yellow-100/10 to-transparent rounded-full blur-3xl -translate-x-1/4 -translate-y-1/4" />
+        <div className="absolute top-1/4 right-0 w-[400px] h-[400px] bg-gradient-to-bl from-teal-200/15 via-cyan-100/10 to-transparent rounded-full blur-3xl translate-x-1/4" />
+        <div className="absolute bottom-0 left-1/4 w-[350px] h-[350px] bg-gradient-to-tr from-pink-200/15 via-rose-100/10 to-transparent rounded-full blur-3xl translate-y-1/4" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-amber-100/10 via-transparent to-purple-100/10 rounded-full blur-3xl" />
       </div>
 
       {/* Animated decorative circles */}
@@ -45,6 +51,29 @@ export default function HeroSection() {
         transition={{ duration: 5, repeat: Infinity, delay: 1 }}
       />
 
+      {/* Particle/star effect behind the mirror */}
+      {Array.from({ length: 12 }).map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute w-1 h-1 rounded-full bg-amber-300/40"
+          style={{
+            left: `${35 + Math.random() * 30}%`,
+            top: `${10 + Math.random() * 30}%`,
+          }}
+          animate={{
+            y: [0, -20 - Math.random() * 30, 0],
+            opacity: [0.2, 0.8, 0.2],
+            scale: [0.5, 1.5, 0.5],
+          }}
+          transition={{
+            duration: 3 + Math.random() * 3,
+            repeat: Infinity,
+            delay: Math.random() * 3,
+            ease: 'easeInOut',
+          }}
+        />
+      ))}
+
       {/* Content */}
       <div className="relative z-10 flex flex-col items-center gap-5 max-w-lg mx-auto">
         {/* Mirror emoji with animation and glow ring */}
@@ -54,11 +83,16 @@ export default function HeroSection() {
           transition={{ type: 'spring', stiffness: 200, damping: 15, delay: 0.2 }}
           className="relative"
         >
-          {/* Glow ring */}
+          {/* Glow ring - enhanced */}
           <motion.div
-            className="absolute -inset-4 rounded-full bg-gradient-to-br from-amber-300/20 via-yellow-200/10 to-amber-400/20 blur-md"
-            animate={{ scale: [1, 1.1, 1], opacity: [0.5, 0.8, 0.5] }}
+            className="absolute -inset-6 rounded-full bg-gradient-to-br from-amber-300/30 via-yellow-200/15 to-amber-400/30 blur-lg"
+            animate={{ scale: [1, 1.15, 1], opacity: [0.4, 0.7, 0.4] }}
             transition={{ duration: 3, repeat: Infinity }}
+          />
+          <motion.div
+            className="absolute -inset-3 rounded-full bg-gradient-to-tl from-teal-200/20 via-transparent to-pink-200/20 blur-md"
+            animate={{ scale: [1, 1.08, 1], opacity: [0.3, 0.5, 0.3] }}
+            transition={{ duration: 4, repeat: Infinity, delay: 1 }}
           />
           <span className="text-7xl sm:text-8xl block">🪞</span>
           {/* Orbiting sparkles */}
@@ -101,12 +135,12 @@ export default function HeroSection() {
           ✨ L&apos;Aventure des Petits Cœurs ✨
         </motion.p>
 
-        {/* Welcome card with audio */}
+        {/* Welcome card with glass-card style */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.9 }}
-          className="w-full bg-card/80 backdrop-blur-sm rounded-2xl p-5 sm:p-6 shadow-lg border border-primary/20 card-hover"
+          className="w-full glass-card rounded-2xl p-5 sm:p-6 gradient-border card-hover"
         >
           <div className="flex items-start justify-between gap-2 mb-2">
             <p className="text-[10px] text-primary font-semibold uppercase tracking-wider">Message de bienvenue</p>
@@ -117,17 +151,23 @@ export default function HeroSection() {
           </p>
         </motion.div>
 
-        {/* CTA Button */}
+        {/* CTA Button - enhanced with gradient and pulse */}
         <motion.button
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 1.1 }}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+          whileHover={{ scale: 1.06 }}
+          whileTap={{ scale: 0.94 }}
           onClick={() => setSection('aventures')}
-          className="relative px-8 py-4 bg-primary text-primary-foreground rounded-full text-lg sm:text-xl font-bold shadow-lg glow-gold glow-gold-hover transition-all"
+          className="relative px-8 py-4 rounded-full text-lg sm:text-xl font-bold shadow-xl transition-all overflow-hidden pulse-gold"
+          style={{
+            background: 'linear-gradient(135deg, #C9A227, #E8D44D, #D4A853)',
+            color: '#3D2C1E',
+          }}
         >
           <span className="relative z-10">🌟 Commencer l&apos;Aventure 🌟</span>
+          {/* Inner glow overlay */}
+          <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] animate-[shimmer_2s_linear_infinite]" />
           {/* Sparkle decorations */}
           <motion.span
             className="absolute -top-2 -right-2 text-lg"
@@ -145,33 +185,48 @@ export default function HeroSection() {
           </motion.span>
         </motion.button>
 
-        {/* Feature cards - enhanced with more detail */}
+        {/* Feature cards - more visually appealing with gradients */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.3 }}
           className="grid grid-cols-4 gap-2 mt-2 w-full"
         >
-          <div className="bg-card/60 backdrop-blur-sm rounded-xl p-2.5 border border-primary/10 text-center card-hover">
-            <span className="text-xl sm:text-2xl block">📖</span>
-            <p className="text-[10px] sm:text-xs font-semibold mt-1">3 Aventures</p>
-          </div>
-          <div className="bg-card/60 backdrop-blur-sm rounded-xl p-2.5 border border-secondary/10 text-center card-hover">
-            <span className="text-xl sm:text-2xl block">🎮</span>
-            <p className="text-[10px] sm:text-xs font-semibold mt-1">6 Activités</p>
-          </div>
-          <div className="bg-card/60 backdrop-blur-sm rounded-xl p-2.5 border border-accent/10 text-center card-hover">
-            <span className="text-xl sm:text-2xl block">🏅</span>
-            <p className="text-[10px] sm:text-xs font-semibold mt-1">14 Badges</p>
-          </div>
-          <div className="bg-card/60 backdrop-blur-sm rounded-xl p-2.5 border border-primary/10 text-center card-hover">
-            <span className="text-xl sm:text-2xl block">🤲</span>
-            <p className="text-[10px] sm:text-xs font-semibold mt-1">Prière</p>
-          </div>
+          <motion.div
+            className="bg-gradient-to-br from-amber-50 to-yellow-100 dark:from-amber-900/20 dark:to-yellow-800/20 rounded-xl p-3 border border-amber-200/50 dark:border-amber-700/30 text-center card-hover-enhanced"
+            whileHover={{ scale: 1.05 }}
+          >
+            <span className="text-2xl sm:text-3xl block">📖</span>
+            <p className="text-[10px] sm:text-xs font-bold mt-1.5 text-gradient-gold">3 Aventures</p>
+          </motion.div>
+          <motion.div
+            className="bg-gradient-to-br from-teal-50 to-cyan-100 dark:from-teal-900/20 dark:to-cyan-800/20 rounded-xl p-3 border border-teal-200/50 dark:border-teal-700/30 text-center card-hover-enhanced"
+            whileHover={{ scale: 1.05 }}
+          >
+            <span className="text-2xl sm:text-3xl block">🎮</span>
+            <p className="text-[10px] sm:text-xs font-bold mt-1.5 text-gradient-teal">6 Activités</p>
+          </motion.div>
+          <motion.div
+            className="bg-gradient-to-br from-pink-50 to-rose-100 dark:from-pink-900/20 dark:to-rose-800/20 rounded-xl p-3 border border-pink-200/50 dark:border-pink-700/30 text-center card-hover-enhanced"
+            whileHover={{ scale: 1.05 }}
+          >
+            <span className="text-2xl sm:text-3xl block">🏅</span>
+            <p className="text-[10px] sm:text-xs font-bold mt-1.5 text-gradient-rose">14 Badges</p>
+          </motion.div>
+          <motion.div
+            className="bg-gradient-to-br from-purple-50 to-indigo-100 dark:from-purple-900/20 dark:to-indigo-800/20 rounded-xl p-3 border border-purple-200/50 dark:border-purple-700/30 text-center card-hover-enhanced"
+            whileHover={{ scale: 1.05 }}
+          >
+            <span className="text-2xl sm:text-3xl block">🤲</span>
+            <p className="text-[10px] sm:text-xs font-bold mt-1.5 text-gradient-gold">Prière</p>
+          </motion.div>
         </motion.div>
 
         {/* Daily Inspiration Card */}
         <DailyInspiration />
+
+        {/* Word of the Day in Arabic */}
+        <WordOfTheDay />
 
         {/* Progress indicator if returning user */}
         {totalStars > 0 && (
@@ -180,14 +235,14 @@ export default function HeroSection() {
             animate={{ opacity: 1 }}
             className="flex items-center gap-4"
           >
-            <div className="flex items-center gap-1.5 bg-primary/10 px-3 py-1.5 rounded-full">
+            <div className="flex items-center gap-1.5 bg-gradient-to-r from-amber-100 to-yellow-100 dark:from-amber-900/30 dark:to-yellow-900/30 px-3 py-1.5 rounded-full border border-amber-200/50 dark:border-amber-700/30 glow-gold">
               <span className="text-yellow-500 text-sm">⭐</span>
-              <span className="text-sm font-bold text-primary">{totalStars}</span>
+              <span className="text-sm font-bold text-gradient-gold">{totalStars}</span>
             </div>
             {unlockedBadges > 0 && (
-              <div className="flex items-center gap-1.5 bg-primary/10 px-3 py-1.5 rounded-full">
+              <div className="flex items-center gap-1.5 bg-gradient-to-r from-rose-100 to-pink-100 dark:from-rose-900/30 dark:to-pink-900/30 px-3 py-1.5 rounded-full border border-rose-200/50 dark:border-rose-700/30">
                 <span className="text-primary text-sm">🏅</span>
-                <span className="text-sm font-bold text-primary">{unlockedBadges}</span>
+                <span className="text-sm font-bold text-gradient-rose">{unlockedBadges}</span>
               </div>
             )}
           </motion.div>

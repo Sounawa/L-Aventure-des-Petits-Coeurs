@@ -63,17 +63,17 @@ function QuizGame() {
         >
           🏆
         </motion.span>
-        <h3 className="text-xl font-bold text-primary">Quiz terminé !</h3>
+        <h3 className="text-xl font-bold text-gradient-gold">Quiz terminé !</h3>
         <p className="text-lg">
-          Score : <span className="font-bold text-primary">{quizCompleted ? quizScore : score}/{quizQuestions.length}</span>
+          Score : <span className="font-bold text-gradient-gold">{quizCompleted ? quizScore : score}/{quizQuestions.length}</span>
         </p>
         {(quizCompleted ? quizScore : score) >= 7 && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="bg-primary/10 rounded-xl p-3 text-center border border-primary/20"
+            className="bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/20 rounded-xl p-3 text-center border border-amber-200/50 dark:border-amber-700/30"
           >
-            <p className="text-sm font-medium text-primary">🌟 Bravo ! Tu connais bien les trésors du cœur !</p>
+            <p className="text-sm font-medium text-gradient-gold">🌟 Bravo ! Tu connais bien les trésors du cœur !</p>
           </motion.div>
         )}
         <Button onClick={() => { setCurrentQ(0); setScore(0); setSelected(null); setFinished(false); }} variant="outline">
@@ -89,19 +89,19 @@ function QuizGame() {
     <div className="flex flex-col gap-4 py-4">
       <div className="flex items-center justify-between">
         <span className="text-sm text-muted-foreground">Question {currentQ + 1}/{quizQuestions.length}</span>
-        <span className="text-sm font-medium text-primary">{score} ⭐</span>
+        <span className="text-sm font-medium text-gradient-gold">{score} ⭐</span>
       </div>
       
       <div className="w-full bg-muted rounded-full h-2.5 overflow-hidden">
         <motion.div
-          className="bg-primary rounded-full h-2.5"
+          className="gradient-progress rounded-full h-2.5"
           initial={{ width: 0 }}
           animate={{ width: `${((currentQ + 1) / quizQuestions.length) * 100}%` }}
           transition={{ duration: 0.3 }}
         />
       </div>
 
-      <div className="bg-primary/5 rounded-xl p-4 border border-primary/10">
+      <div className="bg-gradient-to-br from-amber-50/80 to-yellow-50/80 dark:from-amber-900/10 dark:to-yellow-900/10 rounded-xl p-4 border border-amber-200/40 dark:border-amber-700/20">
         <p className="text-base font-medium text-center">{q.question}</p>
       </div>
 
@@ -244,19 +244,41 @@ export default function ActivitiesSection() {
   const [activeActivity, setActiveActivity] = useState<string | null>(null);
 
   const activities = [
-    { id: 'quiz', name: 'Quiz des Trésors', emoji: '🏆', desc: '10 questions sur les trésors du cœur', color: 'from-amber-100 to-yellow-200', darkColor: 'from-amber-900/30 to-yellow-800/30' },
-    { id: 'coloring', name: 'Coloriage', emoji: '🎨', desc: 'Colorie des formes magiques', color: 'from-pink-100 to-rose-200', darkColor: 'from-pink-900/30 to-rose-800/30' },
-    { id: 'drawing', name: 'Dessin Libre', emoji: '✏️', desc: 'Dessine avec des pinceaux magiques', color: 'from-teal-100 to-cyan-200', darkColor: 'from-teal-900/30 to-cyan-800/30' },
-    { id: 'memory', name: 'Jeu de Mémoire', emoji: '🧩', desc: 'Trouve les paires cachées', color: 'from-purple-100 to-violet-200', darkColor: 'from-purple-900/30 to-violet-800/30' },
-    { id: 'breathing', name: 'Respiration', emoji: '🌬️', desc: 'Exercice de respiration 4-2-6', color: 'from-blue-100 to-indigo-200', darkColor: 'from-blue-900/30 to-indigo-800/30' },
-    { id: 'journal', name: 'Gratitude', emoji: '💛', desc: 'Note ce pour quoi tu es reconnaissant(e)', color: 'from-amber-100 to-orange-200', darkColor: 'from-amber-900/30 to-orange-800/30' },
+    { id: 'quiz', name: 'Quiz des Trésors', emoji: '🏆', desc: '10 questions sur les trésors du cœur', color: 'from-amber-100 to-yellow-200', darkColor: 'from-amber-900/30 to-yellow-800/30', accent: 'amber', isNew: false },
+    { id: 'coloring', name: 'Coloriage', emoji: '🎨', desc: 'Colorie des formes magiques', color: 'from-pink-100 to-rose-200', darkColor: 'from-pink-900/30 to-rose-800/30', accent: 'pink', isNew: false },
+    { id: 'drawing', name: 'Dessin Libre', emoji: '✏️', desc: 'Dessine avec des pinceaux magiques', color: 'from-teal-100 to-cyan-200', darkColor: 'from-teal-900/30 to-cyan-800/30', accent: 'teal', isNew: false },
+    { id: 'memory', name: 'Jeu de Mémoire', emoji: '🧩', desc: 'Trouve les paires cachées', color: 'from-purple-100 to-violet-200', darkColor: 'from-purple-900/30 to-violet-800/30', accent: 'purple', isNew: true },
+    { id: 'breathing', name: 'Respiration', emoji: '🌬️', desc: 'Exercice de respiration 4-2-6', color: 'from-blue-100 to-sky-200', darkColor: 'from-blue-900/30 to-sky-800/30', accent: 'blue', isNew: false },
+    { id: 'journal', name: 'Gratitude', emoji: '💛', desc: 'Note ce pour quoi tu es reconnaissant(e)', color: 'from-orange-100 to-amber-200', darkColor: 'from-orange-900/30 to-amber-800/30', accent: 'orange', isNew: false },
   ];
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="text-center py-2">
+      {/* Section header with decorative elements */}
+      <div className="text-center py-2 relative">
+        <motion.div
+          className="absolute -top-2 left-1/4 text-lg opacity-30"
+          animate={{ y: [0, -5, 0], rotate: [0, 10, 0] }}
+          transition={{ duration: 3, repeat: Infinity }}
+        >
+          ✨
+        </motion.div>
+        <motion.div
+          className="absolute -top-2 right-1/4 text-lg opacity-30"
+          animate={{ y: [0, -5, 0], rotate: [0, -10, 0] }}
+          transition={{ duration: 3, repeat: Infinity, delay: 1.5 }}
+        >
+          🌟
+        </motion.div>
         <h2 className="text-2xl font-bold shimmer-text">🎮 Activités</h2>
-        <p className="text-sm text-muted-foreground mt-1">Amuse-toi tout en apprenant !</p>
+        {/* Fun animated subtitle */}
+        <motion.p
+          className="text-sm text-muted-foreground mt-1"
+          animate={{ opacity: [0.6, 1, 0.6] }}
+          transition={{ duration: 2, repeat: Infinity }}
+        >
+          Amuse-toi tout en apprenant ! 🎉
+        </motion.p>
       </div>
 
       {!activeActivity ? (
@@ -265,12 +287,23 @@ export default function ActivitiesSection() {
             <motion.button
               key={act.id}
               onClick={() => setActiveActivity(act.id)}
-              className={`bg-gradient-to-br ${act.color} dark:${act.darkColor} rounded-2xl p-4 sm:p-5 text-center border-2 border-white/30 dark:border-white/10 shadow-md hover:shadow-lg transition-all`}
-              whileTap={{ scale: 0.95 }}
+              className={`relative bg-gradient-to-br ${act.color} dark:${act.darkColor} rounded-2xl p-4 sm:p-5 text-center border-2 border-white/40 dark:border-white/10 shadow-md hover:shadow-xl transition-all card-hover-enhanced overflow-hidden`}
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.96 }}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.05 }}
             >
+              {/* New badge for Memory Game */}
+              {act.isNew && (
+                <motion.span
+                  className="absolute -top-0 -right-0 bg-gradient-to-r from-rose-400 to-pink-500 text-white text-[8px] font-bold px-2 py-0.5 rounded-bl-xl rounded-tr-2xl shadow-sm"
+                  animate={{ scale: [1, 1.1, 1] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                >
+                  NOUVEAU
+                </motion.span>
+              )}
               <span className="text-3xl sm:text-4xl block">{act.emoji}</span>
               <p className="text-sm sm:text-base font-bold mt-2">{act.name}</p>
               <p className="text-[10px] sm:text-xs text-foreground/60 mt-1">{act.desc}</p>
@@ -278,7 +311,7 @@ export default function ActivitiesSection() {
           ))}
         </div>
       ) : (
-        <Card className="border-2 border-primary/10">
+        <Card className="border-2 border-primary/10 gradient-border overflow-hidden">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <CardTitle className="text-lg flex items-center gap-2">

@@ -83,7 +83,14 @@ interface AppState {
 
   // Theme
   darkMode: boolean;
-  
+
+  // Streak
+  currentStreak: number;
+  lastPracticeDate: string;
+
+  // Settings
+  soundEffects: boolean;
+
   // Hydration
   _hydrated: boolean;
   
@@ -103,6 +110,9 @@ interface AppState {
   toggleFavorite: (chapterKey: string) => void;
   isFavorite: (chapterKey: string) => boolean;
   toggleDarkMode: () => void;
+  toggleSoundEffects: () => void;
+  resetProgress: () => void;
+  updateStreak: () => void;
   _hydrate: () => void;
 }
 
@@ -134,6 +144,9 @@ function saveState(state: AppState) {
       badges: state.badges,
       darkMode: state.darkMode,
       favoriteChapters: state.favoriteChapters,
+      currentStreak: state.currentStreak,
+      lastPracticeDate: state.lastPracticeDate,
+      soundEffects: state.soundEffects,
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
   } catch {
@@ -218,6 +231,9 @@ const defaultState = {
   badges: allBadges,
   darkMode: false,
   favoriteChapters: [] as string[],
+  currentStreak: 0,
+  lastPracticeDate: '',
+  soundEffects: true,
   _hydrated: false,
 };
 
@@ -322,6 +338,11 @@ export const useAppStore = create<AppState>((set, get) => ({
     const finalState = { ...newState, badges: updatedBadges };
     set(finalState);
     saveState({ ...get(), ...finalState });
+
+    // Update streak when all 5 items are checked for the first time today
+    if (allChecked && !wasAllChecked) {
+      get().updateStreak();
+    }
   },
   
   addGratitudeEntry: (entry) => {
@@ -371,6 +392,54 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   isFavorite: (chapterKey: string) => {
     return get().favoriteChapters.includes(chapterKey);
+  },
+
+  toggleSoundEffects: () => {
+    const newSoundEffects = !get().soundEffects;
+    set({ soundEffects: newSoundEffects });
+    saveState({ ...get(), soundEffects: newSoundEffects });
+  },
+
+  resetProgress: () => {
+    const newState = {
+      chaptersProgress: {} as Record<string, ChapterProgress>,
+      treasuresProgress: {} as Record<string, TreasureProgress>,
+      totalStars: 0,
+      practiceDays: [] as PracticeDay[],
+      gratitudeEntries: [] as GratitudeEntry[],
+      quizCompleted: false,
+      quizScore: 0,
+      badges: allBadges.map(b => ({ ...b, unlockedAt: null })),
+      favoriteChapters: [] as string[],
+      currentStreak: 0,
+      lastPracticeDate: '',
+    };
+    set(newState);
+    saveState({ ...get(), ...newState });
+  },
+
+  updateStreak: () => {
+    const today = new Date().toISOString().split('T')[0];
+    const { lastPracticeDate, currentStreak } = get();
+
+    if (lastPracticeDate === today) return; // Already updated today
+
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yesterdayStr = yesterday.toISOString().split('T')[0];
+
+    let newStreak: number;
+    if (lastPracticeDate === yesterdayStr) {
+      newStreak = currentStreak + 1;
+    } else if (lastPracticeDate === '') {
+      newStreak = 1;
+    } else {
+      newStreak = 1; // Streak broken, restart
+    }
+
+    const newState = { currentStreak: newStreak, lastPracticeDate: today };
+    set(newState);
+    saveState({ ...get(), ...newState });
   },
 
   toggleDarkMode: () => {

@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore, type Section } from '@/lib/store';
 import { Home, BookOpen, Star, Gamepad2, Moon, Sun, Trophy, Heart } from 'lucide-react';
 import { useState } from 'react';
+import SettingsPanel from './SettingsPanel';
 
 const navItems: { id: Section; label: string; icon: React.ReactNode; emoji: string }[] = [
   { id: 'accueil', label: 'Accueil', icon: <Home className="w-5 h-5" />, emoji: '🏠' },
@@ -60,7 +61,7 @@ function BadgePanel() {
                 {/* Progress bar */}
                 <div className="w-full bg-muted rounded-full h-2 mb-3 overflow-hidden">
                   <motion.div
-                    className="bg-gradient-to-r from-primary to-amber-400 rounded-full h-2"
+                    className="gradient-progress rounded-full h-2"
                     initial={{ width: 0 }}
                     animate={{ width: `${(unlockedCount / badges.length) * 100}%` }}
                     transition={{ duration: 0.5 }}
@@ -103,13 +104,21 @@ export default function Navigation() {
 
   return (
     <>
-      {/* Top bar */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-background/85 backdrop-blur-md border-b border-border/50 shadow-sm">
+      {/* Top bar with gradient */}
+      <div className="fixed top-0 left-0 right-0 z-50 border-b border-border/50 shadow-sm"
+        style={{
+          background: darkMode
+            ? 'linear-gradient(180deg, oklch(0.18 0.04 280), oklch(0.15 0.03 280))'
+            : 'linear-gradient(180deg, oklch(0.98 0.008 85), oklch(0.96 0.01 85))',
+          backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)',
+        }}
+      >
         <div className="flex items-center justify-between px-3 py-2 max-w-4xl mx-auto">
           <div className="flex items-center gap-2">
             <span className="text-lg">🪞</span>
             <div className="hidden sm:block">
-              <span className="font-bold text-primary text-sm">L&apos;Alchimie du Miroir</span>
+              <span className="font-bold text-gradient-gold text-sm">L&apos;Alchimie du Miroir</span>
               {userName && (
                 <span className="text-[10px] text-muted-foreground ml-1.5">• Salut {userName} 👋</span>
               )}
@@ -118,7 +127,7 @@ export default function Navigation() {
           <div className="flex items-center gap-1.5">
             {/* Favorites indicator */}
             {favoriteChapters.length > 0 && (
-              <div className="flex items-center gap-0.5 bg-rose-50 dark:bg-rose-900/20 px-1.5 py-1 rounded-full">
+              <div className="flex items-center gap-0.5 bg-gradient-to-r from-rose-50 to-pink-50 dark:from-rose-900/20 dark:to-pink-900/20 px-1.5 py-1 rounded-full border border-rose-200/40 dark:border-rose-700/20">
                 <Heart className="w-3 h-3 text-rose-400 fill-rose-400" />
                 <span className="text-[10px] font-bold text-rose-500">{favoriteChapters.length}</span>
               </div>
@@ -127,10 +136,10 @@ export default function Navigation() {
             {/* Badges */}
             <BadgePanel />
 
-            {/* Star count */}
-            <div className="flex items-center gap-1 bg-primary/10 px-2.5 py-1 rounded-full glow-gold">
+            {/* Star count with gold glow */}
+            <div className="flex items-center gap-1 bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/20 px-2.5 py-1 rounded-full border border-amber-200/40 dark:border-amber-700/20 glow-gold">
               <span className="text-yellow-500 text-xs">⭐</span>
-              <span className="font-bold text-primary text-xs">{totalStars}</span>
+              <span className="font-bold text-gradient-gold text-xs">{totalStars}</span>
             </div>
 
             {/* Dark mode toggle */}
@@ -145,12 +154,23 @@ export default function Navigation() {
                 <Moon className="w-3.5 h-3.5 text-primary" />
               )}
             </button>
+
+            {/* Settings */}
+            <SettingsPanel />
           </div>
         </div>
       </div>
 
-      {/* Bottom navigation */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 bg-background/90 backdrop-blur-md border-t border-border/50 safe-area-bottom shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
+      {/* Bottom navigation - polished */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-border/50 safe-area-bottom shadow-[0_-2px_10px_rgba(0,0,0,0.05)]"
+        style={{
+          background: darkMode
+            ? 'linear-gradient(0deg, oklch(0.16 0.03 280), oklch(0.18 0.04 280))'
+            : 'linear-gradient(0deg, oklch(0.97 0.008 85), oklch(0.98 0.005 85))',
+          backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)',
+        }}
+      >
         <div className="flex items-center justify-around max-w-4xl mx-auto py-1 px-2">
           {navItems.map((item) => {
             const isActive = currentSection === item.id;
@@ -161,6 +181,16 @@ export default function Navigation() {
                 className="flex flex-col items-center justify-center py-2 px-3 sm:px-6 min-w-[64px] relative rounded-xl transition-all"
                 aria-label={item.label}
               >
+                {/* Active tab background with rounded corners */}
+                {isActive && (
+                  <motion.div
+                    layoutId="navBg"
+                    className="absolute inset-0 bg-primary/10 rounded-xl border border-primary/15"
+                    transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                  />
+                )}
+
+                {/* Top indicator bar */}
                 {isActive && (
                   <motion.div
                     layoutId="navIndicator"
@@ -168,13 +198,14 @@ export default function Navigation() {
                     transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                   />
                 )}
-                <span className={`transition-colors ${isActive ? 'text-primary' : 'text-muted-foreground'}`}>
+
+                <span className={`transition-colors relative z-10 ${isActive ? 'text-primary' : 'text-muted-foreground'}`}>
                   {isActive ? (
                     <motion.span
                       initial={{ scale: 1 }}
                       animate={{ scale: [1, 1.15, 1] }}
                       transition={{ duration: 0.3 }}
-                      className="inline-block"
+                      className={`inline-block ${isActive ? 'nav-pulse' : ''}`}
                     >
                       {item.icon}
                     </motion.span>
@@ -182,13 +213,15 @@ export default function Navigation() {
                     item.icon
                   )}
                 </span>
-                <span className={`text-[10px] sm:text-xs mt-0.5 transition-colors ${isActive ? 'text-primary font-bold' : 'text-muted-foreground'}`}>
+                <span className={`text-[10px] sm:text-xs mt-0.5 transition-colors relative z-10 ${isActive ? 'text-primary font-bold' : 'text-muted-foreground'}`}>
                   {item.label}
                 </span>
+
+                {/* Pulsing bottom dot for active */}
                 {isActive && (
                   <motion.div
                     layoutId="navDot"
-                    className="absolute -bottom-0.5 w-1.5 h-1.5 bg-primary rounded-full"
+                    className="absolute -bottom-0.5 w-1.5 h-1.5 bg-primary rounded-full pulse-soft"
                     transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                   />
                 )}
