@@ -1,11 +1,11 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useAppStore } from '@/lib/store';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ChevronDown, ChevronUp, Sparkles, Heart } from 'lucide-react';
+import { ChevronDown, Sparkles, Heart } from 'lucide-react';
 import Image from 'next/image';
 import AudioPlayer from './AudioPlayer';
 import { useSoundEffects } from './SoundEffects';
@@ -32,6 +32,25 @@ const chapterImages: Record<string, string> = {
   'lumiere-3': '/images/magic-mirror-hero.png',
   'lumiere-4': '/images/starry-night.png',
 };
+
+// Word-by-word animation helper
+function WordByWordText({ text, className }: { text: string; className?: string }) {
+  const words = useMemo(() => text.split(' '), [text]);
+
+  return (
+    <span className={className}>
+      {words.map((word, i) => (
+        <span
+          key={i}
+          className="word-fade-in inline-block"
+          style={{ animationDelay: `${0.3 + i * 0.04}s` }}
+        >
+          {word}{i < words.length - 1 ? '\u00A0' : ''}
+        </span>
+      ))}
+    </span>
+  );
+}
 
 export default function ChapterCard({ data }: { data: ChapterData }) {
   const { chaptersProgress, markChapterRead, markActivityCompleted, favoriteChapters, toggleFavorite } = useAppStore();
@@ -61,6 +80,9 @@ export default function ChapterCard({ data }: { data: ChapterData }) {
     : 'border-border/50 border-2';
 
   const isNew = !progress.read && !progress.activityCompleted;
+
+  // Calculate thin progress bar percentage
+  const progressPercent = progress.activityCompleted ? 100 : progress.read ? 50 : 0;
 
   return (
     <Card className={`overflow-hidden transition-all ${cardStyle}`}>
@@ -108,7 +130,7 @@ export default function ChapterCard({ data }: { data: ChapterData }) {
                       📖 Lu
                     </span>
                   ) : (
-                    <span className="text-[10px] bg-gradient-to-r from-rose-100 to-pink-100 dark:from-rose-900/30 dark:to-pink-900/30 text-rose-600 dark:text-rose-300 px-2 py-0.5 rounded-full font-bold border border-rose-200/50 dark:border-rose-700/30 animate-pulse">
+                    <span className="text-[10px] bg-gradient-to-r from-rose-100 to-pink-100 dark:from-rose-900/30 dark:to-pink-900/30 text-rose-600 dark:text-rose-300 px-2 py-0.5 rounded-full font-bold border border-rose-200/50 dark:border-rose-700/30 question-pulse">
                       ✨ Nouveau
                     </span>
                   )}
@@ -138,6 +160,13 @@ export default function ChapterCard({ data }: { data: ChapterData }) {
           </div>
         </CardHeader>
       </div>
+
+      {/* Thin progress bar at bottom of collapsed card */}
+      {!expanded && (
+        <div className="chapter-progress-bar">
+          <div className="chapter-progress-bar-fill" style={{ width: `${progressPercent}%` }} />
+        </div>
+      )}
 
       {/* Expanded content with better animation */}
       <AnimatePresence>
@@ -174,15 +203,15 @@ export default function ChapterCard({ data }: { data: ChapterData }) {
                 </div>
               </div>
 
-              {/* Story with audio */}
+              {/* Story with audio and word-by-word fade-in */}
               <div className="bg-gradient-to-r from-amber-50/50 to-yellow-50/50 dark:from-amber-900/8 dark:to-yellow-900/8 rounded-xl p-4 mb-4 border border-amber-200/30 dark:border-amber-700/15">
                 <div className="flex items-start justify-between gap-2 mb-2">
                   <p className="text-xs text-primary font-semibold uppercase tracking-wider">Histoire</p>
                   <AudioPlayer text={data.story} size="sm" />
                 </div>
-                <p className="text-sm sm:text-base leading-relaxed text-foreground/90">
-                  {data.story}
-                </p>
+                <div className="text-sm sm:text-base leading-relaxed text-foreground/90">
+                  <WordByWordText text={data.story} />
+                </div>
               </div>
 
               {/* Lesson */}

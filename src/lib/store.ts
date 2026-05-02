@@ -116,6 +116,9 @@ interface AppState {
   // Bedtime mode
   bedtimeMode: boolean;
 
+  // Daily Challenge
+  dailyChallengeCompleted: Record<string, boolean>;
+
   // Hydration
   _hydrated: boolean;
   
@@ -143,6 +146,7 @@ interface AppState {
   setGuideShown: () => void;
   addAchievement: (type: string, emoji: string, description: string) => void;
   toggleBedtimeMode: () => void;
+  completeDailyChallenge: (date: string) => void;
   _hydrate: () => void;
 }
 
@@ -183,6 +187,7 @@ function saveState(state: AppState) {
       guideShown: state.guideShown,
       achievements: state.achievements,
       bedtimeMode: state.bedtimeMode,
+      dailyChallengeCompleted: state.dailyChallengeCompleted,
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
   } catch {
@@ -282,6 +287,7 @@ const defaultState = {
   guideShown: false,
   achievements: [] as Achievement[],
   bedtimeMode: false,
+  dailyChallengeCompleted: {} as Record<string, boolean>,
   _hydrated: false,
 };
 
@@ -500,6 +506,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       puzzleCompleted: false,
       guideShown: false,
       achievements: [] as Achievement[],
+      dailyChallengeCompleted: {} as Record<string, boolean>,
     };
     set(newState);
     saveState({ ...get(), ...newState });
@@ -569,6 +576,20 @@ export const useAppStore = create<AppState>((set, get) => ({
     }
     set({ bedtimeMode: newBedtimeMode });
     saveState({ ...get(), bedtimeMode: newBedtimeMode });
+  },
+
+  completeDailyChallenge: (date: string) => {
+    const current = get().dailyChallengeCompleted;
+    if (current[date]) return; // Already completed today
+    const newState = {
+      dailyChallengeCompleted: { ...current, [date]: true },
+      totalStars: get().totalStars + 2,
+    };
+    const updatedBadges = checkAndUnlockBadges({ ...get(), ...newState });
+    const finalState = { ...newState, badges: updatedBadges };
+    set(finalState);
+    saveState({ ...get(), ...finalState });
+    get().addAchievement('challenge', '🎯', `Défi du jour complété : ${date}`);
   },
 }));
 

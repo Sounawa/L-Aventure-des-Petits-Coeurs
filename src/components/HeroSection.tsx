@@ -1,11 +1,13 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { useAppStore } from '@/lib/store';
 import Image from 'next/image';
 import AudioPlayer from './AudioPlayer';
 import DailyInspiration from './DailyInspiration';
 import WordOfTheDay from './WordOfTheDay';
+import DailyChallenge from './DailyChallenge';
+import { useRef } from 'react';
 
 // Pre-computed particle positions (deterministic, no Math.random() at render time)
 const PARTICLE_POSITIONS = [
@@ -23,6 +25,14 @@ const PARTICLE_POSITIONS = [
   { left: 63.1, top: 24.2, yMove: 34, duration: 3.4, delay: 1.4 },
 ];
 
+// Feature cards with themed border-left accents
+const featureCards = [
+  { emoji: '📖', label: '3 Aventures', desc: 'Explore des mondes magiques', gradient: 'from-amber-50 to-yellow-100 dark:from-amber-900/20 dark:to-yellow-800/20', border: 'border-amber-200/50 dark:border-amber-700/30', textClass: 'text-gradient-gold', borderAccent: 'border-l-4 border-l-amber-400 dark:border-l-amber-500' },
+  { emoji: '🎮', label: '7 Activités', desc: 'Joue et apprends en t\'amusant', gradient: 'from-teal-50 to-cyan-100 dark:from-teal-900/20 dark:to-cyan-800/20', border: 'border-teal-200/50 dark:border-teal-700/30', textClass: 'text-gradient-teal', borderAccent: 'border-l-4 border-l-teal-400 dark:border-l-teal-500' },
+  { emoji: '🏅', label: '15 Badges', desc: 'Collecte des récompenses', gradient: 'from-pink-50 to-rose-100 dark:from-pink-900/20 dark:to-rose-800/20', border: 'border-pink-200/50 dark:border-pink-700/30', textClass: 'text-gradient-rose', borderAccent: 'border-l-4 border-l-rose-400 dark:border-l-rose-500' },
+  { emoji: '🤲', label: 'Prière', desc: 'Apprends à prier avec le cœur', gradient: 'from-purple-50 to-indigo-100 dark:from-purple-900/20 dark:to-indigo-800/20', border: 'border-purple-200/50 dark:border-purple-700/30', textClass: 'text-gradient-gold', borderAccent: 'border-l-4 border-l-purple-400 dark:border-l-purple-500' },
+] as const;
+
 export default function HeroSection() {
   const { setSection, totalStars, badges, userName } = useAppStore();
   const unlockedBadges = badges.filter(b => b.unlockedAt).length;
@@ -30,10 +40,23 @@ export default function HeroSection() {
   const displayName = userName.trim() || 'petit voyageur';
   const welcomeText = `Bienvenue ${displayName} ! Tu vas découvrir un miroir magique qui reflète la lumière de ton cœur. Es-tu prêt pour l'aventure ?`;
 
+  // Parallax scroll effect
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ['start start', 'end start'],
+  });
+
+  // Mirror emoji moves slower (parallax foreground)
+  const mirrorY = useTransform(scrollYProgress, [0, 1], [0, 80]);
+  // Background layers move at different speeds
+  const bgY1 = useTransform(scrollYProgress, [0, 1], [0, -30]);
+  const bgY2 = useTransform(scrollYProgress, [0, 1], [0, -60]);
+
   return (
-    <div className="relative min-h-[85vh] flex flex-col items-center justify-center text-center px-4 overflow-hidden">
+    <div ref={containerRef} className="relative min-h-[85vh] flex flex-col items-center justify-center text-center px-4 overflow-hidden">
       {/* Gradient mesh background */}
-      <div className="absolute inset-0 z-0">
+      <motion.div className="absolute inset-0 z-0" style={{ y: bgY1 }}>
         <Image
           src="/images/magic-mirror-hero.png"
           alt="Miroir magique doré"
@@ -46,9 +69,9 @@ export default function HeroSection() {
         <div className="absolute inset-0 bg-gradient-to-b from-amber-50/60 via-background/80 to-background" />
         <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-gradient-to-br from-amber-200/20 via-yellow-100/10 to-transparent rounded-full blur-3xl -translate-x-1/4 -translate-y-1/4" />
         <div className="absolute top-1/4 right-0 w-[400px] h-[400px] bg-gradient-to-bl from-teal-200/15 via-cyan-100/10 to-transparent rounded-full blur-3xl translate-x-1/4" />
-        <div className="absolute bottom-0 left-1/4 w-[350px] h-[350px] bg-gradient-to-tr from-pink-200/15 via-rose-100/10 to-transparent rounded-full blur-3xl translate-y-1/4" />
+        <motion.div className="absolute bottom-0 left-1/4 w-[350px] h-[350px] bg-gradient-to-tr from-pink-200/15 via-rose-100/10 to-transparent rounded-full blur-3xl translate-y-1/4" style={{ y: bgY2 }} />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-amber-100/10 via-transparent to-purple-100/10 rounded-full blur-3xl" />
-      </div>
+      </motion.div>
 
       {/* Animated decorative circles */}
       <motion.div
@@ -92,12 +115,13 @@ export default function HeroSection() {
 
       {/* Content — increased gaps between elements */}
       <div className="relative z-10 flex flex-col items-center gap-7 max-w-lg mx-auto">
-        {/* Mirror emoji with animation and glow ring */}
+        {/* Mirror emoji with parallax, shimmer effect, and glow ring */}
         <motion.div
           initial={{ scale: 0, rotate: -180 }}
           animate={{ scale: 1, rotate: 0 }}
           transition={{ type: 'spring', stiffness: 200, damping: 15, delay: 0.2 }}
-          className="relative"
+          className="relative mirror-shimmer"
+          style={{ y: mirrorY }}
         >
           {/* Glow ring - enhanced */}
           <motion.div
@@ -202,22 +226,17 @@ export default function HeroSection() {
           </motion.span>
         </motion.button>
 
-        {/* Feature cards - taller with more padding and hover description */}
+        {/* Feature cards with themed border-left accents */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.3 }}
           className="grid grid-cols-4 gap-2 mt-1 w-full"
         >
-          {[
-            { emoji: '📖', label: '3 Aventures', desc: 'Explore des mondes magiques', gradient: 'from-amber-50 to-yellow-100 dark:from-amber-900/20 dark:to-yellow-800/20', border: 'border-amber-200/50 dark:border-amber-700/30', textClass: 'text-gradient-gold' },
-            { emoji: '🎮', label: '7 Activités', desc: 'Joue et apprends en t\'amusant', gradient: 'from-teal-50 to-cyan-100 dark:from-teal-900/20 dark:to-cyan-800/20', border: 'border-teal-200/50 dark:border-teal-700/30', textClass: 'text-gradient-teal' },
-            { emoji: '🏅', label: '15 Badges', desc: 'Collecte des récompenses', gradient: 'from-pink-50 to-rose-100 dark:from-pink-900/20 dark:to-rose-800/20', border: 'border-pink-200/50 dark:border-pink-700/30', textClass: 'text-gradient-rose' },
-            { emoji: '🤲', label: 'Prière', desc: 'Apprends à prier avec le cœur', gradient: 'from-purple-50 to-indigo-100 dark:from-purple-900/20 dark:to-indigo-800/20', border: 'border-purple-200/50 dark:border-purple-700/30', textClass: 'text-gradient-gold' },
-          ].map((card, idx) => (
+          {featureCards.map((card, idx) => (
             <motion.div
               key={idx}
-              className={`bg-gradient-to-br ${card.gradient} rounded-xl p-4 border ${card.border} text-center card-hover-enhanced relative group`}
+              className={`bg-gradient-to-br ${card.gradient} rounded-xl p-4 border ${card.border} ${card.borderAccent} text-center card-3d relative group`}
               whileHover={{ scale: 1.05 }}
             >
               <span className="text-2xl sm:text-3xl block">{card.emoji}</span>
@@ -233,6 +252,9 @@ export default function HeroSection() {
 
         {/* Daily Inspiration Card */}
         <DailyInspiration />
+
+        {/* Daily Challenge Card */}
+        <DailyChallenge />
 
         {/* Word of the Day in Arabic */}
         <WordOfTheDay />
@@ -258,7 +280,7 @@ export default function HeroSection() {
         )}
       </div>
 
-      {/* Scroll-down indicator */}
+      {/* Scroll-down indicator with animated hand emoji */}
       <motion.div
         className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-1"
         initial={{ opacity: 0, y: -10 }}
@@ -267,7 +289,12 @@ export default function HeroSection() {
       >
         <span className="text-[10px] text-muted-foreground font-medium">Découvrir</span>
         <motion.div
-          animate={{ y: [0, 8, 0] }}
+          className="hand-point-bounce"
+        >
+          <span className="text-2xl">👇</span>
+        </motion.div>
+        <motion.div
+          animate={{ y: [0, 6, 0] }}
           transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
         >
           <svg

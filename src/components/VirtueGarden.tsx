@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore } from '@/lib/store';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 
 interface VirtuePlot {
   id: string;
@@ -62,6 +62,8 @@ function WaterDroplet({ delay }: { delay: number }) {
 }
 
 function GardenPlot({ virtue, stage }: { virtue: VirtuePlot; stage: number }) {
+  const [isHovered, setIsHovered] = useState(false);
+
   return (
     <motion.div
       className={`relative flex flex-col items-center justify-center p-3 rounded-2xl border-2 min-h-[120px] bg-gradient-to-br ${virtue.bgColor} ${virtue.darkBgColor} overflow-hidden transition-all duration-500 ${
@@ -74,7 +76,36 @@ function GardenPlot({ virtue, stage }: { virtue: VirtuePlot; stage: number }) {
       initial={{ scale: 0.9, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
       transition={{ type: 'spring', stiffness: 200, damping: 20 }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
+      {/* Rain animation on hover for empty plots */}
+      <AnimatePresence>
+        {isHovered && stage === 0 && (
+          <>
+            {Array.from({ length: 5 }).map((_, i) => (
+              <motion.span
+                key={`rain-${i}`}
+                className="absolute text-[10px] pointer-events-none"
+                style={{
+                  left: `${15 + i * 18}%`,
+                  top: '10%',
+                }}
+                initial={{ y: -10, opacity: 0 }}
+                animate={{ y: [0, 30, 50], opacity: [0, 0.8, 0] }}
+                exit={{ opacity: 0 }}
+                transition={{
+                  duration: 0.8,
+                  delay: i * 0.1,
+                  ease: 'easeOut',
+                }}
+              >
+                💧
+              </motion.span>
+            ))}
+          </>
+        )}
+      </AnimatePresence>
       {/* Soil base */}
       <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-amber-700/20 to-amber-700/5 dark:from-amber-900/20 dark:to-amber-900/5 rounded-b-2xl" />
 

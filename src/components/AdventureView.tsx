@@ -284,7 +284,7 @@ function TreasureCard({
   return (
     <Card className={`transition-all duration-300 ${
       isCollected
-        ? 'border-2 border-amber-400/60 bg-gradient-to-br from-amber-50/50 to-yellow-50/30 dark:from-amber-900/15 dark:to-yellow-900/10 shadow-md shadow-amber-200/20'
+        ? 'border-2 border-amber-400/60 bg-gradient-to-br from-amber-50/50 to-yellow-50/30 dark:from-amber-900/15 dark:to-yellow-900/10 shadow-md shadow-amber-200/20 treasure-shimmer'
         : 'border-2 border-dashed border-muted-foreground/25 bg-muted/10'
     }`}>
       <button onClick={() => setExpanded(!expanded)} className="w-full text-left">
@@ -302,7 +302,7 @@ function TreasureCard({
                   {index + 1}
                 </span>
                 {!isCollected && (
-                  <span className="absolute -top-1 -right-2 text-[10px] bg-muted text-muted-foreground px-1 py-0.5 rounded-full">?</span>
+                  <span className="absolute -top-1 -right-2 text-[10px] bg-muted text-muted-foreground px-1 py-0.5 rounded-full question-pulse">?</span>
                 )}
               </div>
               <div>

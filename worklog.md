@@ -1011,3 +1011,26 @@ VLM rated homepage 6/10 and activities 7/10. Implemented 6 specific styling impr
 
 ### Compilation
 - ✅ Clean, compiles without errors
+
+---
+Task ID: 5-a
+Agent: Styling Improvement Agent
+Task: Mandatory styling improvements
+
+Work Log:
+- Read worklog.md and all relevant component files (HeroSection, PracticeSection, AdventureView, ChapterCard, Navigation, VirtueGarden, globals.css)
+- Added CSS utilities to globals.css: .text-shimmer, .card-3d, .glow-pulse, .mirror-shimmer, .treasure-shimmer, .question-pulse, .ripple-effect, .star-bounce, .tab-glow-pulse, .feather-write, .rain-drop, .checkmark-spring, .green-fade, .streak-flame-orange/red/double, .hand-point-bounce, .chapter-progress-bar, .word-fade-in, gold-particle animation
+- HeroSection: Added mirror-shimmer CSS class on mirror emoji for moving light reflection, added parallax scroll effect (useScroll/useTransform from framer-motion) with mirror emoji moving slower and background layers at different speeds, added themed border-left accents on feature cards (gold=3 Aventures, teal=7 Activites, rose=15 Badges, purple=Priere), replaced scroll indicator with animated hand emoji with hand-point-bounce CSS animation
+- PracticeSection: Enhanced checklist items with spring physics checkmark animation (scale 0 to 1 with rotate), green background fade-in on completed items, enhanced streak flame with dynamic colors (orange 1-3 days, red 4-6 days, double fire 7+ days), added feather pen emoji with feather-write animation to gratitude journal prompt, added rain/water hover animation on empty VirtueGarden plots
+- AdventureView: Added treasure-shimmer CSS class on collected treasure cards for diagonal light sweep, added question-pulse CSS animation on question badge of uncollected treasures
+- ChapterCard: Added thin 2px progress bar at bottom of collapsed cards (chapter-progress-bar CSS), implemented word-by-word fade-in animation for story text (WordByWordText component with staggered animation delays), added question-pulse on Nouveau badge
+- Navigation: Added ripple effect on nav tab press (CSS ripple-expand animation with position tracking from click event), added star counter bounce animation with gold particle burst (6 particles that fly outward when stars change, using framer-motion key-based re-mount), added tab-glow-pulse CSS on active tab for gentle gradient glow pulsing
+- Fixed lint errors: Removed useEffect with setState for star animation, replaced with key-based framer-motion animation approach
+- Fixed Turbopack/lightningcss CSS parsing crash by replacing oklch colors in gradient stops with rgba/hex equivalents
+- Final lint: zero errors, dev server compiles and serves 200 OK
+
+Stage Summary:
+- 6 files modified: globals.css, HeroSection.tsx, PracticeSection.tsx, AdventureView.tsx, ChapterCard.tsx, Navigation.tsx
+- Plus VirtueGarden.tsx updated with rain hover animation
+- All new text in French, responsive design, dark mode compatible, framer-motion animations
+- Lint: zero errors, compilation clean, dev server 200 OK

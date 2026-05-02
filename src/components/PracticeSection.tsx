@@ -11,6 +11,7 @@ import { Trophy, Heart, Flame, Sparkles, BookOpen } from 'lucide-react';
 import FavoriteChapters from './FavoriteChapters';
 import VirtueGarden from './VirtueGarden';
 import AchievementTimeline from './AchievementTimeline';
+import StatsDashboard from './StatsDashboard';
 
 const practiceItems = [
   { id: 'prayers', label: "J'ai dit mes prières aujourd'hui", emoji: '🤲' },
@@ -197,16 +198,16 @@ export default function PracticeSection() {
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-amber-100/20 dark:via-amber-800/10 to-transparent pointer-events-none" />
         
         <div className="flex items-center gap-3 relative z-10">
-          {/* Fire emoji - bigger and more celebratory */}
+          {/* Fire emoji - dynamic based on streak length */}
           <motion.span
-            className="text-3xl"
+            className={`text-3xl ${streak >= 7 ? 'streak-flame-double' : streak >= 4 ? 'streak-flame-red' : 'streak-flame-orange'}`}
             animate={streak > 0 ? { 
               scale: [1, 1.2, 1], 
               rotate: [0, 5, -5, 0] 
             } : {}}
             transition={streak > 0 ? { duration: 1.5, repeat: Infinity } : {}}
           >
-            {streak > 0 ? '🔥' : '💫'}
+            {streak >= 7 ? '🔥🔥' : streak > 0 ? '🔥' : '💫'}
           </motion.span>
           
           <div className="flex flex-col">
@@ -452,7 +453,7 @@ export default function PracticeSection() {
                   key={item.id}
                   className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all ${
                     isChecked 
-                      ? 'bg-gradient-to-r from-primary/8 to-primary/5 border border-primary/15' 
+                      ? 'bg-gradient-to-r from-green-50/80 to-emerald-50/60 dark:from-green-900/15 dark:to-emerald-900/10 border border-green-200/40 dark:border-green-700/20 green-fade' 
                       : 'hover:bg-muted/50 border border-transparent'
                   }`}
                   initial={{ opacity: 0, x: -10 }}
@@ -467,9 +468,10 @@ export default function PracticeSection() {
                   <span className={`text-sm flex-1 ${isChecked ? 'line-through text-muted-foreground' : ''}`}>{item.label}</span>
                   {isChecked && (
                     <motion.span 
-                      initial={{ scale: 0 }} 
-                      animate={{ scale: 1 }} 
-                      className="text-xs text-primary font-bold"
+                      initial={{ scale: 0, rotate: -45 }} 
+                      animate={{ scale: 1, rotate: 0 }}
+                      transition={{ type: 'spring', stiffness: 400, damping: 12 }}
+                      className="text-xs text-green-600 dark:text-green-400 font-bold checkmark-spring"
                     >
                       ✓
                     </motion.span>
@@ -764,14 +766,14 @@ export default function PracticeSection() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          {/* Prompt suggestion */}
+          {/* Prompt suggestion with feather pen decoration */}
           <motion.div
             key={currentPrompt}
             initial={{ opacity: 0, y: 5 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex items-center gap-2 bg-gradient-to-r from-amber-50/80 to-yellow-50/80 dark:from-amber-900/15 dark:to-yellow-900/15 rounded-xl p-3 border border-amber-200/30 dark:border-amber-700/15 mb-3"
+            className="relative flex items-center gap-2 bg-gradient-to-r from-amber-50/80 to-yellow-50/80 dark:from-amber-900/15 dark:to-yellow-900/15 rounded-xl p-3 border border-amber-200/30 dark:border-amber-700/15 mb-3"
           >
-            <span className="text-base flex-shrink-0">💡</span>
+            <span className="text-base flex-shrink-0 feather-write">🪶</span>
             <p className="text-xs text-foreground/70 flex-1 italic">{currentPrompt}</p>
             <button
               onClick={rotatePrompt}
@@ -824,6 +826,19 @@ export default function PracticeSection() {
       <Card className="border-2 border-primary/10 overflow-hidden card-pattern">
         <CardContent className="p-4">
           <AchievementTimeline />
+        </CardContent>
+      </Card>
+
+      {/* Stats Dashboard */}
+      <Card className="border-2 border-primary/10 overflow-hidden card-pattern">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-lg flex items-center gap-2">
+            <span>📊</span>
+            Mes Statistiques
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <StatsDashboard />
         </CardContent>
       </Card>
     </div>

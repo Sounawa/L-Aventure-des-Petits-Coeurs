@@ -3,7 +3,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore, type Section } from '@/lib/store';
 import { Home, BookOpen, Star, Gamepad2, Moon, Sun, Trophy, Heart } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import SettingsPanel from './SettingsPanel';
 import { useSoundEffects } from './SoundEffects';
 
@@ -123,8 +123,25 @@ export default function Navigation() {
   const { currentSection, setSection, totalStars, darkMode, toggleDarkMode, userName, favoriteChapters, bedtimeMode } = useAppStore();
   const { play } = useSoundEffects();
 
-  const handleNavClick = (section: Section) => {
+  // Ripple effect state
+  const [ripples, setRipples] = useState<Array<{ id: number; x: number; y: number }>>([]);
+  const rippleIdRef = useRef(0);
+
+  // Star counter animation - use animation key derived from totalStars
+  // No setState in effects needed - the key change triggers CSS animation re-mount
+
+  const handleNavClick = (section: Section, e: React.MouseEvent<HTMLButtonElement>) => {
     play('click');
+    // Create ripple effect at touch point
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const id = rippleIdRef.current++;
+    setRipples(prev => [...prev, { id, x, y }]);
+    // Remove ripple after animation
+    setTimeout(() => {
+      setRipples(prev => prev.filter(r => r.id !== id));
+    }, 600);
     setSection(section);
   };
 
@@ -176,12 +193,40 @@ export default function Navigation() {
               <span className="hidden sm:inline text-[8px] text-muted-foreground mt-0.5">Badges</span>
             </div>
 
-            {/* Star count with gold glow - consistent icon size */}
+            {/* Star count with gold glow + bounce animation on change - consistent icon size */}
             <div className="flex flex-col items-center">
-              <div id="guide-stars" className="flex items-center gap-1 bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/20 px-2.5 py-1 rounded-full border border-amber-200/40 dark:border-amber-700/20 glow-gold">
+              <motion.div
+                key={`stars-${totalStars}`}
+                id="guide-stars"
+                initial={{ scale: 1 }}
+                animate={{ scale: [1, 1.4, 0.9, 1.15, 1] }}
+                transition={{ duration: 0.5, ease: 'easeOut' }}
+                className="relative flex items-center gap-1 bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/20 px-2.5 py-1 rounded-full border border-amber-200/40 dark:border-amber-700/20 glow-gold"
+              >
                 <span className="text-yellow-500 text-xs">⭐</span>
                 <span className="font-bold text-gradient-gold text-xs">{totalStars}</span>
-              </div>
+                {/* Gold particle burst */}
+                {totalStars > 0 && (
+                  <div className="absolute inset-0 pointer-events-none overflow-visible">
+                    {[
+                      { px: -15, py: -20, delay: 0 },
+                      { px: 15, py: -18, delay: 0.05 },
+                      { px: -20, py: -10, delay: 0.1 },
+                      { px: 20, py: -12, delay: 0.08 },
+                      { px: -8, py: -25, delay: 0.03 },
+                      { px: 8, py: -22, delay: 0.06 },
+                    ].map((p, i) => (
+                      <motion.span
+                        key={i}
+                        className="absolute top-1/2 left-1/2 w-1.5 h-1.5 rounded-full bg-yellow-400"
+                        initial={{ x: 0, y: 0, scale: 1, opacity: 1 }}
+                        animate={{ x: p.px, y: p.py, scale: 0, opacity: 0 }}
+                        transition={{ duration: 0.6, delay: p.delay, ease: 'easeOut' }}
+                      />
+                    ))}
+                  </div>
+                )}
+              </motion.div>
               <span className="hidden sm:inline text-[8px] text-muted-foreground mt-0.5">étoiles</span>
             </div>
 
@@ -211,7 +256,7 @@ export default function Navigation() {
         </div>
       </div>
 
-      {/* Bottom navigation - polished with active glow and transitions */}
+      {/* Bottom navigation - polished with active glow, ripple, and transitions */}
       <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-border/50 safe-area-bottom shadow-[0_-2px_10px_rgba(0,0,0,0.05)] transition-all duration-500"
         style={{
           background: darkMode
@@ -228,18 +273,29 @@ export default function Navigation() {
               <motion.button
                 key={item.id}
                 id={`guide-nav-${item.id}`}
-                onClick={() => handleNavClick(item.id)}
-                className="flex flex-col items-center justify-center py-2 px-3 sm:px-6 min-w-[64px] relative rounded-xl transition-all duration-200"
+                onClick={(e) => handleNavClick(item.id, e)}
+                className="flex flex-col items-center justify-center py-2 px-3 sm:px-6 min-w-[64px] relative rounded-xl transition-all duration-200 overflow-hidden"
                 aria-label={item.label}
                 whileTap={{ scale: 0.85 }}
                 whileHover={{ scale: 1.05 }}
               >
-                {/* Active tab background with rounded corners and subtle glow */}
+                {/* Ripple effects */}
+                {ripples.map(ripple => (
+                  <span
+                    key={ripple.id}
+                    className="ripple-effect"
+                    style={{
+                      left: ripple.x - 10,
+                      top: ripple.y - 10,
+                    }}
+                  />
+                ))}
+
+                {/* Active tab background with rounded corners, glow, and pulse */}
                 {isActive && (
                   <motion.div
                     layoutId="navBg"
-                    className="absolute inset-0 bg-primary/10 rounded-xl border border-primary/15"
-                    style={{ boxShadow: '0 0 12px oklch(0.55 0.12 80 / 10%)' }}
+                    className="absolute inset-0 bg-primary/10 rounded-xl border border-primary/15 tab-glow-pulse"
                     transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                   />
                 )}
