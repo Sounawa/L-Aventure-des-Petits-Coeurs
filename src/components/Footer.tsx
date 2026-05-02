@@ -20,7 +20,7 @@ export default function Footer() {
 
         {/* Quote */}
         <div className="bg-primary/5 rounded-xl px-4 py-2.5 border border-primary/10 max-w-sm">
-          <p className="text-[11px] text-foreground/60 italic leading-relaxed">
+          <p className="text-[11px] text-foreground/70 italic leading-relaxed">
             &ldquo;Ceux qui croient et dont les cœurs s&apos;apaisent à l&apos;évocation de Dieu.&rdquo;
           </p>
           <p className="text-[10px] text-primary/60 font-medium mt-1">— Coran 13:28</p>

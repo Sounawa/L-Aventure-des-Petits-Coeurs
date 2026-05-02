@@ -5,8 +5,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore } from '@/lib/store';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Moon, Sun, Volume2, VolumeX, RotateCcw, BarChart3, Info, X, Sparkles, Star, Trophy, BookOpen, Flame } from 'lucide-react';
+import { Moon, Sun, Volume2, VolumeX, RotateCcw, BarChart3, Info, X, Sparkles, Star, Trophy, BookOpen, Flame, Share2 } from 'lucide-react';
 import ParentCorner from './ParentCorner';
+import AchievementShare from './AchievementShare';
 
 export default function SettingsPanel() {
   const [isOpen, setIsOpen] = useState(false);
@@ -189,6 +190,15 @@ export default function SettingsPanel() {
                       </div>
                     </CardContent>
                   </Card>
+
+                  {/* Share Progress */}
+                  <div>
+                    <div className="flex items-center gap-2 mb-3">
+                      <Share2 className="w-4 h-4 text-primary" />
+                      <p className="text-sm font-semibold">Partager mes progrès</p>
+                    </div>
+                    <AchievementShare />
+                  </div>
 
                   {/* Parent Corner */}
                   <ParentCorner />

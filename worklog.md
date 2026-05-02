@@ -890,3 +890,79 @@ Comprehensive styling overhaul across 6 components + CSS utilities, addressing V
 
 ### Compilation
 - ✅ Clean, compiles without errors
+
+---
+
+## Task 5-a: Styling Polish Agent Round 2
+
+### Date: 2026-05-03
+
+### Task ID: 5-a
+
+### Agent: Styling Polish Agent Round 2
+
+### Summary
+VLM rated homepage 6/10 and activities 7/10. Implemented 6 specific styling improvements to address VLM feedback, including hiding Next.js dev tools badge, adding difficulty/completion indicators to activity cards, navigation labels, scroll-down indicator, enhanced empty states, and text contrast improvements.
+
+### Changes Made
+
+#### 1. Hide Next.js Dev Tools Badge (`src/app/globals.css`)
+- Added CSS rules to hide `[data-nextjs-dialog-overlay]`, `[data-nextjs-toast-errors-bottom]`, and dev tools buttons by aria-label
+- Added `.bounce-down` animation keyframes for scroll indicator
+
+#### 2. Activity Cards — Difficulty Badge & Completion Checkmark (`src/components/ActivitiesSection.tsx`)
+- Added `difficultyConfig` object with 3 levels: Facile (🟢 green), Moyen (🟡 amber), Avancé (🔴 rose)
+- Added `difficulty` field to each activity: quiz='Moyen', coloring='Facile', drawing='Facile', memory='Facile', breathing='Facile', journal='Facile', wordscramble='Moyen'
+- Difficulty badge rendered below duration hint as a small pill with emoji + label
+- Added `completed` field to each activity: quiz uses `quizCompleted`, wordscramble uses `wordScrambleCompleted`, others=false
+- Completion checkmark: green circle with white SVG check icon in top-left corner of card (framer-motion spring animation)
+- Added `quizCompleted` and `wordScrambleCompleted` from store
+
+#### 3. Navigation — Labels on Top Bar Icons (`src/components/Navigation.tsx`)
+- Wrapped each top bar icon group in flex-col container
+- Added `hidden sm:inline` text labels:
+  - Badges → "Badges"
+  - Stars counter → "étoiles"
+  - Dark mode toggle → dynamic "Jour"/"Nuit"
+  - Settings → "Réglages"
+- Labels only visible on sm+ screens to save mobile space
+
+#### 4. HeroSection — Scroll-Down Indicator (`src/components/HeroSection.tsx`)
+- Added animated scroll-down indicator at bottom of hero section
+- "Découvrir" micro-label with framer-motion fade-in (delay: 2s)
+- Bouncing chevron-down SVG arrow (1.5s infinite loop)
+- Positioned `absolute bottom-6` with `z-10`
+
+#### 5. PracticeSection — Enhanced Empty State with Illustration (`src/components/PracticeSection.tsx`)
+- Replaced emoji-only empty state with decorative SVG star illustration
+- SVG star with 8 animated rays (staggered opacity pulse), central star polygon, inner glow circle
+- Subtle gradient background instead of just dashed border (light/dark mode)
+- Larger, more encouraging text: "Commence ta première pratique pour gagner des étoiles ! 🌟"
+- Added subtitle: "Chaque activité te rapproche de la lumière"
+- Applied to both empty state locations (progress overview + constellation section)
+- Added `darkMode` to store destructure for conditional styling
+
+#### 6. Global — Text Contrast Improvements
+- Activity descriptions: `text-foreground/60` → `text-foreground/70`
+- Duration hints: `text-foreground/40` → `text-foreground/50`
+- Footer quote: `text-foreground/60` → `text-foreground/70`
+- PracticeSection empty state subtitles: `text-foreground/60` → `text-foreground/70`
+
+#### 7. Bug Fix — InteractiveGuide.tsx (`src/components/InteractiveGuide.tsx`)
+- Fixed pre-existing lint error: moved `updateTargetRect` call inside useEffect body instead of calling it via `useCallback`
+- Inlined the function inside the effect to avoid `set-state-in-effect` rule violation
+
+### Files Modified
+- `src/app/globals.css` — Added Next.js dev tools hiding CSS, bounce-down animation
+- `src/components/ActivitiesSection.tsx` — Difficulty badges, completion checkmarks, text contrast
+- `src/components/Navigation.tsx` — Added sm-visible text labels to top bar icons
+- `src/components/HeroSection.tsx` — Added scroll-down indicator
+- `src/components/PracticeSection.tsx` — Enhanced empty states with SVG illustration, darkMode support, text contrast
+- `src/components/Footer.tsx` — Improved quote text contrast
+- `src/components/InteractiveGuide.tsx` — Fixed set-state-in-effect lint error
+
+### Lint Status
+- ✅ Zero errors
+
+### Compilation
+- ✅ Clean, compiles without errors

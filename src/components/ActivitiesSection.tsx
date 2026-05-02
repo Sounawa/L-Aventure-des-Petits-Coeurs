@@ -243,15 +243,22 @@ function ColoringBook() {
 // ============ MAIN ACTIVITIES SECTION ============
 export default function ActivitiesSection() {
   const [activeActivity, setActiveActivity] = useState<string | null>(null);
+  const { quizCompleted, wordScrambleCompleted } = useAppStore();
+
+  const difficultyConfig: Record<string, { label: string; emoji: string; color: string; darkColor: string }> = {
+    Facile: { label: 'Facile', emoji: '🟢', color: 'bg-green-100 text-green-700 border-green-200', darkColor: 'dark:bg-green-900/30 dark:text-green-400 dark:border-green-700/30' },
+    Moyen: { label: 'Moyen', emoji: '🟡', color: 'bg-amber-100 text-amber-700 border-amber-200', darkColor: 'dark:bg-amber-900/30 dark:text-amber-400 dark:border-amber-700/30' },
+    Avance: { label: 'Avancé', emoji: '🔴', color: 'bg-rose-100 text-rose-700 border-rose-200', darkColor: 'dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-700/30' },
+  };
 
   const activities = [
-    { id: 'quiz', name: 'Quiz des Trésors', emoji: '🏆', desc: '10 questions sur les trésors du cœur', duration: '10 min', color: 'from-amber-100 to-yellow-200', darkColor: 'from-amber-900/30 to-yellow-800/30', accent: 'amber', isNew: false },
-    { id: 'coloring', name: 'Coloriage', emoji: '🎨', desc: 'Colorie des formes magiques', duration: '5 min', color: 'from-pink-100 to-rose-200', darkColor: 'from-pink-900/30 to-rose-800/30', accent: 'pink', isNew: false },
-    { id: 'drawing', name: 'Dessin Libre', emoji: '✏️', desc: 'Dessine avec des pinceaux magiques', duration: '10 min', color: 'from-teal-100 to-cyan-200', darkColor: 'from-teal-900/30 to-cyan-800/30', accent: 'teal', isNew: false },
-    { id: 'memory', name: 'Jeu de Mémoire', emoji: '🧩', desc: 'Trouve les paires cachées', duration: '5 min', color: 'from-purple-100 to-violet-200', darkColor: 'from-purple-900/30 to-violet-800/30', accent: 'purple', isNew: false },
-    { id: 'breathing', name: 'Respiration', emoji: '🌬️', desc: 'Exercice de respiration 4-2-6', duration: '3 min', color: 'from-blue-100 to-sky-200', darkColor: 'from-blue-900/30 to-sky-800/30', accent: 'blue', isNew: false },
-    { id: 'journal', name: 'Gratitude', emoji: '💛', desc: 'Note ce pour quoi tu es reconnaissant(e)', duration: '5 min', color: 'from-orange-100 to-amber-200', darkColor: 'from-orange-900/30 to-amber-800/30', accent: 'orange', isNew: false },
-    { id: 'wordscramble', name: 'Mots Mélangés', emoji: '🔤', desc: 'Remets les lettres dans l\'ordre !', duration: '8 min', color: 'from-rose-100 to-pink-200', darkColor: 'from-rose-900/30 to-pink-800/30', accent: 'rose', isNew: true },
+    { id: 'quiz', name: 'Quiz des Trésors', emoji: '🏆', desc: '10 questions sur les trésors du cœur', duration: '10 min', color: 'from-amber-100 to-yellow-200', darkColor: 'from-amber-900/30 to-yellow-800/30', accent: 'amber', isNew: false, difficulty: 'Moyen' as const, completed: quizCompleted },
+    { id: 'coloring', name: 'Coloriage', emoji: '🎨', desc: 'Colorie des formes magiques', duration: '5 min', color: 'from-pink-100 to-rose-200', darkColor: 'from-pink-900/30 to-rose-800/30', accent: 'pink', isNew: false, difficulty: 'Facile' as const, completed: false },
+    { id: 'drawing', name: 'Dessin Libre', emoji: '✏️', desc: 'Dessine avec des pinceaux magiques', duration: '10 min', color: 'from-teal-100 to-cyan-200', darkColor: 'from-teal-900/30 to-cyan-800/30', accent: 'teal', isNew: false, difficulty: 'Facile' as const, completed: false },
+    { id: 'memory', name: 'Jeu de Mémoire', emoji: '🧩', desc: 'Trouve les paires cachées', duration: '5 min', color: 'from-purple-100 to-violet-200', darkColor: 'from-purple-900/30 to-violet-800/30', accent: 'purple', isNew: false, difficulty: 'Facile' as const, completed: false },
+    { id: 'breathing', name: 'Respiration', emoji: '🌬️', desc: 'Exercice de respiration 4-2-6', duration: '3 min', color: 'from-blue-100 to-sky-200', darkColor: 'from-blue-900/30 to-sky-800/30', accent: 'blue', isNew: false, difficulty: 'Facile' as const, completed: false },
+    { id: 'journal', name: 'Gratitude', emoji: '💛', desc: 'Note ce pour quoi tu es reconnaissant(e)', duration: '5 min', color: 'from-orange-100 to-amber-200', darkColor: 'from-orange-900/30 to-amber-800/30', accent: 'orange', isNew: false, difficulty: 'Facile' as const, completed: false },
+    { id: 'wordscramble', name: 'Mots Mélangés', emoji: '🔤', desc: 'Remets les lettres dans l\'ordre !', duration: '8 min', color: 'from-rose-100 to-pink-200', darkColor: 'from-rose-900/30 to-pink-800/30', accent: 'rose', isNew: true, difficulty: 'Moyen' as const, completed: wordScrambleCompleted },
   ];
 
   return (
@@ -306,13 +313,35 @@ export default function ActivitiesSection() {
                   ✨ NOUVEAU
                 </motion.span>
               )}
+              {/* Completion checkmark overlay */}
+              {act.completed && (
+                <motion.div
+                  className="absolute top-2 left-2 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center shadow-md z-10"
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                >
+                  <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                </motion.div>
+              )}
               <span className="text-3xl sm:text-4xl block">{act.emoji}</span>
               <p className="text-sm sm:text-base font-bold mt-2">{act.name}</p>
-              <p className="text-[10px] sm:text-xs text-foreground/60 mt-1">{act.desc}</p>
+              <p className="text-[10px] sm:text-xs text-foreground/70 mt-1">{act.desc}</p>
               {/* Duration hint */}
-              <span className="text-[9px] sm:text-[10px] text-foreground/40 mt-1.5 font-medium flex items-center gap-0.5">
+              <span className="text-[9px] sm:text-[10px] text-foreground/50 mt-1.5 font-medium flex items-center gap-0.5">
                 ⏱️ {act.duration}
               </span>
+              {/* Difficulty badge */}
+              {(() => {
+                const diff = difficultyConfig[act.difficulty];
+                return (
+                  <span className={`text-[8px] sm:text-[9px] mt-1 px-1.5 py-0.5 rounded-full border font-semibold inline-flex items-center gap-0.5 ${diff.color} ${diff.darkColor}`}>
+                    {diff.emoji} {diff.label}
+                  </span>
+                );
+              })()}
             </motion.button>
           ))}
         </div>

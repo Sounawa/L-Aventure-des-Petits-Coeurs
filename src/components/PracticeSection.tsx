@@ -54,7 +54,7 @@ const streakMilestones = [
 ];
 
 export default function PracticeSection() {
-  const { practiceDays, updatePracticeDay, gratitudeEntries, addGratitudeEntry, totalStars, badges, setSection } = useAppStore();
+  const { practiceDays, updatePracticeDay, gratitudeEntries, addGratitudeEntry, totalStars, badges, setSection, darkMode } = useAppStore();
   const [gratitudeText, setGratitudeText] = useState('');
   const [currentPrompt, setCurrentPrompt] = useState(() => {
     return gratitudePrompts[Math.floor(Math.random() * gratitudePrompts.length)];
@@ -285,21 +285,55 @@ export default function PracticeSection() {
             <motion.div
               initial={{ opacity: 0, y: 5 }}
               animate={{ opacity: 1, y: 0 }}
-              className="empty-state-card mt-2"
+              className="mt-2 relative overflow-hidden rounded-2xl p-6 text-center"
+              style={{
+                background: darkMode
+                  ? 'linear-gradient(135deg, oklch(0.20 0.04 280 / 80%), oklch(0.18 0.03 280 / 60%), oklch(0.22 0.04 280 / 80%))'
+                  : 'linear-gradient(135deg, oklch(0.97 0.02 85 / 80%), oklch(0.95 0.03 80 / 60%), oklch(0.97 0.01 175 / 80%))',
+                border: '2px dashed oklch(0.55 0.12 80 / 25%)',
+              }}
             >
-              <motion.span 
-                className="text-4xl block mb-2"
-                animate={{ rotate: [0, 5, -5, 0] }}
-                transition={{ duration: 3, repeat: Infinity }}
+              {/* Decorative SVG star illustration */}
+              <motion.div
+                className="mx-auto mb-3 relative w-20 h-20"
+                animate={{ rotate: [0, 3, -3, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
               >
-                📖
-              </motion.span>
-              <p className="text-sm font-medium text-foreground/80 mb-1">
+                <svg viewBox="0 0 80 80" className="w-full h-full" fill="none">
+                  {/* Star rays */}
+                  {[0, 45, 90, 135, 180, 225, 270, 315].map((angle, i) => (
+                    <motion.line
+                      key={i}
+                      x1="40" y1="40"
+                      x2={40 + 35 * Math.cos((angle * Math.PI) / 180)}
+                      y2={40 + 35 * Math.sin((angle * Math.PI) / 180)}
+                      stroke="oklch(0.75 0.14 80 / 40%)"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      animate={{ opacity: [0.3, 0.7, 0.3] }}
+                      transition={{ duration: 2, repeat: Infinity, delay: i * 0.2 }}
+                    />
+                  ))}
+                  {/* Central star */}
+                  <polygon
+                    points="40,12 46,30 65,30 50,42 56,60 40,48 24,60 30,42 15,30 34,30"
+                    fill="oklch(0.75 0.14 80 / 60%)"
+                    stroke="oklch(0.55 0.12 80 / 80%)"
+                    strokeWidth="1"
+                  />
+                  {/* Inner glow */}
+                  <circle cx="40" cy="35" r="6" fill="oklch(0.90 0.08 85 / 50%)" />
+                </svg>
+              </motion.div>
+              <p className="text-base font-bold text-foreground/80 mb-1">
                 Commence ta première pratique pour gagner des étoiles ! 🌟
+              </p>
+              <p className="text-xs text-foreground/70 mb-3">
+                Chaque activité te rapproche de la lumière
               </p>
               <Button
                 size="sm"
-                className="mt-2 text-xs"
+                className="text-xs"
                 onClick={() => setSection('aventures')}
                 style={{ background: 'linear-gradient(135deg, #C9A227, #E8D44D)', color: '#3D2C1E' }}
               >
@@ -636,20 +670,55 @@ export default function PracticeSection() {
               )}
             </div>
           ) : (
-            <div className="empty-state-card py-8">
-              <motion.span 
-                className="text-4xl block mb-3"
-                animate={{ rotate: [0, 5, -5, 0] }}
-                transition={{ duration: 3, repeat: Infinity }}
+            <div className="relative overflow-hidden rounded-2xl p-8 text-center"
+              style={{
+                background: darkMode
+                  ? 'linear-gradient(135deg, oklch(0.20 0.04 280 / 80%), oklch(0.18 0.03 280 / 60%), oklch(0.22 0.04 280 / 80%))'
+                  : 'linear-gradient(135deg, oklch(0.97 0.02 85 / 80%), oklch(0.95 0.03 80 / 60%), oklch(0.97 0.01 175 / 80%))',
+                border: '2px dashed oklch(0.55 0.12 80 / 25%)',
+              }}
+            >
+              {/* Decorative SVG star illustration */}
+              <motion.div
+                className="mx-auto mb-3 relative w-20 h-20"
+                animate={{ rotate: [0, 3, -3, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
               >
-                📖
-              </motion.span>
-              <p className="text-sm font-medium text-foreground/80 mb-1">
+                <svg viewBox="0 0 80 80" className="w-full h-full" fill="none">
+                  {/* Star rays */}
+                  {[0, 45, 90, 135, 180, 225, 270, 315].map((angle, i) => (
+                    <motion.line
+                      key={i}
+                      x1="40" y1="40"
+                      x2={40 + 35 * Math.cos((angle * Math.PI) / 180)}
+                      y2={40 + 35 * Math.sin((angle * Math.PI) / 180)}
+                      stroke="oklch(0.75 0.14 80 / 40%)"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      animate={{ opacity: [0.3, 0.7, 0.3] }}
+                      transition={{ duration: 2, repeat: Infinity, delay: i * 0.2 }}
+                    />
+                  ))}
+                  {/* Central star */}
+                  <polygon
+                    points="40,12 46,30 65,30 50,42 56,60 40,48 24,60 30,42 15,30 34,30"
+                    fill="oklch(0.75 0.14 80 / 60%)"
+                    stroke="oklch(0.55 0.12 80 / 80%)"
+                    strokeWidth="1"
+                  />
+                  {/* Inner glow */}
+                  <circle cx="40" cy="35" r="6" fill="oklch(0.90 0.08 85 / 50%)" />
+                </svg>
+              </motion.div>
+              <p className="text-base font-bold text-foreground/80 mb-1">
                 Commence ta première pratique pour gagner des étoiles ! 🌟
+              </p>
+              <p className="text-xs text-foreground/70 mb-3">
+                Chaque activité te rapproche de la lumière
               </p>
               <Button
                 size="sm"
-                className="mt-2 text-xs"
+                className="text-xs"
                 onClick={() => setSection('aventures')}
                 style={{ background: 'linear-gradient(135deg, #C9A227, #E8D44D)', color: '#3D2C1E' }}
               >

@@ -610,3 +610,22 @@
 .welcome-glow {
   animation: border-glow 3s ease-in-out infinite;
 }
+
+/* ===== HIDE NEXT.JS DEV TOOLS OVERLAY ===== */
+[data-nextjs-dialog-overlay],
+[data-nextjs-toast-errors-bottom],
+button[aria-label="Open Next.js Dev Tools"],
+button[aria-label="Open issues overlay"],
+button[aria-label="Collapse issues badge"] {
+  display: none !important;
+}
+
+/* ===== BOUNCE DOWN ANIMATION (scroll indicator) ===== */
+@keyframes bounce-down {
+  0%, 100% { transform: translateY(0); opacity: 0.6; }
+  50% { transform: translateY(8px); opacity: 1; }
+}
+
+.bounce-down {
+  animation: bounce-down 1.5s ease-in-out infinite;
+}

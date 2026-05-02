@@ -96,6 +96,9 @@ interface AppState {
   wordScrambleCompleted: boolean;
   wordScrambleBestScore: number;
 
+  // Guide
+  guideShown: boolean;
+
   // Hydration
   _hydrated: boolean;
   
@@ -119,6 +122,7 @@ interface AppState {
   resetProgress: () => void;
   updateStreak: () => void;
   setWordScrambleCompleted: (score: number) => void;
+  setGuideShown: () => void;
   _hydrate: () => void;
 }
 
@@ -155,6 +159,7 @@ function saveState(state: AppState) {
       soundEffects: state.soundEffects,
       wordScrambleCompleted: state.wordScrambleCompleted,
       wordScrambleBestScore: state.wordScrambleBestScore,
+      guideShown: state.guideShown,
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
   } catch {
@@ -247,6 +252,7 @@ const defaultState = {
   soundEffects: true,
   wordScrambleCompleted: false,
   wordScrambleBestScore: 0,
+  guideShown: false,
   _hydrated: false,
 };
 
@@ -425,6 +431,11 @@ export const useAppStore = create<AppState>((set, get) => ({
     saveState({ ...get(), ...finalState });
   },
 
+  setGuideShown: () => {
+    set({ guideShown: true });
+    saveState({ ...get(), guideShown: true });
+  },
+
   resetProgress: () => {
     const newState = {
       chaptersProgress: {} as Record<string, ChapterProgress>,
@@ -440,6 +451,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       lastPracticeDate: '',
       wordScrambleCompleted: false,
       wordScrambleBestScore: 0,
+      guideShown: false,
     };
     set(newState);
     saveState({ ...get(), ...newState });

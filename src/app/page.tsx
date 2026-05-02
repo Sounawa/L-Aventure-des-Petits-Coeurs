@@ -14,6 +14,7 @@ import Footer from '@/components/Footer';
 import HydrationProvider from '@/components/HydrationProvider';
 import CelebrationOverlay from '@/components/CelebrationOverlay';
 import OnboardingFlow from '@/components/OnboardingFlow';
+import InteractiveGuide from '@/components/InteractiveGuide';
 import { useState, useEffect } from 'react';
 
 export default function Home() {
@@ -75,6 +76,9 @@ function AppContent() {
 
       {/* Onboarding overlay for first-time users */}
       <OnboardingFlow />
+
+      {/* Interactive guide for first-time users */}
+      <InteractiveGuide />
 
       {/* Main content */}
       <main className="flex-1 relative z-10 pt-14 pb-20">

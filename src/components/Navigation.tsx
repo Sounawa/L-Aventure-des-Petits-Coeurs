@@ -134,29 +134,42 @@ export default function Navigation() {
             )}
 
             {/* Badges - consistent icon size */}
-            <BadgePanel />
+            <div id="guide-badges" className="flex flex-col items-center">
+              <BadgePanel />
+              <span className="hidden sm:inline text-[8px] text-muted-foreground mt-0.5">Badges</span>
+            </div>
 
             {/* Star count with gold glow - consistent icon size */}
-            <div className="flex items-center gap-1 bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/20 px-2.5 py-1 rounded-full border border-amber-200/40 dark:border-amber-700/20 glow-gold">
-              <span className="text-yellow-500 text-xs">⭐</span>
-              <span className="font-bold text-gradient-gold text-xs">{totalStars}</span>
+            <div className="flex flex-col items-center">
+              <div id="guide-stars" className="flex items-center gap-1 bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/20 px-2.5 py-1 rounded-full border border-amber-200/40 dark:border-amber-700/20 glow-gold">
+                <span className="text-yellow-500 text-xs">⭐</span>
+                <span className="font-bold text-gradient-gold text-xs">{totalStars}</span>
+              </div>
+              <span className="hidden sm:inline text-[8px] text-muted-foreground mt-0.5">étoiles</span>
             </div>
 
             {/* Dark mode toggle - consistent icon size */}
-            <button
-              onClick={toggleDarkMode}
-              className="p-1.5 rounded-full bg-primary/10 hover:bg-primary/20 transition-all hover:scale-105"
-              aria-label={darkMode ? 'Mode jour' : 'Mode nuit'}
-            >
-              {darkMode ? (
-                <Sun className="w-4 h-4 text-amber-400" />
-              ) : (
-                <Moon className="w-4 h-4 text-primary" />
-              )}
-            </button>
+            <div className="flex flex-col items-center">
+              <button
+                id="guide-darkmode"
+                onClick={toggleDarkMode}
+                className="p-1.5 rounded-full bg-primary/10 hover:bg-primary/20 transition-all hover:scale-105"
+                aria-label={darkMode ? 'Mode jour' : 'Mode nuit'}
+              >
+                {darkMode ? (
+                  <Sun className="w-4 h-4 text-amber-400" />
+                ) : (
+                  <Moon className="w-4 h-4 text-primary" />
+                )}
+              </button>
+              <span className="hidden sm:inline text-[8px] text-muted-foreground mt-0.5">{darkMode ? 'Jour' : 'Nuit'}</span>
+            </div>
 
             {/* Settings - consistent icon size */}
-            <SettingsPanel />
+            <div className="flex flex-col items-center">
+              <SettingsPanel />
+              <span className="hidden sm:inline text-[8px] text-muted-foreground mt-0.5">Réglages</span>
+            </div>
           </div>
         </div>
       </div>
@@ -177,6 +190,7 @@ export default function Navigation() {
             return (
               <button
                 key={item.id}
+                id={`guide-nav-${item.id}`}
                 onClick={() => setSection(item.id)}
                 className="flex flex-col items-center justify-center py-2 px-3 sm:px-6 min-w-[64px] relative rounded-xl transition-all duration-200"
                 aria-label={item.label}
