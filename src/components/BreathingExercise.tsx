@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
+import { useSoundEffects } from './SoundEffects';
 
 type BreathPhase = 'inhale' | 'hold' | 'exhale' | 'idle';
 
@@ -16,6 +17,7 @@ export default function BreathingExercise() {
   const [phase, setPhase] = useState<BreathPhase>('idle');
   const [breathCount, setBreathCount] = useState(0);
   const [progress, setProgress] = useState(0);
+  const { play } = useSoundEffects();
 
   useEffect(() => {
     if (phase === 'idle') return;
@@ -35,11 +37,13 @@ export default function BreathingExercise() {
         
         if (phase === 'inhale') {
           setPhase('hold');
+          play('breathOut');
         } else if (phase === 'hold') {
           setPhase('exhale');
         } else if (phase === 'exhale') {
           setBreathCount(prev => prev + 1);
           setPhase('inhale');
+          play('breathIn');
         }
       }
     }, interval);
@@ -49,6 +53,7 @@ export default function BreathingExercise() {
 
   const start = () => {
     setPhase('inhale');
+    play('breathIn');
   };
 
   const stop = () => {

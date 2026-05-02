@@ -50,6 +50,7 @@ const allBadges: Badge[] = [
   { id: 'breathing_3', emoji: '🌬️', title: 'Respirateur', description: 'Tu as fait 3 respirations complètes !', unlockedAt: null },
   { id: 'all_complete', emoji: '👑', title: 'Cœur d\'Or', description: 'Tu as tout complété ! Tu es un vrai petit sage !', unlockedAt: null },
   { id: 'word_wizard', emoji: '🔤', title: 'Magicien des Mots', description: 'Tu as complété le jeu de mots mélangés !', unlockedAt: null },
+  { id: 'puzzle_master', emoji: '🧩', title: 'Maître du Puzzle', description: 'Tu as complété un puzzle magique !', unlockedAt: null },
 ];
 
 interface AppState {
@@ -96,6 +97,9 @@ interface AppState {
   wordScrambleCompleted: boolean;
   wordScrambleBestScore: number;
 
+  // Puzzle
+  puzzleCompleted: boolean;
+
   // Guide
   guideShown: boolean;
 
@@ -122,6 +126,7 @@ interface AppState {
   resetProgress: () => void;
   updateStreak: () => void;
   setWordScrambleCompleted: (score: number) => void;
+  setPuzzleCompleted: () => void;
   setGuideShown: () => void;
   _hydrate: () => void;
 }
@@ -159,6 +164,7 @@ function saveState(state: AppState) {
       soundEffects: state.soundEffects,
       wordScrambleCompleted: state.wordScrambleCompleted,
       wordScrambleBestScore: state.wordScrambleBestScore,
+      puzzleCompleted: state.puzzleCompleted,
       guideShown: state.guideShown,
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
@@ -223,6 +229,9 @@ function checkAndUnlockBadges(state: AppState): Badge[] {
 
   // Word scramble completed
   if (state.wordScrambleCompleted) unlock('word_wizard');
+
+  // Puzzle completed
+  if (state.puzzleCompleted) unlock('puzzle_master');
   
   // All complete
   if (miroirComplete && tresorsComplete && lumiereComplete && state.quizCompleted) {
@@ -252,6 +261,7 @@ const defaultState = {
   soundEffects: true,
   wordScrambleCompleted: false,
   wordScrambleBestScore: 0,
+  puzzleCompleted: false,
   guideShown: false,
   _hydrated: false,
 };
@@ -431,6 +441,16 @@ export const useAppStore = create<AppState>((set, get) => ({
     saveState({ ...get(), ...finalState });
   },
 
+  setPuzzleCompleted: () => {
+    const newState = {
+      puzzleCompleted: true,
+    };
+    const updatedBadges = checkAndUnlockBadges({ ...get(), ...newState });
+    const finalState = { ...newState, badges: updatedBadges };
+    set(finalState);
+    saveState({ ...get(), ...finalState });
+  },
+
   setGuideShown: () => {
     set({ guideShown: true });
     saveState({ ...get(), guideShown: true });
@@ -451,6 +471,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       lastPracticeDate: '',
       wordScrambleCompleted: false,
       wordScrambleBestScore: 0,
+      puzzleCompleted: false,
       guideShown: false,
     };
     set(newState);

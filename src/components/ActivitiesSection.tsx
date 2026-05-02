@@ -10,6 +10,7 @@ import GratitudeJournal from './GratitudeJournal';
 import DrawingCanvas from './DrawingCanvas';
 import MemoryGame from './MemoryGame';
 import WordScramble from './WordScramble';
+import PuzzleGame from './PuzzleGame';
 
 // ---- Quiz Game ----
 const quizQuestions = [
@@ -258,7 +259,8 @@ export default function ActivitiesSection() {
     { id: 'memory', name: 'Jeu de Mémoire', emoji: '🧩', desc: 'Trouve les paires cachées', duration: '5 min', color: 'from-purple-100 to-violet-200', darkColor: 'from-purple-900/30 to-violet-800/30', accent: 'purple', isNew: false, difficulty: 'Facile' as const, completed: false },
     { id: 'breathing', name: 'Respiration', emoji: '🌬️', desc: 'Exercice de respiration 4-2-6', duration: '3 min', color: 'from-blue-100 to-sky-200', darkColor: 'from-blue-900/30 to-sky-800/30', accent: 'blue', isNew: false, difficulty: 'Facile' as const, completed: false },
     { id: 'journal', name: 'Gratitude', emoji: '💛', desc: 'Note ce pour quoi tu es reconnaissant(e)', duration: '5 min', color: 'from-orange-100 to-amber-200', darkColor: 'from-orange-900/30 to-amber-800/30', accent: 'orange', isNew: false, difficulty: 'Facile' as const, completed: false },
-    { id: 'wordscramble', name: 'Mots Mélangés', emoji: '🔤', desc: 'Remets les lettres dans l\'ordre !', duration: '8 min', color: 'from-rose-100 to-pink-200', darkColor: 'from-rose-900/30 to-pink-800/30', accent: 'rose', isNew: true, difficulty: 'Moyen' as const, completed: wordScrambleCompleted },
+    { id: 'wordscramble', name: 'Mots Mélangés', emoji: '🔤', desc: 'Remets les lettres dans l\'ordre !', duration: '8 min', color: 'from-rose-100 to-pink-200', darkColor: 'from-rose-900/30 to-pink-800/30', accent: 'rose', isNew: false, difficulty: 'Moyen' as const, completed: wordScrambleCompleted },
+    { id: 'puzzle', name: 'Puzzle Magique', emoji: '🧩', desc: 'Reconstitue les images mystères !', duration: '5 min', color: 'from-indigo-100 to-blue-200', darkColor: 'from-indigo-900/30 to-blue-800/30', accent: 'indigo', isNew: true, difficulty: 'Moyen' as const, completed: false },
   ];
 
   return (
@@ -366,6 +368,7 @@ export default function ActivitiesSection() {
             {activeActivity === 'wordscramble' && <WordScramble />}
             {activeActivity === 'breathing' && <BreathingExercise />}
             {activeActivity === 'journal' && <GratitudeJournal />}
+            {activeActivity === 'puzzle' && <PuzzleGame />}
           </CardContent>
         </Card>
       )}

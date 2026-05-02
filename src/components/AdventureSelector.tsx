@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore, type AdventureId } from '@/lib/store';
 import { useMemo, useState } from 'react';
+import CertificateView from './CertificateView';
 
 const adventures = [
   { 
@@ -46,6 +47,7 @@ const adventures = [
 export default function AdventureSelector() {
   const { currentAdventure, setAdventure, chaptersProgress, treasuresProgress } = useAppStore();
   const [celebratingId, setCelebratingId] = useState<AdventureId | null>(null);
+  const [certificateAdv, setCertificateAdv] = useState<typeof adventures[number] | null>(null);
 
   const getProgress = useMemo(() => {
     return (advId: AdventureId) => {
@@ -77,6 +79,7 @@ export default function AdventureSelector() {
   };
 
   return (
+    <>
     <div className="flex gap-3 overflow-x-auto pb-3 px-1 custom-scrollbar snap-x snap-mandatory">
       {adventures.map((adv) => {
         const isActive = currentAdventure === adv.id;
@@ -160,13 +163,26 @@ export default function AdventureSelector() {
             )}
 
             {isComplete && (
-              <motion.span 
-                className="text-[9px] font-bold block relative z-10 text-gradient-gold"
-                animate={{ scale: [1, 1.1, 1] }}
-                transition={{ duration: 1.5, repeat: Infinity }}
-              >
-                Complété ! 🎉
-              </motion.span>
+              <>
+                <motion.span 
+                  className="text-[9px] font-bold block relative z-10 text-gradient-gold"
+                  animate={{ scale: [1, 1.1, 1] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                >
+                  Complété ! 🎉
+                </motion.span>
+                <motion.button
+                  className="text-[8px] px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-700/30 font-medium relative z-10 mt-0.5"
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setCertificateAdv(adv);
+                  }}
+                >
+                  📜 Certificat
+                </motion.button>
+              </>
             )}
 
             {/* Progress bar with gradient */}
@@ -182,5 +198,14 @@ export default function AdventureSelector() {
         );
       })}
     </div>
+
+      {/* Certificate overlay */}
+      <CertificateView
+        isOpen={!!certificateAdv}
+        onClose={() => setCertificateAdv(null)}
+        adventureName={certificateAdv?.title || ''}
+        adventureEmoji={certificateAdv?.emoji || ''}
+      />
+    </>
   );
 }

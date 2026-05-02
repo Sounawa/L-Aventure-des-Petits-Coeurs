@@ -76,7 +76,7 @@ export default function InteractiveGuide() {
     if (_hydrated && userName && !guideShown) {
       const timer = setTimeout(() => {
         setIsVisible(true);
-      }, 800);
+      }, 2000);
       return () => clearTimeout(timer);
     }
   }, [_hydrated, userName, guideShown]);
@@ -115,6 +115,16 @@ export default function InteractiveGuide() {
     setGuideShown();
   };
 
+  // Auto-dismiss after 20 seconds if user doesn't interact
+  useEffect(() => {
+    if (!isVisible) return;
+    const timer = setTimeout(() => {
+      setIsVisible(false);
+      setGuideShown();
+    }, 20000);
+    return () => clearTimeout(timer);
+  }, [isVisible, setGuideShown]);
+
   if (!isVisible || !targetRect) return null;
 
   const step = guideSteps[currentStep];
@@ -141,7 +151,8 @@ export default function InteractiveGuide() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[190]"
+            className="fixed inset-0 z-[90]"
+            onClick={handleSkip}
           >
             <div
               style={{
@@ -151,8 +162,8 @@ export default function InteractiveGuide() {
                 width: targetRect.width + 12,
                 height: targetRect.height + 12,
                 borderRadius: 12,
-                boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.4)',
-                zIndex: 200,
+                boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.3)',
+                zIndex: 91,
                 pointerEvents: 'none',
               }}
               className="border-2 border-amber-400 dark:border-amber-300"
@@ -165,7 +176,7 @@ export default function InteractiveGuide() {
                 width: targetRect.width + 16,
                 height: targetRect.height + 16,
                 borderRadius: 14,
-                zIndex: 201,
+                zIndex: 92,
                 pointerEvents: 'none',
               }}
               animate={{
@@ -191,7 +202,7 @@ export default function InteractiveGuide() {
               left: tooltipLeft,
               top: tooltipTop,
               transform: step.position === 'top' ? 'translateY(-100%)' : undefined,
-              zIndex: 210,
+              zIndex: 95,
               width: tooltipWidth,
             }}
           >

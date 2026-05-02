@@ -585,8 +585,18 @@ export default function AdventureView() {
       >
         {currentAdventure === 'miroir' && (
           <div className="space-y-4">
-            <div className="text-center py-2">
-              <h2 className="text-2xl font-bold text-primary">🪞 Le Miroir Magique</h2>
+            <div className="text-center py-3 relative">
+              <motion.div
+                className="absolute -top-1 left-1/4 text-sm opacity-20"
+                animate={{ y: [0, -5, 0], rotate: [0, 10, 0] }}
+                transition={{ duration: 3, repeat: Infinity }}
+              >✨</motion.div>
+              <motion.div
+                className="absolute -top-1 right-1/4 text-sm opacity-20"
+                animate={{ y: [0, -5, 0], rotate: [0, -10, 0] }}
+                transition={{ duration: 3, repeat: Infinity, delay: 1.5 }}
+              >🌟</motion.div>
+              <h2 className="text-2xl font-bold shimmer-text">🪞 Le Miroir Magique</h2>
               <p className="text-sm text-muted-foreground mt-1">5 chapitres pour découvrir le miroir enchanté</p>
             </div>
             {miroirChapters.map((ch) => (
@@ -607,8 +617,18 @@ export default function AdventureView() {
 
         {currentAdventure === 'tresors' && (
           <div className="space-y-4">
-            <div className="text-center py-2">
-              <h2 className="text-2xl font-bold text-secondary">💎 Les Trésors du Cœur</h2>
+            <div className="text-center py-3 relative">
+              <motion.div
+                className="absolute -top-1 left-1/4 text-sm opacity-20"
+                animate={{ y: [0, -5, 0], rotate: [0, 10, 0] }}
+                transition={{ duration: 3, repeat: Infinity }}
+              >✨</motion.div>
+              <motion.div
+                className="absolute -top-1 right-1/4 text-sm opacity-20"
+                animate={{ y: [0, -5, 0], rotate: [0, -10, 0] }}
+                transition={{ duration: 3, repeat: Infinity, delay: 1.5 }}
+              >💎</motion.div>
+              <h2 className="text-2xl font-bold text-gradient-teal">💎 Les Trésors du Cœur</h2>
               <p className="text-sm text-muted-foreground mt-1">6 trésors précieux à collecter</p>
             </div>
             
@@ -682,8 +702,18 @@ export default function AdventureView() {
 
         {currentAdventure === 'lumiere' && (
           <div className="space-y-4">
-            <div className="text-center py-2">
-              <h2 className="text-2xl font-bold text-purple-600">✨ La Lumière Intérieure</h2>
+            <div className="text-center py-3 relative">
+              <motion.div
+                className="absolute -top-1 left-1/4 text-sm opacity-20"
+                animate={{ y: [0, -5, 0], rotate: [0, 10, 0] }}
+                transition={{ duration: 3, repeat: Infinity }}
+              >✨</motion.div>
+              <motion.div
+                className="absolute -top-1 right-1/4 text-sm opacity-20"
+                animate={{ y: [0, -5, 0], rotate: [0, -10, 0] }}
+                transition={{ duration: 3, repeat: Infinity, delay: 1.5 }}
+              >🌙</motion.div>
+              <h2 className="text-2xl font-bold text-gradient-rose">✨ La Lumière Intérieure</h2>
               <p className="text-sm text-muted-foreground mt-1">4 chapitres pour comprendre la lumière divine</p>
             </div>
             {lumiereChapters.map((ch) => (

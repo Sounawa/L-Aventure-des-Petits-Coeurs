@@ -29,9 +29,10 @@ export default function Footer() {
         {/* Features list */}
         <div className="flex flex-wrap justify-center gap-3 text-[10px] text-muted-foreground/70">
           <span className="flex items-center gap-1">📖 3 Aventures</span>
-          <span className="flex items-center gap-1">🎮 6 Activités</span>
-          <span className="flex items-center gap-1">🏅 14 Badges</span>
+          <span className="flex items-center gap-1">🎮 8 Activités</span>
+          <span className="flex items-center gap-1">🏅 16 Badges</span>
           <span className="flex items-center gap-1">🤲 Prières</span>
+          <span className="flex items-center gap-1">🔊 Sons</span>
         </div>
 
         {/* Credits */}

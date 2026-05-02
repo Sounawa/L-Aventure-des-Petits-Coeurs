@@ -5,6 +5,7 @@ import { useAppStore, type Section } from '@/lib/store';
 import { Home, BookOpen, Star, Gamepad2, Moon, Sun, Trophy, Heart } from 'lucide-react';
 import { useState } from 'react';
 import SettingsPanel from './SettingsPanel';
+import { useSoundEffects } from './SoundEffects';
 
 const navItems: { id: Section; label: string; icon: React.ReactNode; emoji: string }[] = [
   { id: 'accueil', label: 'Accueil', icon: <Home className="w-4 h-4" />, emoji: '🏠' },
@@ -101,6 +102,12 @@ function BadgePanel() {
 
 export default function Navigation() {
   const { currentSection, setSection, totalStars, darkMode, toggleDarkMode, userName, favoriteChapters } = useAppStore();
+  const { play } = useSoundEffects();
+
+  const handleNavClick = (section: Section) => {
+    play('click');
+    setSection(section);
+  };
 
   return (
     <>
@@ -191,7 +198,7 @@ export default function Navigation() {
               <button
                 key={item.id}
                 id={`guide-nav-${item.id}`}
-                onClick={() => setSection(item.id)}
+                onClick={() => handleNavClick(item.id)}
                 className="flex flex-col items-center justify-center py-2 px-3 sm:px-6 min-w-[64px] relative rounded-xl transition-all duration-200"
                 aria-label={item.label}
               >

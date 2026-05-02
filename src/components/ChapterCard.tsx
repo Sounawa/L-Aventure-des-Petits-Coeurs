@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { ChevronDown, ChevronUp, Sparkles, Heart } from 'lucide-react';
 import Image from 'next/image';
 import AudioPlayer from './AudioPlayer';
+import { useSoundEffects } from './SoundEffects';
 
 interface ChapterData {
   chapterNum: number;
@@ -34,6 +35,7 @@ const chapterImages: Record<string, string> = {
 
 export default function ChapterCard({ data }: { data: ChapterData }) {
   const { chaptersProgress, markChapterRead, markActivityCompleted, favoriteChapters, toggleFavorite } = useAppStore();
+  const { play } = useSoundEffects();
   const [expanded, setExpanded] = useState(false);
   const [showActivity, setShowActivity] = useState(false);
 
@@ -48,6 +50,7 @@ export default function ChapterCard({ data }: { data: ChapterData }) {
 
   const handleActivityComplete = () => {
     markActivityCompleted(data.adventureId as 'miroir' | 'tresors' | 'lumiere', data.chapterNum);
+    play('chapter');
   };
 
   // Determine card styling based on state
