@@ -675,6 +675,51 @@ Stage Summary:
 
 ---
 
+## Task: Cron Review Round 4 — Bug Fixes + Styling + New Features
+
+### Date: 2026-05-03
+
+### Task ID: 6
+
+### Bugs Fixed
+
+1. **🔒 Removed lock/padlock on Trésors du Cœur themes** — TreasureCard showed 🔒 for uncollected treasures, making them appear locked. Fixed: replaced with actual emoji + "?" badge with reduced opacity.
+2. **🗺️ Removed adventure locking in AdventureMap** — Tresors/Lumiere were locked until previous adventures completed. Fixed: all adventures now freely accessible, removed Lock icons, dark overlays, "Verrouillé" labels.
+3. **💧 Fixed hydration mismatch** — Math.random() in HeroSection particles caused SSR/client mismatch. Fixed: replaced with pre-computed deterministic PARTICLE_POSITIONS array.
+
+### Styling Improvements (Sub-agent Task 4-a)
+
+- TreasureCard: progress indicator dots, dashed border for uncollected, gold gradient for collected, numbered circles, spring physics expansion
+- AdventureSelector: fixed doubled emoji, order number badges, "1→2→3" recommended order indicator
+- Navigation: section-matching gradients, scale animation on tab press, bigger active dot with pulse
+- Footer: floating stars animation, heart divider
+- ChapterCard: "✨ Nouveau" badge, numbered circles, "Leçon" label header
+
+### New Features (Sub-agent Task 4-b)
+
+1. **🌟 Virtue Garden** — Visual 3x2 garden grid with 6 virtue plots, 4 growth stages
+2. **🏆 Achievement Timeline** — Vertical timeline of last 10 achievements, color-coded by type
+3. **🌙 Bedtime Mode** — Gentle night mode with deep navy, warm amber text, slower animations, 🌙 nav indicator
+
+### Store Changes
+- Added `achievements: Achievement[]`, `bedtimeMode: boolean`
+- Added `addAchievement()`, `toggleBedtimeMode()` actions
+- `collectTreasure()`, `markActivityCompleted()`, `unlockBadge()` now log achievements
+- All new fields persisted in localStorage
+
+### QA Results
+- ✅ Zero console errors, zero hydration mismatches
+- ✅ Lint: Zero errors
+- ✅ All 4 sections render correctly
+- ✅ Trésors shows emoji + "?" (no more 🔒)
+- ✅ All adventures freely accessible
+
+### Next Phase Recommendations
+1. **PWA** — Service worker, offline mode
+2. **Sound effects** — Audio feedback on interactions
+3. **Performance** — Lazy loading for heavy components
+4. **Backend API** — Save progress to database
+
 ## Task 4-b (Features Agent): Word Scramble Game + Parent Corner
 
 ### Date: 2026-05-03

@@ -629,3 +629,98 @@ button[aria-label="Collapse issues badge"] {
 .bounce-down {
   animation: bounce-down 1.5s ease-in-out infinite;
 }
+
+/* ===== BEDTIME MODE (Mode Nuit Douce) ===== */
+
+/* Bedtime mode overrides - deeper navy background, warm amber text, slower animations */
+.bedtime {
+  --background: oklch(0.10 0.04 270);
+  --foreground: oklch(0.85 0.06 70);
+  --card: oklch(0.14 0.04 270);
+  --card-foreground: oklch(0.85 0.06 70);
+  --popover: oklch(0.14 0.04 270);
+  --popover-foreground: oklch(0.85 0.06 70);
+  --primary: oklch(0.75 0.10 70);
+  --primary-foreground: oklch(0.12 0.04 270);
+  --muted: oklch(0.20 0.03 270);
+  --muted-foreground: oklch(0.65 0.05 70);
+  --border: oklch(0.25 0.04 270);
+  --input: oklch(0.25 0.04 270);
+  --ring: oklch(0.75 0.10 70);
+}
+
+/* Bedtime mode text color override - warm amber */
+.bedtime .text-foreground,
+.bedtime .text-card-foreground,
+.bedtime .text-popover-foreground {
+  color: oklch(0.85 0.06 70) !important;
+}
+
+.bedtime .text-muted-foreground {
+  color: oklch(0.60 0.04 70) !important;
+}
+
+/* Bedtime mode - slower animations */
+.bedtime .floating-decoration,
+.bedtime .sparkle-float,
+.bedtime .pulse-soft,
+.bedtime .pulse-ring::before,
+.bedtime .badge-shine::after {
+  animation-duration: 6s !important;
+}
+
+.bedtime .twinkle {
+  animation-duration: 3s !important;
+}
+
+/* Bedtime mode - softer card borders */
+.bedtime .card-pattern {
+  background-image:
+    radial-gradient(circle at 20% 80%, oklch(0.75 0.10 70 / 4%) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, oklch(0.60 0.05 70 / 3%) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, oklch(0.55 0.06 270 / 3%) 0%, transparent 50%) !important;
+}
+
+/* Bedtime mode - warmer shimmer text */
+.bedtime .shimmer-text {
+  background: linear-gradient(
+    90deg,
+    oklch(0.75 0.10 70) 0%,
+    oklch(0.85 0.08 60) 25%,
+    oklch(0.90 0.06 80) 50%,
+    oklch(0.85 0.08 60) 75%,
+    oklch(0.75 0.10 70) 100%
+  ) !important;
+}
+
+/* Bedtime mode - gold gradient with amber tones */
+.bedtime .text-gradient-gold {
+  background: linear-gradient(135deg, #C99227, #E8B44D, #C99227) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+}
+
+/* Bedtime mode - scrollbar */
+.bedtime .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: oklch(0.75 0.10 70 / 30%);
+}
+
+/* Bedtime mode - glass card */
+.bedtime .glass-card {
+  background: rgba(20, 20, 50, 0.4) !important;
+  border: 1px solid rgba(200, 170, 80, 0.15) !important;
+}
+
+/* Bedtime mode - input styling */
+.bedtime input,
+.bedtime textarea {
+  color: oklch(0.85 0.06 70) !important;
+  caret-color: oklch(0.75 0.10 70) !important;
+}
+
+/* Bedtime mode - selection */
+.bedtime ::selection {
+  background: oklch(0.75 0.10 70 / 30%);
+  color: oklch(0.95 0.04 70);
+}

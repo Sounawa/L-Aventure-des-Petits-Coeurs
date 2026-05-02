@@ -9,6 +9,8 @@ import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Trophy, Heart, Flame, Sparkles, BookOpen } from 'lucide-react';
 import FavoriteChapters from './FavoriteChapters';
+import VirtueGarden from './VirtueGarden';
+import AchievementTimeline from './AchievementTimeline';
 
 const practiceItems = [
   { id: 'prayers', label: "J'ai dit mes prières aujourd'hui", emoji: '🤲' },
@@ -387,6 +389,19 @@ export default function PracticeSection() {
               </div>
             </motion.div>
           )}
+        </CardContent>
+      </Card>
+
+      {/* Virtue Garden */}
+      <Card className="border-2 border-green-200/50 dark:border-green-800/30 overflow-hidden card-pattern">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-lg flex items-center gap-2">
+            <span>🌱</span>
+            Mon Jardin des Vertus
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <VirtueGarden />
         </CardContent>
       </Card>
 
@@ -802,6 +817,13 @@ export default function PracticeSection() {
               ))}
             </div>
           )}
+        </CardContent>
+      </Card>
+
+      {/* Achievement Timeline - expandable */}
+      <Card className="border-2 border-primary/10 overflow-hidden card-pattern">
+        <CardContent className="p-4">
+          <AchievementTimeline />
         </CardContent>
       </Card>
     </div>

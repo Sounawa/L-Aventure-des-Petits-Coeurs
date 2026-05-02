@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { useMemo } from 'react';
+import { useAppStore } from '@/lib/store';
 
 interface Star {
   id: number;
@@ -48,6 +49,7 @@ function generateStars(): Star[] {
 
 export default function FloatingStars() {
   const stars = useMemo(() => generateStars(), []);
+  const { bedtimeMode } = useAppStore();
 
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
@@ -58,21 +60,25 @@ export default function FloatingStars() {
           style={{
             left: `${star.x}%`,
             top: `${star.y}%`,
-            fontSize: `${star.size}px`,
+            fontSize: `${bedtimeMode ? star.size * 1.3 : star.size}px`,
           }}
           animate={{
             y: [0, -15, 0],
-            opacity: [0.15, 0.5, 0.15],
-            scale: [0.8, 1.1, 0.8],
+            opacity: bedtimeMode
+              ? [0.3, 0.9, 0.3]
+              : [0.15, 0.5, 0.15],
+            scale: bedtimeMode
+              ? [0.8, 1.3, 0.8]
+              : [0.8, 1.1, 0.8],
           }}
           transition={{
-            duration: star.duration,
+            duration: bedtimeMode ? star.duration * 1.5 : star.duration,
             repeat: Infinity,
             delay: star.delay,
             ease: 'easeInOut',
           }}
         >
-          <span className="text-amber-400/40">{star.emoji}</span>
+          <span className={bedtimeMode ? 'text-amber-300/70' : 'text-amber-400/40'}>{star.emoji}</span>
         </motion.div>
       ))}
     </div>

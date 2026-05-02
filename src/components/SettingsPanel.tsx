@@ -23,6 +23,8 @@ export default function SettingsPanel() {
     badges,
     chaptersProgress,
     currentStreak,
+    bedtimeMode,
+    toggleBedtimeMode,
   } = useAppStore();
 
   const unlockedBadges = badges.filter(b => b.unlockedAt).length;
@@ -121,6 +123,48 @@ export default function SettingsPanel() {
                           />
                         </button>
                       </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Bedtime / Gentle Night Mode */}
+                  <Card className="border-2 border-indigo-200/50 dark:border-indigo-800/30">
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 flex items-center justify-center">
+                            <span className="text-lg">🌙</span>
+                          </div>
+                          <div>
+                            <p className="text-sm font-semibold">Mode Nuit Douce</p>
+                            <p className="text-[10px] text-muted-foreground">
+                              {bedtimeMode ? 'Lecture douce activée' : 'Pour lire avant de dormir'}
+                            </p>
+                          </div>
+                        </div>
+                        <button
+                          onClick={toggleBedtimeMode}
+                          className={`relative w-12 h-6 rounded-full transition-colors ${
+                            bedtimeMode ? 'bg-indigo-500' : 'bg-muted'
+                          }`}
+                        >
+                          <motion.div
+                            className="absolute top-0.5 w-5 h-5 rounded-full bg-white shadow-md"
+                            animate={{ left: bedtimeMode ? 26 : 2 }}
+                            transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                          />
+                        </button>
+                      </div>
+                      {bedtimeMode && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: 'auto' }}
+                          className="mt-3 p-2.5 bg-indigo-50/50 dark:bg-indigo-900/10 rounded-xl border border-indigo-200/30 dark:border-indigo-700/20"
+                        >
+                          <p className="text-[10px] text-muted-foreground">
+                            🌙 Couleurs douces, animations lentes et texte ambré pour protéger tes yeux avant de dormir.
+                          </p>
+                        </motion.div>
+                      )}
                     </CardContent>
                   </Card>
 

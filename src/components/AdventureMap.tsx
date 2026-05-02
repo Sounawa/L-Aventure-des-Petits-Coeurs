@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import { useAppStore, type AdventureId } from '@/lib/store';
 import { useMemo } from 'react';
-import { Check, Lock } from 'lucide-react';
+import { Check } from 'lucide-react';
 
 interface AdventureStation {
   id: AdventureId;
@@ -68,29 +68,12 @@ export default function AdventureMap() {
     };
   }, [chaptersProgress, treasuresProgress]);
 
-  const isUnlocked = useMemo(() => {
-    return (advId: AdventureId): boolean => {
-      if (advId === 'miroir') return true; // Always unlocked
-      if (advId === 'tresors') {
-        const miroirCompleted = [1, 2, 3, 4, 5].filter(i => chaptersProgress[`miroir-${i}`]?.activityCompleted).length;
-        return miroirCompleted >= 3;
-      }
-      if (advId === 'lumiere') {
-        const allTreasures = ['gratitude', 'patience', 'gentillesse', 'courage', 'honnêteté', 'amour'];
-        const tresorsCollected = allTreasures.filter(t => treasuresProgress[t]?.collected).length;
-        return tresorsCollected >= 3;
-      }
-      return false;
-    };
-  }, [chaptersProgress, treasuresProgress]);
-
   return (
     <div className="py-4">
       <div className="flex items-center justify-between">
         {stations.map((station, index) => {
           const progress = getProgress(station.id);
           const isComplete = progress === station.totalItems;
-          const unlocked = isUnlocked(station.id);
           const isCurrent = currentAdventure === station.id;
           const percent = station.totalItems > 0 ? (progress / station.totalItems) * 100 : 0;
 
@@ -98,16 +81,13 @@ export default function AdventureMap() {
             <div key={station.id} className="flex items-center flex-1">
               {/* Station node */}
               <motion.button
-                onClick={() => unlocked && setAdventure(station.id)}
-                disabled={!unlocked}
-                className={`relative flex flex-col items-center gap-1.5 flex-shrink-0 ${
-                  unlocked ? 'cursor-pointer' : 'cursor-not-allowed'
-                }`}
-                whileTap={unlocked ? { scale: 0.92 } : {}}
-                whileHover={unlocked ? { scale: 1.05 } : {}}
+                onClick={() => setAdventure(station.id)}
+                className="relative flex flex-col items-center gap-1.5 flex-shrink-0 cursor-pointer"
+                whileTap={{ scale: 0.92 }}
+                whileHover={{ scale: 1.05 }}
               >
                 {/* Glow ring for current adventure */}
-                {isCurrent && unlocked && (
+                {isCurrent && (
                   <motion.div
                     className={`absolute -inset-4 rounded-full bg-gradient-to-br ${station.bgColor} blur-lg ${station.glowColor}`}
                     animate={{ scale: [1, 1.2, 1], opacity: [0.4, 0.7, 0.4] }}
@@ -115,19 +95,14 @@ export default function AdventureMap() {
                   />
                 )}
 
-                {/* Circle node — bigger for better visibility */}
-                <div className={`relative w-18 h-18 sm:w-22 sm:h-22 rounded-2xl bg-gradient-to-br ${station.bgColor} border-2 ${
-                  isCurrent && unlocked ? station.borderColor : 'border-border/50'
+                {/* Circle node */}
+                <div className={`relative rounded-2xl bg-gradient-to-br ${station.bgColor} border-2 ${
+                  isCurrent ? station.borderColor : 'border-border/50'
                 } flex items-center justify-center shadow-md overflow-hidden ${
-                  isComplete && unlocked ? 'station-complete-shimmer' : ''
+                  isComplete ? 'station-complete-shimmer' : ''
                 }`}
                   style={{ width: '72px', height: '72px' }}
                 >
-                  {/* Dark overlay for locked stations */}
-                  {!unlocked && (
-                    <div className="absolute inset-0 bg-background/60 dark:bg-background/70 rounded-2xl z-10" />
-                  )}
-                  
                   {/* Progress arc background */}
                   <div className="absolute inset-0 flex items-center justify-center">
                     <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 100 100">
@@ -138,7 +113,7 @@ export default function AdventureMap() {
                         className="text-primary/10"
                         strokeWidth="5"
                       />
-                      {unlocked && progress > 0 && (
+                      {progress > 0 && (
                         <motion.circle
                           cx="50" cy="50" r="42"
                           fill="none"
@@ -156,7 +131,7 @@ export default function AdventureMap() {
                   </div>
 
                   {/* Content */}
-                  {isComplete && unlocked ? (
+                  {isComplete ? (
                     <motion.div
                       initial={{ scale: 0, rotate: -180 }}
                       animate={{ scale: 1, rotate: 0 }}
@@ -166,53 +141,39 @@ export default function AdventureMap() {
                       <Check className="w-8 h-8" strokeWidth={3} />
                       <span className="absolute -top-1 -right-1 text-xs">🎉</span>
                     </motion.div>
-                  ) : !unlocked ? (
-                    <div className="relative z-20 flex flex-col items-center gap-0.5">
-                      <Lock className="w-6 h-6 text-muted-foreground/50" />
-                      <span className="text-[8px] text-muted-foreground/60 font-bold">Verrouillé</span>
-                    </div>
                   ) : (
                     <span className="text-2xl sm:text-3xl relative z-20">{station.emoji}</span>
                   )}
                 </div>
 
-                {/* Label with progress — bigger and bolder */}
+                {/* Label with progress */}
                 <div className="text-center max-w-[80px] sm:max-w-[100px]">
                   <p className={`text-[10px] sm:text-xs font-bold leading-tight ${
-                    isCurrent && unlocked ? station.color : unlocked ? 'text-foreground/70' : 'text-muted-foreground/50'
+                    isCurrent ? station.color : 'text-foreground/70'
                   }`}>
                     {station.title}
                   </p>
-                  {unlocked && (
-                    <div className="mt-1">
-                      <p className={`text-xs sm:text-sm font-extrabold ${progress > 0 ? 'text-primary' : 'text-muted-foreground'}`}>
-                        {progress}/{station.totalItems}
-                        {isComplete && ' 🎉'}
-                      </p>
-                      {/* Mini progress bar below station */}
-                      <div className="w-full bg-muted/50 rounded-full h-1.5 mt-1 overflow-hidden">
-                        <motion.div
-                          className="gradient-progress rounded-full h-1.5"
-                          initial={{ width: 0 }}
-                          animate={{ width: `${percent}%` }}
-                          transition={{ duration: 0.5 }}
-                        />
-                      </div>
-                    </div>
-                  )}
-                  {!unlocked && (
-                    <p className="text-[9px] text-muted-foreground/60 mt-0.5 flex items-center justify-center gap-0.5">
-                      <Lock className="w-2.5 h-2.5" />
-                      Verrouillé
+                  <div className="mt-1">
+                    <p className={`text-xs sm:text-sm font-extrabold ${progress > 0 ? 'text-primary' : 'text-muted-foreground'}`}>
+                      {progress}/{station.totalItems}
+                      {isComplete && ' 🎉'}
                     </p>
-                  )}
+                    {/* Mini progress bar below station */}
+                    <div className="w-full bg-muted/50 rounded-full h-1.5 mt-1 overflow-hidden">
+                      <motion.div
+                        className="gradient-progress rounded-full h-1.5"
+                        initial={{ width: 0 }}
+                        animate={{ width: `${percent}%` }}
+                        transition={{ duration: 0.5 }}
+                      />
+                    </div>
+                  </div>
                 </div>
               </motion.button>
 
-              {/* Connection line to next station — thicker with animated dots */}
+              {/* Connection line to next station */}
               {index < stations.length - 1 && (
                 <div className="flex-1 flex items-center justify-center px-1 sm:px-2 relative min-w-[30px] sm:min-w-[50px]">
-                  {/* Base line — thicker */}
                   <div className="w-full h-1 bg-gradient-to-r from-border/60 to-border/40 relative overflow-hidden rounded-full">
                     {/* Animated progress fill */}
                     {isComplete && (
@@ -224,7 +185,7 @@ export default function AdventureMap() {
                       />
                     )}
                     {/* Animated dots moving along the line */}
-                    {isCurrent && unlocked && (
+                    {isCurrent && (
                       <>
                         <motion.div
                           className="absolute top-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full bg-primary shadow-sm shadow-primary/30"
@@ -245,26 +206,6 @@ export default function AdventureMap() {
           );
         })}
       </div>
-
-      {/* Unlock hint */}
-      {!isUnlocked('tresors') && (
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="text-center text-xs text-muted-foreground mt-4"
-        >
-          🔓 Complète 3 chapitres du Miroir pour débloquer les Trésors
-        </motion.p>
-      )}
-      {isUnlocked('tresors') && !isUnlocked('lumiere') && (
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="text-center text-xs text-muted-foreground mt-4"
-        >
-          🔓 Collecte 3 trésors pour débloquer la Lumière
-        </motion.p>
-      )}
     </div>
   );
 }

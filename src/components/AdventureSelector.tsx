@@ -15,8 +15,9 @@ const adventures = [
     gradient: 'linear-gradient(135deg, #F59E0B, #EAB308)',
     desc: 'Découvre le miroir enchanté', 
     totalChapters: 5,
-    emblem: '🪞',
+    emblem: '✨',
     accentColor: '#F59E0B',
+    order: 1,
   },
   { 
     id: 'tresors' as AdventureId, 
@@ -27,8 +28,9 @@ const adventures = [
     gradient: 'linear-gradient(135deg, #14B8A6, #10B981)',
     desc: 'Collecte les vertus précieuses', 
     totalChapters: 6,
-    emblem: '💎',
+    emblem: '🌟',
     accentColor: '#14B8A6',
+    order: 2,
   },
   { 
     id: 'lumiere' as AdventureId, 
@@ -39,8 +41,9 @@ const adventures = [
     gradient: 'linear-gradient(135deg, #A78BFA, #818CF8)',
     desc: 'Comprends la lumière divine', 
     totalChapters: 4,
-    emblem: '✨',
+    emblem: '🌙',
     accentColor: '#A78BFA',
+    order: 3,
   },
 ];
 
@@ -80,6 +83,25 @@ export default function AdventureSelector() {
 
   return (
     <>
+    {/* Recommended order indicator */}
+    <div className="flex items-center justify-center gap-1 mb-2">
+      <span className="text-[10px] text-muted-foreground font-medium">Ordre recommandé :</span>
+      {adventures.map((adv, i) => (
+        <div key={adv.id} className="flex items-center">
+          <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full transition-all ${
+            currentAdventure === adv.id
+              ? 'bg-primary/20 text-primary'
+              : 'text-muted-foreground'
+          }`}>
+            {adv.order}
+          </span>
+          {i < adventures.length - 1 && (
+            <span className="text-muted-foreground/40 mx-0.5">→</span>
+          )}
+        </div>
+      ))}
+    </div>
+
     <div className="flex gap-3 overflow-x-auto pb-3 px-1 custom-scrollbar snap-x snap-mandatory">
       {adventures.map((adv) => {
         const isActive = currentAdventure === adv.id;
@@ -93,10 +115,11 @@ export default function AdventureSelector() {
             onClick={() => handleClick(adv.id)}
             className={`flex-shrink-0 px-4 py-3 rounded-2xl border-2 transition-all min-w-[130px] snap-start relative overflow-hidden ${
               isActive
-                ? 'border-primary/60 shadow-lg scale-[1.02]'
+                ? 'border-primary/60 shadow-xl scale-105'
                 : 'border-border/50 bg-card hover:border-primary/40'
             }`}
-            whileTap={{ scale: 0.95 }}
+            whileTap={{ scale: 0.93 }}
+            whileHover={isActive ? { scale: 1.06 } : { scale: 1.02 }}
             style={isActive ? { background: adv.gradient + '22' } : {}}
           >
             {/* Gradient background for active state */}
@@ -107,9 +130,20 @@ export default function AdventureSelector() {
               />
             )}
 
-            {/* Decorative emblem watermark */}
+            {/* Decorative emblem watermark - different from main emoji */}
             <div className="absolute -bottom-2 -right-2 text-4xl opacity-10 select-none">
               {adv.emblem}
+            </div>
+
+            {/* Order number badge */}
+            <div className="absolute top-1 left-1.5 z-10">
+              <span className={`w-5 h-5 flex items-center justify-center text-[9px] font-bold rounded-full shadow-sm transition-all ${
+                isActive
+                  ? 'bg-gradient-to-br from-amber-400 to-yellow-300 text-amber-900'
+                  : 'bg-muted text-muted-foreground'
+              }`}>
+                {adv.order}
+              </span>
             </div>
 
             {/* Celebration effect */}
@@ -142,7 +176,7 @@ export default function AdventureSelector() {
             </AnimatePresence>
 
             {/* Badge/emblem icon */}
-            <div className="relative z-10">
+            <div className="relative z-10 mt-2">
               <motion.div
                 className="text-2xl block"
                 animate={isComplete ? { rotate: [0, 5, -5, 0] } : {}}

@@ -7,6 +7,22 @@ import AudioPlayer from './AudioPlayer';
 import DailyInspiration from './DailyInspiration';
 import WordOfTheDay from './WordOfTheDay';
 
+// Pre-computed particle positions (deterministic, no Math.random() at render time)
+const PARTICLE_POSITIONS = [
+  { left: 36.2, top: 12.5, yMove: 25, duration: 3.2, delay: 0.4 },
+  { left: 42.8, top: 28.1, yMove: 35, duration: 4.5, delay: 1.8 },
+  { left: 50.1, top: 18.7, yMove: 20, duration: 3.8, delay: 0.9 },
+  { left: 57.4, top: 35.2, yMove: 30, duration: 5.1, delay: 2.3 },
+  { left: 38.9, top: 22.4, yMove: 28, duration: 3.5, delay: 0.2 },
+  { left: 44.6, top: 38.1, yMove: 22, duration: 4.8, delay: 1.5 },
+  { left: 52.3, top: 15.3, yMove: 32, duration: 3.1, delay: 2.7 },
+  { left: 59.7, top: 26.8, yMove: 18, duration: 5.3, delay: 0.6 },
+  { left: 40.3, top: 31.6, yMove: 26, duration: 4.2, delay: 1.1 },
+  { left: 47.9, top: 19.9, yMove: 40, duration: 3.6, delay: 2.0 },
+  { left: 55.6, top: 33.5, yMove: 24, duration: 4.9, delay: 0.8 },
+  { left: 63.1, top: 24.2, yMove: 34, duration: 3.4, delay: 1.4 },
+];
+
 export default function HeroSection() {
   const { setSection, totalStars, badges, userName } = useAppStore();
   const unlockedBadges = badges.filter(b => b.unlockedAt).length;
@@ -51,24 +67,24 @@ export default function HeroSection() {
         transition={{ duration: 5, repeat: Infinity, delay: 1 }}
       />
 
-      {/* Particle/star effect behind the mirror */}
-      {Array.from({ length: 12 }).map((_, i) => (
+      {/* Particle/star effect behind the mirror (deterministic positions) */}
+      {PARTICLE_POSITIONS.map((p, i) => (
         <motion.div
           key={i}
           className="absolute w-1 h-1 rounded-full bg-amber-300/40"
           style={{
-            left: `${35 + Math.random() * 30}%`,
-            top: `${10 + Math.random() * 30}%`,
+            left: `${p.left}%`,
+            top: `${p.top}%`,
           }}
           animate={{
-            y: [0, -20 - Math.random() * 30, 0],
+            y: [0, -p.yMove, 0],
             opacity: [0.2, 0.8, 0.2],
             scale: [0.5, 1.5, 0.5],
           }}
           transition={{
-            duration: 3 + Math.random() * 3,
+            duration: p.duration,
             repeat: Infinity,
-            delay: Math.random() * 3,
+            delay: p.delay,
             ease: 'easeInOut',
           }}
         />

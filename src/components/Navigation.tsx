@@ -100,8 +100,27 @@ function BadgePanel() {
   );
 }
 
+const sectionGradients: Record<Section, { light: string; dark: string }> = {
+  accueil: {
+    light: 'linear-gradient(180deg, rgba(245, 158, 11, 0.08), rgba(255, 255, 255, 0.95))',
+    dark: 'linear-gradient(180deg, rgba(245, 158, 11, 0.12), oklch(0.15 0.03 280))',
+  },
+  aventures: {
+    light: 'linear-gradient(180deg, rgba(20, 184, 166, 0.08), rgba(255, 255, 255, 0.95))',
+    dark: 'linear-gradient(180deg, rgba(20, 184, 166, 0.12), oklch(0.15 0.03 280))',
+  },
+  pratique: {
+    light: 'linear-gradient(180deg, rgba(244, 63, 94, 0.08), rgba(255, 255, 255, 0.95))',
+    dark: 'linear-gradient(180deg, rgba(244, 63, 94, 0.12), oklch(0.15 0.03 280))',
+  },
+  activites: {
+    light: 'linear-gradient(180deg, rgba(168, 85, 247, 0.08), rgba(255, 255, 255, 0.95))',
+    dark: 'linear-gradient(180deg, rgba(168, 85, 247, 0.12), oklch(0.15 0.03 280))',
+  },
+};
+
 export default function Navigation() {
-  const { currentSection, setSection, totalStars, darkMode, toggleDarkMode, userName, favoriteChapters } = useAppStore();
+  const { currentSection, setSection, totalStars, darkMode, toggleDarkMode, userName, favoriteChapters, bedtimeMode } = useAppStore();
   const { play } = useSoundEffects();
 
   const handleNavClick = (section: Section) => {
@@ -109,14 +128,14 @@ export default function Navigation() {
     setSection(section);
   };
 
+  const topBarGradient = sectionGradients[currentSection];
+
   return (
     <>
-      {/* Top bar with gradient */}
-      <div className="fixed top-0 left-0 right-0 z-50 border-b border-border/50 shadow-sm"
+      {/* Top bar with section-matching gradient */}
+      <div className="fixed top-0 left-0 right-0 z-50 border-b border-border/50 shadow-sm transition-all duration-500"
         style={{
-          background: darkMode
-            ? 'linear-gradient(180deg, oklch(0.18 0.04 280), oklch(0.15 0.03 280))'
-            : 'linear-gradient(180deg, oklch(0.98 0.008 85), oklch(0.96 0.01 85))',
+          background: darkMode ? topBarGradient.dark : topBarGradient.light,
           backdropFilter: 'blur(12px)',
           WebkitBackdropFilter: 'blur(12px)',
         }}
@@ -130,6 +149,17 @@ export default function Navigation() {
                 <span className="text-[10px] text-muted-foreground ml-1.5">• Salut {userName} 👋</span>
               )}
             </div>
+            {/* Bedtime mode crescent moon indicator */}
+            {bedtimeMode && (
+              <motion.span
+                className="text-lg"
+                initial={{ scale: 0, rotate: -180 }}
+                animate={{ scale: 1, rotate: 0 }}
+                transition={{ type: 'spring', stiffness: 200, damping: 15 }}
+              >
+                🌙
+              </motion.span>
+            )}
           </div>
           <div className="flex items-center gap-1.5">
             {/* Favorites indicator - consistent icon size */}
@@ -182,11 +212,11 @@ export default function Navigation() {
       </div>
 
       {/* Bottom navigation - polished with active glow and transitions */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-border/50 safe-area-bottom shadow-[0_-2px_10px_rgba(0,0,0,0.05)]"
+      <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-border/50 safe-area-bottom shadow-[0_-2px_10px_rgba(0,0,0,0.05)] transition-all duration-500"
         style={{
           background: darkMode
-            ? 'linear-gradient(0deg, oklch(0.16 0.03 280), oklch(0.18 0.04 280))'
-            : 'linear-gradient(0deg, oklch(0.97 0.008 85), oklch(0.98 0.005 85))',
+            ? sectionGradients[currentSection].dark.replace('180deg', '0deg')
+            : sectionGradients[currentSection].light.replace('180deg', '0deg'),
           backdropFilter: 'blur(12px)',
           WebkitBackdropFilter: 'blur(12px)',
         }}
@@ -195,12 +225,14 @@ export default function Navigation() {
           {navItems.map((item) => {
             const isActive = currentSection === item.id;
             return (
-              <button
+              <motion.button
                 key={item.id}
                 id={`guide-nav-${item.id}`}
                 onClick={() => handleNavClick(item.id)}
                 className="flex flex-col items-center justify-center py-2 px-3 sm:px-6 min-w-[64px] relative rounded-xl transition-all duration-200"
                 aria-label={item.label}
+                whileTap={{ scale: 0.85 }}
+                whileHover={{ scale: 1.05 }}
               >
                 {/* Active tab background with rounded corners and subtle glow */}
                 {isActive && (
@@ -240,15 +272,17 @@ export default function Navigation() {
                   {item.label}
                 </span>
 
-                {/* Pulsing bottom dot for active */}
+                {/* Pulsing bottom dot for active - bigger with stronger pulse */}
                 {isActive && (
                   <motion.div
                     layoutId="navDot"
-                    className="absolute -bottom-0.5 w-1.5 h-1.5 bg-primary rounded-full pulse-soft"
-                    transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                    className="absolute -bottom-0.5 w-2.5 h-2.5 bg-primary rounded-full"
+                    animate={{ scale: [1, 1.4, 1], opacity: [1, 0.6, 1] }}
+                    transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+                    style={{ boxShadow: '0 0 8px oklch(0.55 0.12 80 / 40%)' }}
                   />
                 )}
-              </button>
+              </motion.button>
             );
           })}
         </div>

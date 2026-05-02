@@ -34,6 +34,13 @@ export interface Badge {
   unlockedAt: string | null;
 }
 
+export interface Achievement {
+  type: string;
+  emoji: string;
+  description: string;
+  timestamp: string;
+}
+
 const allBadges: Badge[] = [
   { id: 'first_chapter', emoji: '📖', title: 'Premier Chapitre', description: 'Tu as lu ton premier chapitre !', unlockedAt: null },
   { id: 'first_activity', emoji: '🎮', title: 'Première Activité', description: 'Tu as complété ta première activité !', unlockedAt: null },
@@ -103,6 +110,12 @@ interface AppState {
   // Guide
   guideShown: boolean;
 
+  // Achievements
+  achievements: Achievement[];
+
+  // Bedtime mode
+  bedtimeMode: boolean;
+
   // Hydration
   _hydrated: boolean;
   
@@ -128,6 +141,8 @@ interface AppState {
   setWordScrambleCompleted: (score: number) => void;
   setPuzzleCompleted: () => void;
   setGuideShown: () => void;
+  addAchievement: (type: string, emoji: string, description: string) => void;
+  toggleBedtimeMode: () => void;
   _hydrate: () => void;
 }
 
@@ -166,6 +181,8 @@ function saveState(state: AppState) {
       wordScrambleBestScore: state.wordScrambleBestScore,
       puzzleCompleted: state.puzzleCompleted,
       guideShown: state.guideShown,
+      achievements: state.achievements,
+      bedtimeMode: state.bedtimeMode,
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
   } catch {
@@ -263,6 +280,8 @@ const defaultState = {
   wordScrambleBestScore: 0,
   puzzleCompleted: false,
   guideShown: false,
+  achievements: [] as Achievement[],
+  bedtimeMode: false,
   _hydrated: false,
 };
 
@@ -282,6 +301,10 @@ export const useAppStore = create<AppState>((set, get) => ({
       // Apply dark mode class
       if (saved.darkMode && typeof document !== 'undefined') {
         document.documentElement.classList.add('dark');
+      }
+      // Apply bedtime mode class
+      if (saved.bedtimeMode && typeof document !== 'undefined') {
+        document.documentElement.classList.add('bedtime');
       }
     } else {
       set({ _hydrated: true });
@@ -323,6 +346,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       const finalState = { ...newState, badges: updatedBadges };
       set(finalState);
       saveState({ ...get(), ...finalState });
+      get().addAchievement('chapter', '📖', `Activité complétée : ${key}`);
     }
   },
   
@@ -337,6 +361,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       const finalState = { ...newState, badges: updatedBadges };
       set(finalState);
       saveState({ ...get(), ...finalState });
+      get().addAchievement('treasure', '💎', `Trésor collecté : ${treasureId}`);
     }
   },
   
@@ -406,6 +431,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       badge.unlockedAt = new Date().toISOString();
       set({ badges });
       saveState({ ...get(), badges });
+      get().addAchievement('badge', badge.emoji, `Badge débloqué : ${badge.title}`);
     }
   },
 
@@ -473,6 +499,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       wordScrambleBestScore: 0,
       puzzleCompleted: false,
       guideShown: false,
+      achievements: [] as Achievement[],
     };
     set(newState);
     saveState({ ...get(), ...newState });
@@ -513,6 +540,35 @@ export const useAppStore = create<AppState>((set, get) => ({
     }
     set({ darkMode: newDarkMode });
     saveState({ ...get(), darkMode: newDarkMode });
+  },
+
+  addAchievement: (type: string, emoji: string, description: string) => {
+    const newAchievement: Achievement = {
+      type,
+      emoji,
+      description,
+      timestamp: new Date().toISOString(),
+    };
+    const achievements = [...get().achievements, newAchievement];
+    set({ achievements });
+    saveState({ ...get(), achievements });
+  },
+
+  toggleBedtimeMode: () => {
+    const newBedtimeMode = !get().bedtimeMode;
+    if (typeof document !== 'undefined') {
+      if (newBedtimeMode) {
+        document.documentElement.classList.add('bedtime');
+        if (!get().darkMode) {
+          document.documentElement.classList.add('dark');
+          set({ darkMode: true });
+        }
+      } else {
+        document.documentElement.classList.remove('bedtime');
+      }
+    }
+    set({ bedtimeMode: newBedtimeMode });
+    saveState({ ...get(), bedtimeMode: newBedtimeMode });
   },
 }));
 

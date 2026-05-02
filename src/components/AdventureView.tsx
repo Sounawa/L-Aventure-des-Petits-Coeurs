@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore, type AdventureId } from '@/lib/store';
 import AdventureSelector from './AdventureSelector';
 import AdventureMap from './AdventureMap';
@@ -229,9 +229,42 @@ function HeartWhispers() {
   );
 }
 
+// ---- Treasure Progress Indicator ----
+function TreasureProgressIndicator() {
+  const { treasuresProgress } = useAppStore();
+  const allTreasures = ['gratitude', 'patience', 'gentillesse', 'courage', 'honnêteté', 'amour'];
+  const collectedCount = allTreasures.filter(t => treasuresProgress[t]?.collected).length;
+
+  return (
+    <div className="flex items-center justify-center gap-2 py-2">
+      <span className="text-xs text-muted-foreground font-medium">Trésors collectés :</span>
+      <div className="flex items-center gap-1.5">
+        {allTreasures.map((t, i) => {
+          const isCollected = treasuresProgress[t]?.collected;
+          return (
+            <motion.div
+              key={t}
+              className={`w-3 h-3 rounded-full border-2 transition-all ${
+                isCollected
+                  ? 'bg-gradient-to-br from-amber-400 to-yellow-300 border-amber-500 shadow-sm shadow-amber-300/50'
+                  : 'bg-muted/50 border-dashed border-muted-foreground/30'
+              }`
+              }
+              initial={false}
+              animate={isCollected ? { scale: [1, 1.3, 1] } : {}}
+              transition={{ duration: 0.4, delay: i * 0.05 }}
+            />
+          );
+        })}
+      </div>
+      <span className="text-xs font-bold text-primary">{collectedCount}/6</span>
+    </div>
+  );
+}
+
 // ---- Treasure Card ----
 function TreasureCard({ 
-  emoji, title, arabicName, story, lesson, activityLabel, activity, treasureId 
+  emoji, title, arabicName, story, lesson, activityLabel, activity, treasureId, index 
 }: {
   emoji: string;
   title: string;
@@ -241,6 +274,7 @@ function TreasureCard({
   activityLabel: string;
   activity: React.ReactNode;
   treasureId: string;
+  index: number;
 }) {
   const { treasuresProgress, collectTreasure } = useAppStore();
   const [expanded, setExpanded] = useState(false);
@@ -248,45 +282,79 @@ function TreasureCard({
   const isCollected = treasuresProgress[treasureId]?.collected;
 
   return (
-    <Card className={`border-2 ${isCollected ? 'border-primary/50 bg-primary/5' : 'border-border'}`}>
+    <Card className={`transition-all duration-300 ${
+      isCollected
+        ? 'border-2 border-amber-400/60 bg-gradient-to-br from-amber-50/50 to-yellow-50/30 dark:from-amber-900/15 dark:to-yellow-900/10 shadow-md shadow-amber-200/20'
+        : 'border-2 border-dashed border-muted-foreground/25 bg-muted/10'
+    }`}>
       <button onClick={() => setExpanded(!expanded)} className="w-full text-left">
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <span className="text-3xl">{isCollected ? emoji : '🔒'}</span>
+              <div className="relative">
+                <span className={`text-3xl transition-all duration-300 ${isCollected ? 'drop-shadow-sm' : 'opacity-60 grayscale-[30%]'}`}>{emoji}</span>
+                {/* Numbered circle */}
+                <span className={`absolute -top-1.5 -left-1.5 w-5 h-5 flex items-center justify-center text-[10px] font-bold rounded-full shadow-sm ${
+                  isCollected
+                    ? 'bg-gradient-to-br from-amber-400 to-yellow-300 text-amber-900'
+                    : 'bg-muted text-muted-foreground'
+                }`}>
+                  {index + 1}
+                </span>
+                {!isCollected && (
+                  <span className="absolute -top-1 -right-2 text-[10px] bg-muted text-muted-foreground px-1 py-0.5 rounded-full">?</span>
+                )}
+              </div>
               <div>
-                <CardTitle className="text-base">{title}</CardTitle>
+                <CardTitle className={`text-base transition-colors ${isCollected ? 'text-foreground' : 'text-muted-foreground'}`}>{title}</CardTitle>
                 <p className="text-xs text-muted-foreground">{arabicName}</p>
               </div>
             </div>
-            {isCollected && <span className="text-xs bg-primary/20 text-primary px-2 py-0.5 rounded-full">💎 Collecté</span>}
+            {isCollected && (
+              <span className="text-[10px] font-bold px-2.5 py-1 rounded-full shadow-sm"
+                style={{ background: 'linear-gradient(135deg, #C9A227, #E8D44D)', color: '#3D2C1E' }}
+              >
+                💎 Collecté
+              </span>
+            )}
           </div>
         </CardHeader>
       </button>
 
-      {expanded && (
-        <CardContent className="pt-0">
-          <div className="bg-primary/5 rounded-xl p-4 mb-3">
-            <p className="text-sm leading-relaxed">{story}</p>
-          </div>
-          <div className="bg-secondary/10 rounded-xl p-3 mb-3 border border-secondary/20">
-            <p className="text-sm font-medium text-foreground/80">💡 {lesson}</p>
-          </div>
-          <Button variant="outline" onClick={() => setShowActivity(!showActivity)} className="w-full mb-2">
-            {showActivity ? 'Cacher' : `🎮 ${activityLabel}`}
-          </Button>
-          {showActivity && (
-            <div className="border-2 border-dashed border-primary/20 rounded-xl p-4 bg-primary/5 mt-2">
-              {activity}
-              {!isCollected && (
-                <Button onClick={() => collectTreasure(treasureId)} className="w-full mt-4" size="sm">
-                  💎 J&apos;ai trouvé ce trésor !
-                </Button>
+      <AnimatePresence>
+        {expanded && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+          >
+            <CardContent className="pt-0">
+              <div className="bg-gradient-to-r from-amber-50/60 to-yellow-50/40 dark:from-amber-900/10 dark:to-yellow-900/8 rounded-xl p-4 mb-3 border border-amber-200/30 dark:border-amber-700/15">
+                <p className="text-sm leading-relaxed">{story}</p>
+              </div>
+              <div className="bg-gradient-to-r from-teal-50/50 to-cyan-50/40 dark:from-teal-900/10 dark:to-cyan-900/8 rounded-xl p-3 mb-3 border border-teal-200/30 dark:border-teal-700/15">
+                <p className="text-sm font-medium text-foreground/80">💡 {lesson}</p>
+              </div>
+              <Button variant="outline" onClick={() => setShowActivity(!showActivity)} className="w-full mb-2">
+                {showActivity ? '🔼 Cacher' : `🎮 ${activityLabel}`}
+              </Button>
+              {showActivity && (
+                <div className="border-2 border-dashed border-primary/20 rounded-xl p-4 bg-primary/5 mt-2">
+                  {activity}
+                  {!isCollected && (
+                    <Button onClick={() => collectTreasure(treasureId)} className="w-full mt-4" size="sm"
+                      style={{ background: 'linear-gradient(135deg, #C9A227, #E8D44D)', color: '#3D2C1E' }}
+                    >
+                      💎 J&apos;ai trouvé ce trésor !
+                    </Button>
+                  )}
+                </div>
               )}
-            </div>
-          )}
-        </CardContent>
-      )}
+            </CardContent>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </Card>
   );
 }
@@ -632,7 +700,11 @@ export default function AdventureView() {
               <p className="text-sm text-muted-foreground mt-1">6 trésors précieux à collecter</p>
             </div>
             
+            {/* Progress indicator */}
+            <TreasureProgressIndicator />
+
             <TreasureCard
+              index={0}
               emoji="💛"
               title="La Gratitude"
               arabicName="Al-Shukr"
@@ -644,6 +716,7 @@ export default function AdventureView() {
             />
 
             <TreasureCard
+              index={1}
               emoji="🌿"
               title="La Patience"
               arabicName="As-Sabr"
@@ -655,6 +728,7 @@ export default function AdventureView() {
             />
 
             <TreasureCard
+              index={2}
               emoji="🌸"
               title="La Gentillesse"
               arabicName="Al-Ihsan"
@@ -666,6 +740,7 @@ export default function AdventureView() {
             />
 
             <TreasureCard
+              index={3}
               emoji="⭐"
               title="Le Courage"
               arabicName="Ash-Shuja'a"
@@ -677,6 +752,7 @@ export default function AdventureView() {
             />
 
             <TreasureCard
+              index={4}
               emoji="💎"
               title="L'Honnêteté"
               arabicName="As-Sidq"
@@ -688,6 +764,7 @@ export default function AdventureView() {
             />
 
             <TreasureCard
+              index={5}
               emoji="❤️"
               title="L'Amour"
               arabicName="Al-Mahabba"

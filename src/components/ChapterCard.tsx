@@ -60,6 +60,8 @@ export default function ChapterCard({ data }: { data: ChapterData }) {
     ? 'border-secondary/30 bg-secondary/5 border-2'
     : 'border-border/50 border-2';
 
+  const isNew = !progress.read && !progress.activityCompleted;
+
   return (
     <Card className={`overflow-hidden transition-all ${cardStyle}`}>
       {/* Chapter header - always visible */}
@@ -73,22 +75,29 @@ export default function ChapterCard({ data }: { data: ChapterData }) {
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
+              {/* Numbered circle for chapter */}
               <motion.span 
-                className="text-2xl w-10 h-10 flex items-center justify-center rounded-xl bg-gradient-to-br from-primary/15 to-primary/5 border border-primary/10"
+                className="w-10 h-10 flex items-center justify-center rounded-xl border-2 font-bold text-sm transition-all"
+                style={progress.activityCompleted 
+                  ? { background: 'linear-gradient(135deg, #C9A227, #E8D44D)', color: '#3D2C1E', borderColor: 'transparent' }
+                  : progress.read
+                  ? { background: 'rgba(20, 184, 166, 0.1)', color: '#14B8A6', borderColor: 'rgba(20, 184, 166, 0.3)' }
+                  : { background: 'rgba(0,0,0,0.05)', color: 'rgba(0,0,0,0.4)', borderColor: 'rgba(0,0,0,0.1)' }
+                }
                 animate={progress.activityCompleted ? { rotate: [0, 5, -5, 0] } : {}}
                 transition={{ duration: 0.5, repeat: progress.activityCompleted ? 2 : 0 }}
               >
-                {progress.read ? (progress.activityCompleted ? '🌟' : '📖') : '📜'}
+                {progress.activityCompleted ? '✨' : data.chapterNum}
               </motion.span>
               <div>
                 <CardTitle className="text-base sm:text-lg">
-                  Chapitre {data.chapterNum} : {data.title}
+                  {data.title}
                 </CardTitle>
-                {/* Progress indicator */}
+                {/* Progress indicator with Nouveau badge */}
                 <div className="flex items-center gap-1.5 mt-1">
                   <div className="flex items-center gap-0.5">
-                    <span className={`w-2 h-2 rounded-full ${progress.read ? 'bg-primary' : 'bg-muted-foreground/20'}`} />
-                    <span className={`w-2 h-2 rounded-full ${progress.activityCompleted ? 'bg-primary' : 'bg-muted-foreground/20'}`} />
+                    <span className={`w-2 h-2 rounded-full transition-colors ${progress.read ? 'bg-primary' : 'bg-muted-foreground/20'}`} />
+                    <span className={`w-2 h-2 rounded-full transition-colors ${progress.activityCompleted ? 'bg-primary' : 'bg-muted-foreground/20'}`} />
                   </div>
                   {progress.activityCompleted ? (
                     <span className="text-[10px] bg-gradient-to-r from-amber-100 to-yellow-100 dark:from-amber-900/30 dark:to-yellow-900/30 text-primary px-2 py-0.5 rounded-full font-medium border border-amber-200/40 dark:border-amber-700/20">
@@ -99,8 +108,8 @@ export default function ChapterCard({ data }: { data: ChapterData }) {
                       📖 Lu
                     </span>
                   ) : (
-                    <span className="text-[10px] bg-muted/50 text-muted-foreground px-2 py-0.5 rounded-full font-medium">
-                      Nouveau
+                    <span className="text-[10px] bg-gradient-to-r from-rose-100 to-pink-100 dark:from-rose-900/30 dark:to-pink-900/30 text-rose-600 dark:text-rose-300 px-2 py-0.5 rounded-full font-bold border border-rose-200/50 dark:border-rose-700/30 animate-pulse">
+                      ✨ Nouveau
                     </span>
                   )}
                 </div>
@@ -137,7 +146,7 @@ export default function ChapterCard({ data }: { data: ChapterData }) {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.4, ease: [0.04, 0.62, 0.23, 0.98] }}
+            transition={{ type: 'spring', stiffness: 300, damping: 25 }}
           >
             <CardContent className="pt-0">
               {/* Illustration */}
@@ -178,9 +187,12 @@ export default function ChapterCard({ data }: { data: ChapterData }) {
 
               {/* Lesson */}
               <div className="bg-gradient-to-r from-teal-50/50 to-cyan-50/50 dark:from-teal-900/8 dark:to-cyan-900/8 rounded-xl p-4 mb-4 border border-teal-200/30 dark:border-teal-700/15">
-                <p className="text-sm font-medium text-foreground/80 flex items-start gap-2">
-                  <Sparkles className="w-4 h-4 text-teal-500 flex-shrink-0 mt-0.5" />
-                  <span>{data.lesson}</span>
+                <div className="flex items-center gap-1.5 mb-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-teal-500" />
+                  <p className="text-xs text-teal-600 dark:text-teal-400 font-semibold uppercase tracking-wider">Leçon</p>
+                </div>
+                <p className="text-sm font-medium text-foreground/80 leading-relaxed">
+                  {data.lesson}
                 </p>
               </div>
 
@@ -201,7 +213,7 @@ export default function ChapterCard({ data }: { data: ChapterData }) {
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: 'auto', opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.3 }}
+                    transition={{ type: 'spring', stiffness: 300, damping: 25 }}
                   >
                     <div className="rounded-xl p-4 relative overflow-hidden"
                       style={{ background: 'linear-gradient(135deg, rgba(201, 162, 39, 0.05), rgba(20, 184, 166, 0.05))' }}
