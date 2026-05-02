@@ -12,6 +12,8 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true,
   },
+  // GitHub Pages serves with trailing slashes
+  trailingSlash: true,
   allowedDevOrigins: [
     "preview-chat-bc496f87-5c6b-4697-80a8-2887f34cac8c.space-z.ai",
     ".space-z.ai",

@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   description: "Un livre interactif spirituel pour les petits cœurs. Découvre le miroir magique qui reflète la lumière de ton cœur !",
   keywords: ["alchimie", "miroir", "enfants", "spiritualité", "islam", "méditation", "tadabbur"],
   icons: {
-    icon: "https://z-cdn.chatglm.cn/z-ai/static/logo.svg",
+    icon: process.env.NODE_ENV === 'production' ? '/L-Aventure-des-Petits-Coeurs/logo.svg' : '/logo.svg',
   },
 };
 
