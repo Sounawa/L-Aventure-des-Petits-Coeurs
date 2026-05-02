@@ -2,7 +2,9 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore } from '@/lib/store';
-import FloatingStars from '@/components/FloatingStars';
+import dynamic from 'next/dynamic';
+
+const FloatingStars = dynamic(() => import('@/components/FloatingStars'), { ssr: false });
 import Navigation from '@/components/Navigation';
 import HeroSection from '@/components/HeroSection';
 import AdventureView from '@/components/AdventureView';
@@ -11,6 +13,7 @@ import ActivitiesSection from '@/components/ActivitiesSection';
 import Footer from '@/components/Footer';
 import HydrationProvider from '@/components/HydrationProvider';
 import CelebrationOverlay from '@/components/CelebrationOverlay';
+import OnboardingFlow from '@/components/OnboardingFlow';
 import { useState, useEffect } from 'react';
 
 export default function Home() {
@@ -69,6 +72,9 @@ function AppContent() {
         emoji={celebration.emoji}
         onComplete={() => setCelebration(prev => ({ ...prev, active: false }))}
       />
+
+      {/* Onboarding overlay for first-time users */}
+      <OnboardingFlow />
 
       {/* Main content */}
       <main className="flex-1 relative z-10 pt-14 pb-20">

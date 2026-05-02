@@ -7,7 +7,8 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trophy } from 'lucide-react';
+import { Trophy, Heart } from 'lucide-react';
+import FavoriteChapters from './FavoriteChapters';
 
 const practiceItems = [
   { id: 'prayers', label: "J'ai dit mes prières aujourd'hui", emoji: '🤲' },
@@ -116,6 +117,19 @@ export default function PracticeSection() {
               </div>
             </motion.div>
           )}
+        </CardContent>
+      </Card>
+
+      {/* Favorite Chapters */}
+      <Card className="border-2 border-rose-200/50 dark:border-rose-800/30">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-lg flex items-center gap-2">
+            <Heart className="w-5 h-5 text-rose-500" />
+            Mes Favoris
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <FavoriteChapters />
         </CardContent>
       </Card>
 

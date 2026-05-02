@@ -57,6 +57,9 @@ interface AppState {
   currentAdventure: AdventureId;
   currentChapter: number;
   
+  // User
+  userName: string;
+  
   // Progress
   chaptersProgress: Record<string, ChapterProgress>;
   treasuresProgress: Record<string, TreasureProgress>;
@@ -75,6 +78,9 @@ interface AppState {
   // Badges
   badges: Badge[];
   
+  // Favorites
+  favoriteChapters: string[];
+
   // Theme
   darkMode: boolean;
   
@@ -85,6 +91,7 @@ interface AppState {
   setSection: (section: Section) => void;
   setAdventure: (adventure: AdventureId) => void;
   setChapter: (chapter: number) => void;
+  setUserName: (name: string) => void;
   markChapterRead: (adventure: AdventureId, chapter: number) => void;
   markActivityCompleted: (adventure: AdventureId, chapter: number) => void;
   collectTreasure: (treasureId: string) => void;
@@ -93,6 +100,8 @@ interface AppState {
   addGratitudeEntry: (entry: GratitudeEntry) => void;
   setQuizCompleted: (score: number) => void;
   unlockBadge: (badgeId: string) => void;
+  toggleFavorite: (chapterKey: string) => void;
+  isFavorite: (chapterKey: string) => boolean;
   toggleDarkMode: () => void;
   _hydrate: () => void;
 }
@@ -114,6 +123,7 @@ function saveState(state: AppState) {
   if (typeof window === 'undefined') return;
   try {
     const toSave = {
+      userName: state.userName,
       chaptersProgress: state.chaptersProgress,
       treasuresProgress: state.treasuresProgress,
       totalStars: state.totalStars,
@@ -123,6 +133,7 @@ function saveState(state: AppState) {
       quizScore: state.quizScore,
       badges: state.badges,
       darkMode: state.darkMode,
+      favoriteChapters: state.favoriteChapters,
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
   } catch {
@@ -196,6 +207,7 @@ const defaultState = {
   currentSection: 'accueil' as Section,
   currentAdventure: 'miroir' as AdventureId,
   currentChapter: 0,
+  userName: '',
   chaptersProgress: {} as Record<string, ChapterProgress>,
   treasuresProgress: {} as Record<string, TreasureProgress>,
   totalStars: 0,
@@ -205,6 +217,7 @@ const defaultState = {
   quizScore: 0,
   badges: allBadges,
   darkMode: false,
+  favoriteChapters: [] as string[],
   _hydrated: false,
 };
 
@@ -233,6 +246,10 @@ export const useAppStore = create<AppState>((set, get) => ({
   setSection: (section) => set({ currentSection: section, currentChapter: 0 }),
   setAdventure: (adventure) => set({ currentAdventure: adventure, currentChapter: 0 }),
   setChapter: (chapter) => set({ currentChapter: chapter }),
+  setUserName: (name) => {
+    set({ userName: name });
+    saveState({ ...get(), userName: name });
+  },
   
   markChapterRead: (adventure, chapter) => {
     const key = `${adventure}-${chapter}`;
@@ -340,6 +357,20 @@ export const useAppStore = create<AppState>((set, get) => ({
       set({ badges });
       saveState({ ...get(), badges });
     }
+  },
+
+  toggleFavorite: (chapterKey: string) => {
+    const current = get().favoriteChapters;
+    const isFav = current.includes(chapterKey);
+    const newFavorites = isFav
+      ? current.filter(k => k !== chapterKey)
+      : [...current, chapterKey];
+    set({ favoriteChapters: newFavorites });
+    saveState({ ...get(), favoriteChapters: newFavorites });
+  },
+
+  isFavorite: (chapterKey: string) => {
+    return get().favoriteChapters.includes(chapterKey);
   },
 
   toggleDarkMode: () => {

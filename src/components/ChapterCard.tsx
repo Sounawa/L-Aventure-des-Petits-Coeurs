@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { useAppStore } from '@/lib/store';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ChevronDown, ChevronUp, Sparkles } from 'lucide-react';
+import { ChevronDown, ChevronUp, Sparkles, Heart } from 'lucide-react';
 import Image from 'next/image';
 import AudioPlayer from './AudioPlayer';
 
@@ -33,13 +33,14 @@ const chapterImages: Record<string, string> = {
 };
 
 export default function ChapterCard({ data }: { data: ChapterData }) {
-  const { chaptersProgress, markChapterRead, markActivityCompleted } = useAppStore();
+  const { chaptersProgress, markChapterRead, markActivityCompleted, favoriteChapters, toggleFavorite } = useAppStore();
   const [expanded, setExpanded] = useState(false);
   const [showActivity, setShowActivity] = useState(false);
 
   const key = `${data.adventureId}-${data.chapterNum}`;
   const progress = chaptersProgress[key] || { read: false, activityCompleted: false };
   const chapterImage = chapterImages[key];
+  const isFav = favoriteChapters.includes(key);
 
   const handleMarkRead = () => {
     markChapterRead(data.adventureId as 'miroir' | 'tresors' | 'lumiere', data.chapterNum);
@@ -83,7 +84,19 @@ export default function ChapterCard({ data }: { data: ChapterData }) {
                 )}
               </div>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1">
+              <motion.button
+                onClick={(e) => { e.stopPropagation(); toggleFavorite(key); }}
+                className="p-1.5 rounded-full hover:bg-rose-100 dark:hover:bg-rose-900/30 transition-colors"
+                whileTap={{ scale: 0.8 }}
+                aria-label={isFav ? 'Retirer des favoris' : 'Ajouter aux favoris'}
+              >
+                {isFav ? (
+                  <span className="text-lg">❤️</span>
+                ) : (
+                  <span className="text-lg">🤍</span>
+                )}
+              </motion.button>
               {expanded ? <ChevronUp className="w-5 h-5 text-muted-foreground" /> : <ChevronDown className="w-5 h-5 text-muted-foreground" />}
             </div>
           </div>

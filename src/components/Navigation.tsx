@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore, type Section } from '@/lib/store';
-import { Home, BookOpen, Star, Gamepad2, Moon, Sun, Trophy } from 'lucide-react';
+import { Home, BookOpen, Star, Gamepad2, Moon, Sun, Trophy, Heart } from 'lucide-react';
 import { useState } from 'react';
 
 const navItems: { id: Section; label: string; icon: React.ReactNode; emoji: string }[] = [
@@ -26,6 +26,9 @@ function BadgePanel() {
       >
         <Trophy className="w-3.5 h-3.5 text-primary" />
         <span className="text-[10px] font-bold text-primary">{unlockedCount}</span>
+        {unlockedCount > 0 && (
+          <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-green-400 rounded-full border border-background" />
+        )}
       </button>
 
       <AnimatePresence>
@@ -54,6 +57,15 @@ function BadgePanel() {
                     ✕
                   </button>
                 </div>
+                {/* Progress bar */}
+                <div className="w-full bg-muted rounded-full h-2 mb-3 overflow-hidden">
+                  <motion.div
+                    className="bg-gradient-to-r from-primary to-amber-400 rounded-full h-2"
+                    initial={{ width: 0 }}
+                    animate={{ width: `${(unlockedCount / badges.length) * 100}%` }}
+                    transition={{ duration: 0.5 }}
+                  />
+                </div>
                 <p className="text-xs text-muted-foreground mb-3">
                   {unlockedCount}/{badges.length} badges débloqués
                 </p>
@@ -72,7 +84,7 @@ function BadgePanel() {
                       >
                         <span className="text-2xl block">{isUnlocked ? badge.emoji : '🔒'}</span>
                         <p className="text-xs font-bold mt-1">{badge.title}</p>
-                        <p className="text-[10px] text-muted-foreground mt-0.5">{badge.description}</p>
+                        <p className="text-[10px] text-muted-foreground mt-0.5">{isUnlocked ? badge.description : '???'}</p>
                       </motion.div>
                     );
                   })}
@@ -87,7 +99,7 @@ function BadgePanel() {
 }
 
 export default function Navigation() {
-  const { currentSection, setSection, totalStars, darkMode, toggleDarkMode } = useAppStore();
+  const { currentSection, setSection, totalStars, darkMode, toggleDarkMode, userName, favoriteChapters } = useAppStore();
 
   return (
     <>
@@ -96,18 +108,31 @@ export default function Navigation() {
         <div className="flex items-center justify-between px-3 py-2 max-w-4xl mx-auto">
           <div className="flex items-center gap-2">
             <span className="text-lg">🪞</span>
-            <span className="font-bold text-primary text-sm sm:text-base hidden sm:inline">L&apos;Alchimie du Miroir</span>
+            <div className="hidden sm:block">
+              <span className="font-bold text-primary text-sm">L&apos;Alchimie du Miroir</span>
+              {userName && (
+                <span className="text-[10px] text-muted-foreground ml-1.5">• Salut {userName} 👋</span>
+              )}
+            </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
+            {/* Favorites indicator */}
+            {favoriteChapters.length > 0 && (
+              <div className="flex items-center gap-0.5 bg-rose-50 dark:bg-rose-900/20 px-1.5 py-1 rounded-full">
+                <Heart className="w-3 h-3 text-rose-400 fill-rose-400" />
+                <span className="text-[10px] font-bold text-rose-500">{favoriteChapters.length}</span>
+              </div>
+            )}
+
             {/* Badges */}
             <BadgePanel />
-            
+
             {/* Star count */}
             <div className="flex items-center gap-1 bg-primary/10 px-2.5 py-1 rounded-full glow-gold">
               <span className="text-yellow-500 text-xs">⭐</span>
               <span className="font-bold text-primary text-xs">{totalStars}</span>
             </div>
-            
+
             {/* Dark mode toggle */}
             <button
               onClick={toggleDarkMode}
@@ -133,7 +158,7 @@ export default function Navigation() {
               <button
                 key={item.id}
                 onClick={() => setSection(item.id)}
-                className="flex flex-col items-center justify-center py-2 px-3 sm:px-6 min-w-[64px] relative rounded-xl transition-colors"
+                className="flex flex-col items-center justify-center py-2 px-3 sm:px-6 min-w-[64px] relative rounded-xl transition-all"
                 aria-label={item.label}
               >
                 {isActive && (
@@ -144,7 +169,18 @@ export default function Navigation() {
                   />
                 )}
                 <span className={`transition-colors ${isActive ? 'text-primary' : 'text-muted-foreground'}`}>
-                  {item.icon}
+                  {isActive ? (
+                    <motion.span
+                      initial={{ scale: 1 }}
+                      animate={{ scale: [1, 1.15, 1] }}
+                      transition={{ duration: 0.3 }}
+                      className="inline-block"
+                    >
+                      {item.icon}
+                    </motion.span>
+                  ) : (
+                    item.icon
+                  )}
                 </span>
                 <span className={`text-[10px] sm:text-xs mt-0.5 transition-colors ${isActive ? 'text-primary font-bold' : 'text-muted-foreground'}`}>
                   {item.label}

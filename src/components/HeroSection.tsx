@@ -4,12 +4,14 @@ import { motion } from 'framer-motion';
 import { useAppStore } from '@/lib/store';
 import Image from 'next/image';
 import AudioPlayer from './AudioPlayer';
+import DailyInspiration from './DailyInspiration';
 
 export default function HeroSection() {
-  const { setSection, totalStars, badges } = useAppStore();
+  const { setSection, totalStars, badges, userName } = useAppStore();
   const unlockedBadges = badges.filter(b => b.unlockedAt).length;
 
-  const welcomeText = "Bienvenue petit voyageur ! Tu vas découvrir un miroir magique qui reflète la lumière de ton cœur. Es-tu prêt pour l'aventure ?";
+  const displayName = userName.trim() || 'petit voyageur';
+  const welcomeText = `Bienvenue ${displayName} ! Tu vas découvrir un miroir magique qui reflète la lumière de ton cœur. Es-tu prêt pour l'aventure ?`;
 
   return (
     <div className="relative min-h-[85vh] flex flex-col items-center justify-center text-center px-4 overflow-hidden">
@@ -19,6 +21,7 @@ export default function HeroSection() {
           src="/images/magic-mirror-hero.png"
           alt="Miroir magique doré"
           fill
+          sizes="100vw"
           className="object-cover opacity-15"
           priority
         />
@@ -155,7 +158,7 @@ export default function HeroSection() {
           </div>
           <div className="bg-card/60 backdrop-blur-sm rounded-xl p-2.5 border border-secondary/10 text-center card-hover">
             <span className="text-xl sm:text-2xl block">🎮</span>
-            <p className="text-[10px] sm:text-xs font-semibold mt-1">5 Activités</p>
+            <p className="text-[10px] sm:text-xs font-semibold mt-1">6 Activités</p>
           </div>
           <div className="bg-card/60 backdrop-blur-sm rounded-xl p-2.5 border border-accent/10 text-center card-hover">
             <span className="text-xl sm:text-2xl block">🏅</span>
@@ -166,6 +169,9 @@ export default function HeroSection() {
             <p className="text-[10px] sm:text-xs font-semibold mt-1">Prière</p>
           </div>
         </motion.div>
+
+        {/* Daily Inspiration Card */}
+        <DailyInspiration />
 
         {/* Progress indicator if returning user */}
         {totalStars > 0 && (

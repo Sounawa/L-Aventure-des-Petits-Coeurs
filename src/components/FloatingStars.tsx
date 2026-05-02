@@ -15,17 +15,32 @@ interface Star {
 
 const starEmojis = ['✦', '✧', '⭐', '✨', '·'];
 
+/**
+ * Seeded pseudo-random number generator using a Linear Congruential Generator.
+ * This ensures deterministic output, avoiding hydration mismatches.
+ */
+function createSeededRandom(seed: number) {
+  let s = seed;
+  return () => {
+    s = (s * 1103515245 + 12345) & 0x7fffffff;
+    return s / 0x7fffffff;
+  };
+}
+
+const SEED = 42;
+
 function generateStars(): Star[] {
+  const random = createSeededRandom(SEED);
   const generated: Star[] = [];
   for (let i = 0; i < 30; i++) {
     generated.push({
       id: i,
-      x: Math.random() * 100,
-      y: Math.random() * 100,
-      size: Math.random() * 14 + 6,
-      duration: Math.random() * 5 + 3,
-      delay: Math.random() * 4,
-      emoji: starEmojis[Math.floor(Math.random() * starEmojis.length)],
+      x: random() * 100,
+      y: random() * 100,
+      size: random() * 14 + 6,
+      duration: random() * 5 + 3,
+      delay: random() * 4,
+      emoji: starEmojis[Math.floor(random() * starEmojis.length)],
     });
   }
   return generated;

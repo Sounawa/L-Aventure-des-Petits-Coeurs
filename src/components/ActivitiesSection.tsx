@@ -8,6 +8,7 @@ import { useAppStore } from '@/lib/store';
 import BreathingExercise from './BreathingExercise';
 import GratitudeJournal from './GratitudeJournal';
 import DrawingCanvas from './DrawingCanvas';
+import MemoryGame from './MemoryGame';
 
 // ---- Quiz Game ----
 const quizQuestions = [
@@ -246,6 +247,7 @@ export default function ActivitiesSection() {
     { id: 'quiz', name: 'Quiz des Trésors', emoji: '🏆', desc: '10 questions sur les trésors du cœur', color: 'from-amber-100 to-yellow-200', darkColor: 'from-amber-900/30 to-yellow-800/30' },
     { id: 'coloring', name: 'Coloriage', emoji: '🎨', desc: 'Colorie des formes magiques', color: 'from-pink-100 to-rose-200', darkColor: 'from-pink-900/30 to-rose-800/30' },
     { id: 'drawing', name: 'Dessin Libre', emoji: '✏️', desc: 'Dessine avec des pinceaux magiques', color: 'from-teal-100 to-cyan-200', darkColor: 'from-teal-900/30 to-cyan-800/30' },
+    { id: 'memory', name: 'Jeu de Mémoire', emoji: '🧩', desc: 'Trouve les paires cachées', color: 'from-purple-100 to-violet-200', darkColor: 'from-purple-900/30 to-violet-800/30' },
     { id: 'breathing', name: 'Respiration', emoji: '🌬️', desc: 'Exercice de respiration 4-2-6', color: 'from-blue-100 to-indigo-200', darkColor: 'from-blue-900/30 to-indigo-800/30' },
     { id: 'journal', name: 'Gratitude', emoji: '💛', desc: 'Note ce pour quoi tu es reconnaissant(e)', color: 'from-amber-100 to-orange-200', darkColor: 'from-amber-900/30 to-orange-800/30' },
   ];
@@ -292,6 +294,7 @@ export default function ActivitiesSection() {
             {activeActivity === 'quiz' && <QuizGame />}
             {activeActivity === 'coloring' && <ColoringBook />}
             {activeActivity === 'drawing' && <DrawingCanvas />}
+            {activeActivity === 'memory' && <MemoryGame />}
             {activeActivity === 'breathing' && <BreathingExercise />}
             {activeActivity === 'journal' && <GratitudeJournal />}
           </CardContent>

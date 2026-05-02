@@ -328,3 +328,155 @@ Une aventure magique où l'enfant découvre un miroir enchanté qui reflète la 
 4. **Parent dashboard** — Progress sharing via email/link
 5. **Sound effects** — Short feedback sounds for interactions
 6. **Onboarding flow** — First-time user tutorial
+
+---
+
+## Task 4-a: Onboarding Flow + Daily Inspiration Card
+
+### Date: 2026-05-03
+
+### Task ID: 4-a
+
+### New Features Added
+
+1. **🌟 Onboarding Flow** — First-time user welcome experience
+   - 3-step animated overlay using framer-motion (Welcome → Name Input → Personalized Greeting)
+   - Step 1: "Bienvenue petit voyageur ! 🌟" with animated mirror emoji and glow ring
+   - Step 2: "Comment tu t'appelles ?" with styled name input field (Enter key support)
+   - Step 3: "Enchanté {name} ! Ton aventure commence..." with sparkle burst animation
+   - Auto-dismiss after greeting with name saved to store
+   - Decorative floating elements (✨🌙⭐💫🌸🕊️) with staggered animations
+   - Warm color palette (cream/amber gradient background, gold accents)
+   - Step indicator dots at bottom
+   - Dark mode compatible
+   - Only shown when `userName` is empty and `_hydrated` is true
+
+2. **📖 Daily Inspiration Card** — Rotating daily quote/verse card
+   - 30 inspirational quotes in French, mixing:
+     - 7 Quranic verses (Coran) — e.g., 2:153, 2:186, 94:6, 7:156, 50:16, 51:55, 13:28
+     - 14 Hadiths (prophetic sayings) — e.g., best character, smile as charity, patience, kindness
+     - 9 Wisdom quotes (Sagesse) — e.g., gratitude, heart treasure, peace, kindness
+   - All quotes are child-appropriate (ages 6-12)
+   - Deterministic daily rotation: based on day of year modulo 30 (changes at midnight)
+   - Beautiful card with:
+     - Gold gradient border effect (2px gradient border)
+     - Type badge with color coding (amber=Coran, teal=Hadith, rose=Sagesse)
+     - Elegant quote styling with decorative quotation marks
+     - Source attribution
+     - Audio player button (using existing AudioPlayer + TTS API)
+     - Share button (uses Web Share API, falls back to clipboard copy)
+     - Date display in French format
+   - Responsive mobile-first design
+   - Dark mode compatible
+
+### Store Changes (`src/lib/store.ts`)
+- Added `userName: string` to AppState (default: empty string)
+- Added `setUserName: (name: string) => void` action
+- `userName` persisted in localStorage via `saveState()`
+- `userName` loaded from localStorage via `_hydrate()`
+
+### Files Created
+- `src/components/OnboardingFlow.tsx` — 3-step animated onboarding overlay
+- `src/components/DailyInspiration.tsx` — Daily inspiration card with 30 quotes
+
+### Files Modified
+- `src/lib/store.ts` — Added userName state + setUserName action + localStorage persistence
+- `src/app/page.tsx` — Added OnboardingFlow import and rendering (overlay on top of app)
+- `src/components/HeroSection.tsx` — Added DailyInspiration import and rendering (after feature cards, before progress indicator)
+
+### Technical Details
+- OnboardingFlow uses `z-[100]` to overlay above all content including Navigation
+- Auto-dismiss: Step 3 (greeting) auto-saves name after 2.5s delay
+- DailyInspiration uses `useMemo` for quote calculation to avoid re-renders
+- Share button uses `navigator.share` with `navigator.clipboard.writeText` fallback
+- Both components use `'use client'` directive
+- All text in French, child-friendly language
+- Animations: spring physics for step transitions, sparkle bursts, floating decorations
+
+### Lint Status
+- ✅ Zero errors on all new/modified files
+- Pre-existing error in FloatingStars.tsx (unrelated to this task)
+
+### Compilation
+- ✅ Clean, no errors
+
+---
+
+## Task 4-b: Memory Matching Game + Story Bookmarking System
+
+### Date: 2026-05-03
+
+### Task ID: 4-b
+
+### New Features Added
+
+1. **🧩 Memory Matching Game** — New activity in the Activities section
+   - 12 cards (6 pairs) in a 4×3 grid (3 columns on mobile, 4 on desktop)
+   - Card pairs use spiritual/heart-themed emojis: 🪞 💛 🌟 🤲 🌸 🕊️
+   - Each card shows "?" face-down and the emoji face-up
+   - Click to flip cards, match pairs by finding matching emojis
+   - Tracks: moves count, time elapsed (MM:SS format), matches found
+   - Visual feedback:
+     - **Green glow** on matched cards with pulsating border animation
+     - **Shake animation** on mismatched cards
+   - **Win screen** with confetti effect (30 animated pieces: circles, squares, stars)
+   - Star rating on completion:
+     - ⭐⭐⭐⭐⭐ (5 stars) if ≤10 moves
+     - ⭐⭐⭐ (3 stars) if ≤15 moves
+     - ⭐ (1 star) otherwise
+   - Calls `addStars` from store on win
+   - "🔄 Rejouer" (replay) button to restart
+   - Beautiful 3D card flip animation using framer-motion (rotateY with spring physics)
+   - Timer starts on first card flip, stops on win
+   - Responsive grid layout
+
+2. **💜 Story Bookmarking / Favorites System** — Save favorite chapters for quick access
+   - Store changes in `src/lib/store.ts`:
+     - Added `favoriteChapters: string[]` to AppState (default: empty array)
+     - Added `toggleFavorite(chapterKey: string)` action — adds/removes from favorites
+     - Added `isFavorite(chapterKey: string)` derived method
+     - `favoriteChapters` persisted in localStorage via `saveState()`/`loadState()`
+   - **FavoriteChapters component** (`src/components/FavoriteChapters.tsx`):
+     - Displays list of bookmarked chapters with emoji + title
+     - Each item has a "Lire →" button that navigates to the correct adventure
+     - Empty state: "Tu n'as pas encore de chapitres favoris. Ajoutes-en en cliquant sur le cœur ! 💜"
+     - Beautiful card layout with rose/pink gradient backgrounds
+     - AnimatePresence for smooth list animations
+     - Max height with scroll overflow
+   - **ChapterCard integration** (`src/components/ChapterCard.tsx`):
+     - Added heart toggle button in card header (next to chevron)
+     - Shows ❤️ (filled heart) if favorited, 🤍 (outline heart) if not
+     - `stopPropagation` on click to prevent card expand/collapse
+     - `whileTap` scale animation on heart button
+     - Uses `toggleFavorite` from store
+   - **PracticeSection integration** (`src/components/PracticeSection.tsx`):
+     - Added "Mes Favoris" card with Heart icon (rose color)
+     - Renders FavoriteChapters component
+     - Positioned after the progress overview card
+
+### Files Created
+- `src/components/MemoryGame.tsx` — Full memory card matching game with 3D flip, confetti, star rating
+- `src/components/FavoriteChapters.tsx` — Favorite chapters list with navigation
+
+### Files Modified
+- `src/lib/store.ts` — Added `favoriteChapters`, `toggleFavorite`, `isFavorite`, localStorage persistence
+- `src/components/ChapterCard.tsx` — Added heart toggle button (❤️/🤍) in header
+- `src/components/ActivitiesSection.tsx` — Added Memory Game activity (🧩), imported MemoryGame component
+- `src/components/PracticeSection.tsx` — Added "Mes Favoris" card with FavoriteChapters component, Heart icon import
+- `src/app/globals.css` — Added `.backface-hidden` (3D flip support), `.animate-shake` (mismatch feedback) CSS
+
+### Technical Details
+- MemoryGame uses `useState<MemoryCard[]>(createCards)` lazy initializer (avoids lint error)
+- Win detection moved into card click handler (not useEffect) for React 19 compliance
+- Stars awarded via `useRef` guard to prevent double-awarding
+- ConfettiPiece uses `window.innerHeight` via state to avoid SSR issues
+- FavoriteChapters maps chapter keys to display info (title, emoji, adventure)
+- All new text in French
+- Responsive design: 3-col mobile / 4-col desktop grid for memory cards
+
+### Lint Status
+- ✅ Zero new errors (only pre-existing FloatingStars.tsx error)
+- ✅ MemoryGame.tsx lint-clean (fixed React 19 set-state-in-effect issues)
+
+### Compilation
+- ✅ Clean, no errors
