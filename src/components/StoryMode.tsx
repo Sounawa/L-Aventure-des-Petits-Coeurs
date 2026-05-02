@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore, type AdventureId } from '@/lib/store';
 import { Button } from '@/components/ui/button';
-import { X, Play, Pause, BookOpen } from 'lucide-react';
+import { X, Play, Pause, BookOpen, Gauge } from 'lucide-react';
 
 interface StoryModeProps {
   story: string;
@@ -33,11 +33,23 @@ const adventureEmojis: Record<string, string[]> = {
   lumiere: ['🌟', '✨', '💜', '💫', '🌙', '⭐'],
 };
 
+type SpeedLevel = 'slow' | 'medium' | 'fast';
+
+const SPEED_CONFIG: Record<SpeedLevel, { label: string; ms: number; emoji: string }> = {
+  slow: { label: 'Lent', ms: 1000, emoji: '🐢' },
+  medium: { label: 'Moyen', ms: 667, emoji: '🚶' },
+  fast: { label: 'Rapide', ms: 400, emoji: '🏃' },
+};
+
+const SPEED_ORDER: SpeedLevel[] = ['slow', 'medium', 'fast'];
+
 function StoryModeContent({ story, title, adventureId, chapterNum, onClose }: Omit<StoryModeProps, 'isOpen'>) {
   const { markChapterRead, darkMode, bedtimeMode } = useAppStore();
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentWordIndex, setCurrentWordIndex] = useState(-1);
   const [isCompleted, setIsCompleted] = useState(false);
+  const [speed, setSpeed] = useState<SpeedLevel>('medium');
+  const [isManual, setIsManual] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const completedRef = useRef(false);
 
@@ -45,9 +57,11 @@ function StoryModeContent({ story, title, adventureId, chapterNum, onClose }: Om
   const words = useMemo(() => story.split(/\s+/).filter(w => w.trim()), [story]);
   const totalWords = words.length;
 
+  const speedMs = SPEED_CONFIG[speed].ms;
+
   // Word-by-word highlight animation
   useEffect(() => {
-    if (isPlaying && currentWordIndex < totalWords) {
+    if (isPlaying && !isManual && currentWordIndex < totalWords) {
       intervalRef.current = setInterval(() => {
         setCurrentWordIndex(prev => {
           if (prev >= totalWords - 1) {
@@ -56,12 +70,12 @@ function StoryModeContent({ story, title, adventureId, chapterNum, onClose }: Om
           }
           return prev + 1;
         });
-      }, 667); // ~1.5 words per second
+      }, speedMs);
     }
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [isPlaying, currentWordIndex, totalWords]);
+  }, [isPlaying, isManual, currentWordIndex, totalWords, speedMs]);
 
   const progress = totalWords > 0 ? (currentWordIndex + 1) / totalWords : 0;
 
@@ -69,10 +83,34 @@ function StoryModeContent({ story, title, adventureId, chapterNum, onClose }: Om
     if (currentWordIndex >= totalWords - 1) {
       setCurrentWordIndex(0);
       setIsPlaying(true);
+      setIsManual(false);
     } else {
       setIsPlaying(prev => !prev);
+      setIsManual(false);
     }
   }, [currentWordIndex, totalWords]);
+
+  const handleManualNext = useCallback(() => {
+    if (currentWordIndex < totalWords - 1) {
+      setCurrentWordIndex(prev => prev + 1);
+      setIsManual(true);
+      setIsPlaying(false);
+    }
+  }, [currentWordIndex, totalWords]);
+
+  const handleManualPrev = useCallback(() => {
+    if (currentWordIndex > 0) {
+      setCurrentWordIndex(prev => prev - 1);
+      setIsManual(true);
+      setIsPlaying(false);
+    }
+  }, [currentWordIndex]);
+
+  const handleSpeedChange = useCallback(() => {
+    const currentIdx = SPEED_ORDER.indexOf(speed);
+    const nextIdx = (currentIdx + 1) % SPEED_ORDER.length;
+    setSpeed(SPEED_ORDER[nextIdx]);
+  }, [speed]);
 
   const handleFinishReading = useCallback(() => {
     if (completedRef.current) return;
@@ -86,7 +124,7 @@ function StoryModeContent({ story, title, adventureId, chapterNum, onClose }: Om
     onClose();
   }, [onClose]);
 
-  // Build word map: map from flat word index to paragraph/word-in-paragraph
+  // Build word map
   const paragraphWordRanges = useMemo(() => {
     const ranges: { start: number; end: number; words: string[] }[] = [];
     let flatIdx = 0;
@@ -162,14 +200,15 @@ function StoryModeContent({ story, title, adventureId, chapterNum, onClose }: Om
         </div>
 
         {/* Story text area */}
-        <div className="flex-1 overflow-y-auto px-4 sm:px-8 md:px-16 lg:px-24 pb-24 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto px-4 sm:px-8 md:px-16 lg:px-24 pb-32 custom-scrollbar">
           <div className="max-w-3xl mx-auto py-4">
             {paragraphWordRanges.map((range, pIdx) => (
               <p
                 key={pIdx}
-                className={`text-xl sm:text-2xl leading-relaxed mb-6 ${
+                className={`text-xl sm:text-2xl leading-[2] mb-8 ${
                   darkMode || bedtimeMode ? 'text-amber-50/90' : 'text-amber-950/85'
                 }`}
+                style={{ fontFamily: "'Georgia', 'Times New Roman', 'Noto Serif', serif" }}
               >
                 {range.words.map((word, wIdx) => {
                   const flatIndex = range.start + wIdx;
@@ -178,11 +217,11 @@ function StoryModeContent({ story, title, adventureId, chapterNum, onClose }: Om
                   return (
                     <span
                       key={wIdx}
-                      className={`inline transition-all duration-300 ${
+                      className={`inline transition-all duration-200 ${
                         isHighlighted
-                          ? 'bg-amber-300/60 dark:bg-amber-400/50 rounded px-1 -mx-0.5'
+                          ? 'bg-amber-300/70 dark:bg-amber-400/60 rounded px-1 -mx-0.5 font-bold scale-105'
                           : isPast
-                          ? (darkMode || bedtimeMode ? 'text-amber-100/60' : 'text-amber-900/50')
+                          ? (darkMode || bedtimeMode ? 'text-amber-100/50' : 'text-amber-900/40')
                           : ''
                       }`}
                     >
@@ -209,15 +248,28 @@ function StoryModeContent({ story, title, adventureId, chapterNum, onClose }: Om
 
         {/* Controls */}
         <div className={`absolute bottom-4 left-0 right-0 z-20 px-4 sm:px-8 ${isCompleted ? 'hidden' : ''}`}>
-          <div className={`max-w-3xl mx-auto rounded-2xl p-4 flex items-center gap-4 ${
+          <div className={`max-w-3xl mx-auto rounded-2xl p-3 sm:p-4 flex items-center gap-2 sm:gap-3 ${
             darkMode || bedtimeMode
               ? 'bg-black/40 backdrop-blur-md border border-white/10'
               : 'bg-white/70 backdrop-blur-md border border-amber-200/50'
           }`}>
+            {/* Previous word button */}
+            <Button
+              onClick={handleManualPrev}
+              disabled={currentWordIndex <= 0}
+              className={`rounded-full w-9 h-9 p-0 flex-shrink-0 text-sm ${
+                darkMode || bedtimeMode
+                  ? 'bg-amber-400/10 hover:bg-amber-400/20 text-amber-200 disabled:opacity-30'
+                  : 'bg-amber-50 hover:bg-amber-100 text-amber-800 disabled:opacity-30'
+              }`}
+            >
+              ←
+            </Button>
+
             {/* Play/Pause */}
             <Button
               onClick={handlePlayPause}
-              className={`rounded-full w-12 h-12 p-0 flex-shrink-0 ${
+              className={`rounded-full w-11 h-11 p-0 flex-shrink-0 ${
                 darkMode || bedtimeMode
                   ? 'bg-amber-400/20 hover:bg-amber-400/30 text-amber-200'
                   : 'bg-amber-100 hover:bg-amber-200 text-amber-800'
@@ -226,20 +278,50 @@ function StoryModeContent({ story, title, adventureId, chapterNum, onClose }: Om
               {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5 ml-0.5" />}
             </Button>
 
+            {/* Next word button */}
+            <Button
+              onClick={handleManualNext}
+              disabled={currentWordIndex >= totalWords - 1}
+              className={`rounded-full w-9 h-9 p-0 flex-shrink-0 text-sm ${
+                darkMode || bedtimeMode
+                  ? 'bg-amber-400/10 hover:bg-amber-400/20 text-amber-200 disabled:opacity-30'
+                  : 'bg-amber-50 hover:bg-amber-100 text-amber-800 disabled:opacity-30'
+              }`}
+            >
+              →
+            </Button>
+
+            {/* Speed control */}
+            <motion.button
+              onClick={handleSpeedChange}
+              className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium transition-colors ${
+                darkMode || bedtimeMode
+                  ? 'bg-amber-400/10 hover:bg-amber-400/20 text-amber-200'
+                  : 'bg-amber-50 hover:bg-amber-100 text-amber-700'
+              }`}
+              whileTap={{ scale: 0.9 }}
+              aria-label={`Vitesse: ${SPEED_CONFIG[speed].label}`}
+            >
+              <Gauge className="w-3 h-3" />
+              <span className="hidden sm:inline">{SPEED_CONFIG[speed].emoji}</span>
+              <span>{SPEED_CONFIG[speed].label}</span>
+            </motion.button>
+
+            {/* Spacer */}
+            <div className="flex-1 min-w-0" />
+
             {/* Progress text */}
-            <div className="flex-1 min-w-0">
-              <p className={`text-xs ${darkMode || bedtimeMode ? 'text-amber-200/70' : 'text-amber-700/70'}`}>
-                {currentWordIndex >= 0 ? `${Math.round(progress * 100)}% lu` : 'Appuie sur ▶ pour commencer la lecture'}
-              </p>
-            </div>
+            <p className={`text-[10px] sm:text-xs ${darkMode || bedtimeMode ? 'text-amber-200/70' : 'text-amber-700/70'} hidden sm:block`}>
+              {currentWordIndex >= 0 ? `${Math.round(progress * 100)}%` : '▶ Lecture'}
+            </p>
 
             {/* Finish button */}
             <Button
               onClick={handleFinishReading}
-              className="rounded-full px-4 flex-shrink-0 text-sm font-bold"
+              className="rounded-full px-3 sm:px-4 flex-shrink-0 text-xs sm:text-sm font-bold"
               style={{ background: 'linear-gradient(135deg, #C9A227, #E8D44D)', color: '#3D2C1E' }}
             >
-              J&apos;ai fini de lire ! ⭐
+              J&apos;ai fini ! ⭐
             </Button>
           </div>
         </div>
@@ -294,7 +376,6 @@ function StoryModeContent({ story, title, adventureId, chapterNum, onClose }: Om
 }
 
 export default function StoryMode({ story, title, adventureId, chapterNum, isOpen, onClose }: StoryModeProps) {
-  // StoryModeContent remounts naturally when isOpen toggles (AnimatePresence unmounts on exit)
   return (
     <AnimatePresence>
       {isOpen && (

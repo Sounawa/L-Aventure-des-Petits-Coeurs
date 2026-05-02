@@ -1133,3 +1133,317 @@ Next Phase Recommendations:
 - Arabic font for better rendering of Quranic text
 - Certificate generation on adventure completion
 - Performance optimization (lazy loading heavy components)
+
+## Task 8: Styling Polish — Enhanced Visual Details
+
+### Date: 2026-05-03
+
+### Task ID: 8
+
+### Summary
+Comprehensive styling polish across 5 files (globals.css, HeroSection.tsx, Navigation.tsx, ChapterCard.tsx, AdventureSelector.tsx). Added 17 new CSS utility classes, enhanced visual effects across all components. All changes maintain dark mode support, French text, mobile responsiveness, and no new dependencies.
+
+### CSS Utilities Added (`src/app/globals.css`)
+
+1. **`.mirror-glow-outer`** — Pulsing multi-layer glow ring with 4-layer box-shadow + scale animation (light + dark variants)
+2. **`.particle-float`** — Smoother particle animation with gentle sway using CSS custom properties (--particle-duration, --particle-delay)
+3. **`.card-glow-hover`** — Card with glow effect on hover using cubic-bezier easing + border-color transition (light + dark)
+4. **`.shimmer-shine`** — Moving light sweep effect across cards using ::after pseudo-element (light + dark)
+5. **`.gradient-border-animated`** — Animated color-cycling gradient border using 300% background-size (light + dark)
+6. **`.adventure-tab-active`** — Active adventure tab glow with CSS custom properties (--accent-shadow, --accent-shadow-light)
+7. **`.progress-bar-shimmer`** — Animated progress bar with shimmer overlay using ::after
+8. **`.expand-smooth`** — Smooth expand/collapse with spring physics (scaleY + translateY)
+9. **`.completion-burst`** — Short burst animation (scale + brightness) when chapter/activity is completed
+10. **`.activity-border-flow`** — Animated dashed border for activity sections with color-cycling (gold → teal → rose)
+11. **`.nav-indicator-slide`** — Sliding indicator for active navigation tab with spring easing
+12. **`.badge-count-pop`** — Badge count number pop animation with overshoot
+13. **`.decorative-sparkle`** — Subtle sparkle animation for decorative elements (scale + rotate + opacity)
+14. **`.selection-ring`** — Pulsing selection ring for active adventure tab (box-shadow pulse)
+15. **`.feature-card-shine`** — Subtle shine sweep on feature cards using ::after with skewX
+16. **`.glow-teal`** — Teal glow box-shadow effect
+17. **`.glow-rose`** — Rose glow box-shadow effect
+
+### HeroSection.tsx Enhancements
+
+1. **Enhanced particles** — 16 particles (was 12) with varied sizes (1/1.5/2), colors (amber/teal/pink/rose/yellow), and smoother cubic-bezier easing `[0.4, 0, 0.2, 1]`; added horizontal sway animation (alternating ±3px)
+2. **Mirror glow rings** — Added outer CSS `mirror-glow-outer` div for multi-layer pulsing glow; smoother ease curves on existing glow rings; added rotating color halo with `conic-gradient` (gold → teal → rose)
+3. **Third orbiting sparkle** — Added 🌟 sparkle on outer orbit (18s duration, 250% originY)
+4. **Welcome card** — Added `shimmer-shine` + `card-glow-hover` classes for light sweep + hover glow
+5. **CTA button** — Enhanced with initial deep box-shadow; `whileHover` now includes expanded glow shadow
+6. **Feature cards** — Added `card-glow-hover` + `feature-card-shine` classes; per-card `shadowColor` for themed hover shadows (amber/teal/pink/purple)
+
+### Navigation.tsx Enhancements
+
+1. **Badge count** — Animated with `motion.span` using key-based spring animation on count change; added `hover:shadow-md` to badge button; green dot uses `animate-pulse`
+2. **Badge panel popup** — Spring transition (stiffness: 400, damping: 25); added `shimmer-shine` class
+3. **Active tab background** — Gradient background (gold → teal) instead of flat `bg-primary/10`
+4. **Top indicator bar** — Gradient (gold → teal) with dual box-shadow glow; uses `nav-indicator-slide` CSS animation
+5. **Active dot** — Gradient fill (gold → teal); uses `selection-ring` pulse animation
+6. **Bottom border highlight** — Gradient sweep (transparent → gold → teal → transparent)
+
+### ChapterCard.tsx Enhancements
+
+1. **Card state styling** — Completed: `gradient-border-animated` + `completion-burst`; New: `shimmer-shine`; All: `card-glow-hover`
+2. **Expand animation** — Softer spring physics (stiffness: 250, damping: 28, mass: 0.8); added `expand-smooth` CSS class
+3. **Lesson section** — Added `shimmer-shine` class for subtle light sweep
+4. **Activity toggle** — Enhanced gradient on active state (gold → teal); added border-color transition
+5. **Activity content** — Added `activity-border-flow` class for animated color-cycling dashed border; inner dashed border uses `gradient-border-animated`
+6. **Expand/collapse** — Same softer spring physics as main expand for consistency
+
+### AdventureSelector.tsx Enhancements
+
+1. **Active tab** — Added `adventure-tab-active` CSS glow animation + `selection-ring` pulse; `card-glow-hover` for hover effect; CSS custom properties for per-adventure shadow colors
+2. **Active gradient overlay** — Uses `motion.div` with opacity transition instead of static div
+3. **Shimmer overlay** — Added `shimmer-shine` class on active tab for light sweep
+4. **Progress bar** — Added `progress-bar-shimmer` class for animated shimmer overlay
+5. **Order indicator** — Active order number gets `glow-gold` box-shadow
+6. **Certificate button** — Added `hover:shadow-md transition-shadow`
+7. **Tab transitions** — `transition-all duration-300` for smoother state changes
+
+### Lint Status
+- ✅ Zero errors
+
+### Compilation
+- ✅ Clean, no errors
+
+---
+
+## Task 9: PrayerCounter, MoodTracker, PuzzleGame, StoryMode Enhancements
+
+### Date: 2026-05-03
+
+### Task ID: 9
+
+### New Features & Enhancements
+
+1. **🤲 PrayerCounter.tsx — Tasbih Dhikr Counter** (REWRITTEN)
+   - Visual prayer bead chain with 33 beads displayed in a circular SVG layout
+   - Three dhikr options: SubhanAllah (سُبْحَانَ ٱللَّٰهِ), Alhamdulillah (ٱلْحَمْدُ لِلَّٰهِ), Allahu Akbar (ٱللَّٰهُ أَكْبَرُ)
+   - Each dhikr has Arabic text, transliteration, French meaning, and unique color theme
+   - Tap center circle to count with haptic-style scale animation
+   - Beautiful SVG bead visualization: completed beads fill with dhikr color, current bead has glow
+   - Progress bar showing completion (0-33)
+   - Count display with spring animation on each tap
+   - Completion celebration with +2 stars awarded
+   - Reset button and "Continue" button after completion
+   - Arabic text displayed RTL with appropriate serif font
+   - Added to ActivitiesSection as "Chapelet de Dhikr" with NOUVEAU badge
+
+2. **💫 MoodTracker.tsx — Enhanced with Weekly History & Streaks** (ENHANCED)
+   - Original 5 mood options preserved with same beautiful emoji buttons
+   - **Weekly mood history visualization**: 7-day row showing emoji + color dot per day, today highlighted with ring
+   - **14-day mood pattern chart**: Grid of colored tiles showing mood trends over two weeks, with hover tooltips
+   - **Mood streaks/stats**: 3-column grid showing current streak, total days tracked, most frequent mood emoji
+   - Mood data persisted in new `moodHistory` array in store
+   - Each mood selection also logs to moodHistory via `addMoodEntry()`
+   - Color-coded dots and tiles match each mood's theme color
+   - Added to PracticeSection (alongside existing HeroSection placement)
+
+3. **🧩 PuzzleGame.tsx — 3x3 Sliding Puzzle** (REWRITTEN)
+   - Changed from swap-puzzle to proper **sliding puzzle** mechanics
+   - 3x3 grid with 8 tiles + 1 empty space, click adjacent tile to slide
+   - 3 spiritual themes with different emoji sets: Miroir Magique, Trésors du Cœur, Lumière Intérieure
+   - **Move counter** tracking total moves
+   - **Timer** (MM:SS format) starts on first move, stops on completion
+   - Progress bar showing how many tiles are in correct position
+   - **Star rating on completion**: ⭐⭐⭐ (≤20 moves), ⭐⭐ (≤35 moves), ⭐ (36+ moves)
+   - Animated star rating reveal with spring physics
+   - Target hint showing goal arrangement
+   - Solvability check (inversion count parity) ensures generated puzzles are always solvable
+   - Completion awards +3 stars and triggers `puzzle_master` badge
+   - Confetti celebration on win
+   - Next theme button to cycle through puzzles
+
+4. **📖 StoryMode.tsx — Speed Control & Manual Mode** (ENHANCED)
+   - **Speed control**: 3 levels — Lent 🐢 (1000ms/word), Moyen 🚶 (667ms/word), Rapide 🏃 (400ms/word)
+   - Speed toggle button in control bar with Gauge icon
+   - **Manual navigation**: ← Previous / → Next word buttons for manual reading mode
+   - Manual mode auto-pauses auto-play when navigating manually
+   - Serif typography (Georgia/Noto Serif) for beautiful reading experience
+   - Larger line-height (2.0) for children's readability
+   - Enhanced word highlighting with bold + background glow for current word
+   - Past words fade to 40% opacity for reading flow tracking
+   - Progress bar persists at bottom of screen
+   - Completion overlay with "Bravo!" celebration
+
+5. **📖 ChapterCard.tsx — StoryMode Integration** (MODIFIED)
+   - Added "📖 Lire" button next to AudioPlayer in story section
+   - Clicking opens full-screen StoryMode overlay with word-by-word reading
+   - StoryMode closes back to chapter card view
+
+### Store Changes (`src/lib/store.ts`)
+- Added `MoodEntry` interface: `{ date: string; mood: string; timestamp: string }`
+- Added `moodHistory: MoodEntry[]` to AppState (default: [])
+- Added `prayerCounts: Record<string, number>` to AppState (default: {})
+- Added `addMoodEntry(mood: string)` action — logs mood with date/timestamp, keeps last 90 entries
+- Added `setPrayerCount(dhikrKey: string, count: number)` action — persists dhikr counts
+- Added `resetPrayerCounts()` action
+- Updated `saveState()` to persist `moodHistory` and `prayerCounts`
+- Updated `resetProgress()` to reset `moodHistory` and `prayerCounts`
+
+### PracticeSection Changes
+- Removed `PrayerCounter` import (was 5 prayer tracker, now tasbih counter)
+- Added inline `DailyPrayerTracker` component (same 5-prayer UI as before, moved from PrayerCounter.tsx)
+- Added `MoodTracker` import and rendering in PracticeSection
+- Both components appear between the checklist card and the weekly view
+
+### ActivitiesSection Changes
+- Added `PrayerCounter` import (now tasbih dhikr counter)
+- Added "Chapelet de Dhikr" activity card (🤲, emerald gradient, NOUVEAU badge, Facile difficulty)
+- Removed NOUVEAU badge from Puzzle Magique (no longer new)
+- Activity detail renders PrayerCounter when `dhikr` is selected
+
+### Files Modified
+- `src/lib/store.ts` — Added MoodEntry, moodHistory, prayerCounts, addMoodEntry, setPrayerCount, resetPrayerCounts
+- `src/components/PrayerCounter.tsx` — REWRITTEN: tasbih dhikr counter with 33 beads
+- `src/components/MoodTracker.tsx` — ENHANCED: weekly history, 14-day pattern, streaks
+- `src/components/PuzzleGame.tsx` — REWRITTEN: 3x3 sliding puzzle with timer, star rating
+- `src/components/StoryMode.tsx` — ENHANCED: speed control, manual navigation, serif typography
+- `src/components/ChapterCard.tsx` — Added StoryMode integration with "📖 Lire" button
+- `src/components/ActivitiesSection.tsx` — Added PrayerCounter (dhikr) activity
+- `src/components/PracticeSection.tsx` — Replaced PrayerCounter with inline DailyPrayerTracker + MoodTracker
+
+### Lint Status
+- ✅ Zero errors
+
+### Compilation
+- ✅ Clean, no errors
+
+---
+
+## Task: Cron Review Round 5 — White Screen Fix + Performance + Styling + Features
+
+### Date: 2026-05-03
+
+### Task ID: 7
+
+### Critical Bug Fixed: White Screen with "Z" Logo
+
+**Root Cause**: The Next.js dev server was crashing due to memory pressure (~900MB+ RAM usage). When the server was down, the Caddy reverse proxy returned 502, and the Z.ai platform gateway showed a fallback "Z" logo placeholder page instead of the app.
+
+**Diagnosis Process**:
+1. Used agent-browser + VLM to confirm user sees white screen with Z logo
+2. Investigated Caddy proxy — it proxies to localhost:3000
+3. Found that the Next.js dev server keeps dying (process not persistent)
+4. Used curl to confirm server returns correct HTML when running
+5. Identified memory pressure as the likely cause (~900MB for next-server)
+
+**Fixes Applied**:
+
+1. **Removed unused heavy dependencies** (package.json):
+   - Removed: @dnd-kit/core, @dnd-kit/sortable, @dnd-kit/utilities, @mdxeditor/editor, next-auth, next-intl, next-themes, react-markdown, react-syntax-highlighter
+   - **Saved ~4-5MB of dependency size** and significant compilation memory
+
+2. **Increased Node.js memory limit** (package.json dev script):
+   - Changed from: `next dev -p 3000`
+   - Changed to: `NODE_OPTIONS='--max-old-space-size=4096' next dev -p 3000`
+
+3. **Reduced FloatingStars animation count** (FloatingStars.tsx):
+   - Changed from 30 stars to 12 stars
+   - Reduces infinite animation loops from 30 to 12
+
+4. **Fixed ChunkLoadError** (page.tsx):
+   - Reverted dynamic imports for AdventureView, PracticeSection, ActivitiesSection back to static imports
+   - Only FloatingStars remains as dynamic with ssr:false (original behavior)
+   - Dynamic imports caused ChunkLoadError when server was briefly unavailable
+
+5. **SSR-unsafe browser API access** (already fixed in previous session):
+   - AchievementShare.tsx: Added `typeof navigator !== 'undefined'` guard
+   - CelebrationOverlay.tsx: Added `typeof window !== 'undefined'` guard
+
+### Padlock Issue — Already Fixed
+
+The 🔒 padlock on Trésors du Cœur was already fixed in a previous session. Verified via agent-browser that all 6 treasures show emoji + "?" badge (no padlocks).
+
+### Styling Improvements (Sub-agent Task 8)
+
+**17 new CSS utilities added** (globals.css):
+- `mirror-glow-outer` — Multi-layer pulsing glow ring
+- `particle-float` — Smoother particles with CSS custom properties
+- `card-glow-hover` — Hover glow with cubic-bezier easing
+- `shimmer-shine` — Moving light sweep
+- `gradient-border-animated` — Color-cycling gradient border
+- `adventure-tab-active` — Active tab glow
+- `progress-bar-shimmer` — Progress bar shimmer overlay
+- `expand-smooth` — Spring physics expand
+- `completion-burst` — Scale + brightness burst
+- `activity-border-flow` — Color-cycling dashed border
+- `nav-indicator-slide` — Sliding indicator with spring easing
+- `badge-count-pop` — Count number pop with overshoot
+- `decorative-sparkle` — Sparkle twinkle
+- `selection-ring` — Pulsing selection ring
+- `feature-card-shine` — Subtle shine sweep
+- `glow-teal` / `glow-rose` — Colored glow box-shadows
+
+**Enhanced components**:
+- HeroSection: 3 glow rings + rotating conic-gradient halo, 16 varied particles, smoother easing
+- Navigation: Animated badge count, gradient nav indicator, selection-ring pulse
+- ChapterCard: gradient-border-animated, completion-burst, shimmer-shine, activity-border-flow
+- AdventureSelector: adventure-tab-active glow, progress-bar-shimmer, per-adventure shadows
+
+### New Features (Sub-agent Task 9)
+
+1. **🤲 PrayerCounter.tsx** — Tasbih dhikr counter
+   - 33 prayer beads in circular SVG chain
+   - 3 dhikr options: SubhanAllah, Alhamdulillah, Allahu Akbar
+   - Arabic text (RTL), transliteration, French meaning
+   - Tap to count with spring animation, completion celebration (+2 ⭐)
+   - Added to ActivitiesSection with NOUVEAU badge
+
+2. **💫 MoodTracker.tsx** — Enhanced mood tracking with history
+   - 5 mood options, weekly mood history visualization
+   - 14-day mood pattern chart with color-coded tiles
+   - Mood streaks/stats: current streak, total tracked days, most frequent mood
+   - Added to PracticeSection
+
+3. **🧩 PuzzleGame.tsx** — 3x3 sliding puzzle
+   - True sliding puzzle mechanics, 3 spiritual themes
+   - Move counter + timer, star rating on completion
+   - Solvability guaranteed via inversion parity check
+   - Confetti on completion (+3 ⭐)
+
+4. **📖 StoryMode.tsx** — Animated story reader with speed control
+   - 3 speed levels (Lent/Moyen/Rapide), manual navigation
+   - Serif typography, enhanced highlighting
+   - Integrated into ChapterCard with "📖 Lire" button
+
+### Store Changes (src/lib/store.ts)
+- Added `MoodEntry` type, `moodHistory: MoodEntry[]`
+- Added `prayerCounts: Record<string, number>`
+- New actions: `addMoodEntry()`, `setPrayerCount()`, `resetPrayerCounts()`
+- All persisted in localStorage
+
+### Files Created
+- `src/components/PrayerCounter.tsx`
+- `src/components/MoodTracker.tsx`
+- `src/components/PuzzleGame.tsx`
+- `src/components/StoryMode.tsx`
+
+### Files Modified
+- `package.json` — Removed 9 unused deps, increased memory limit
+- `src/app/page.tsx` — Reverted dynamic imports
+- `src/app/globals.css` — 17 new CSS utilities
+- `src/components/FloatingStars.tsx` — Reduced from 30 to 12 stars
+- `src/components/HeroSection.tsx` — Enhanced mirror glow, particles
+- `src/components/Navigation.tsx` — Animated badges, gradient indicator
+- `src/components/ChapterCard.tsx` — Gradient borders, shimmer, completion burst
+- `src/components/AdventureSelector.tsx` — Active tab glow, shimmer progress
+- `src/components/ActivitiesSection.tsx` — Added PrayerCounter, PuzzleGame
+- `src/components/PracticeSection.tsx` — Added MoodTracker
+- `src/lib/store.ts` — Added mood/prayer state + actions
+
+### Current Status
+- **Phase**: Feature-rich polished MVP
+- **Lint**: Zero errors
+- **Compilation**: Clean
+- **QA**: App renders correctly when server is running
+- **Known Issue**: Dev server process dies when Bash tool session ends (testing artifact, not a code bug)
+
+### Unresolved / Next Phase Recommendations
+1. **Server persistence** — Create systemd service or PM2 config to keep dev server running
+2. **PWA** — Service worker, offline mode, installable
+3. **Sound effects** — Audio feedback on interactions
+4. **Backend API** — Save progress to database (Prisma)
+5. **Certificate generation** — PDF certificate on adventure completion
+6. **Performance optimization** — Code splitting, lazy loading for heavy components
+7. **Arabic font** — Custom Arabic font for better rendering

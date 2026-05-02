@@ -9,6 +9,7 @@ import { ChevronDown, Sparkles, Heart } from 'lucide-react';
 import Image from 'next/image';
 import AudioPlayer from './AudioPlayer';
 import { useSoundEffects } from './SoundEffects';
+import StoryMode from './StoryMode';
 
 interface ChapterData {
   chapterNum: number;
@@ -57,6 +58,7 @@ export default function ChapterCard({ data }: { data: ChapterData }) {
   const { play } = useSoundEffects();
   const [expanded, setExpanded] = useState(false);
   const [showActivity, setShowActivity] = useState(false);
+  const [showStoryMode, setShowStoryMode] = useState(false);
 
   const key = `${data.adventureId}-${data.chapterNum}`;
   const progress = chaptersProgress[key] || { read: false, activityCompleted: false };
@@ -74,10 +76,10 @@ export default function ChapterCard({ data }: { data: ChapterData }) {
 
   // Determine card styling based on state
   const cardStyle = progress.activityCompleted
-    ? 'gradient-border border-transparent bg-primary/5'
+    ? 'gradient-border-animated border-transparent bg-primary/5 completion-burst'
     : progress.read
     ? 'border-secondary/30 bg-secondary/5 border-2'
-    : 'border-border/50 border-2';
+    : 'border-border/50 border-2 shimmer-shine';
 
   const isNew = !progress.read && !progress.activityCompleted;
 
@@ -85,7 +87,7 @@ export default function ChapterCard({ data }: { data: ChapterData }) {
   const progressPercent = progress.activityCompleted ? 100 : progress.read ? 50 : 0;
 
   return (
-    <Card className={`overflow-hidden transition-all ${cardStyle}`}>
+    <Card className={`overflow-hidden transition-all duration-300 card-glow-hover ${cardStyle}`}>
       {/* Chapter header - always visible */}
       <div
         role="button"
@@ -168,14 +170,15 @@ export default function ChapterCard({ data }: { data: ChapterData }) {
         </div>
       )}
 
-      {/* Expanded content with better animation */}
+      {/* Expanded content with smoother animation */}
       <AnimatePresence>
         {expanded && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+            transition={{ type: 'spring', stiffness: 250, damping: 28, mass: 0.8 }}
+            className="expand-smooth"
           >
             <CardContent className="pt-0">
               {/* Illustration */}
@@ -210,7 +213,18 @@ export default function ChapterCard({ data }: { data: ChapterData }) {
                     <span className="feather-write">📜</span>
                     Histoire
                   </p>
-                  <AudioPlayer text={data.story} size="sm" />
+                  <div className="flex items-center gap-1.5">
+                    <AudioPlayer text={data.story} size="sm" />
+                    <motion.button
+                      onClick={() => setShowStoryMode(true)}
+                      className="px-2.5 py-1.5 rounded-lg text-[10px] font-bold bg-gradient-to-r from-amber-100 to-yellow-100 dark:from-amber-900/30 dark:to-yellow-900/30 border border-amber-200/50 dark:border-amber-700/30 text-amber-700 dark:text-amber-300 hover:shadow-md transition-all"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      aria-label="Mode lecture"
+                    >
+                      📖 Lire
+                    </motion.button>
+                  </div>
                 </div>
                 <div className="text-sm sm:text-base leading-[1.85] text-foreground/90" style={{ fontFamily: "'Georgia', 'Times New Roman', 'Noto Serif', serif" }}>
                   <WordByWordText text={data.story} />
@@ -221,7 +235,7 @@ export default function ChapterCard({ data }: { data: ChapterData }) {
               <div className="story-divider my-3" />
 
               {/* Lesson */}
-              <div className="bg-gradient-to-r from-teal-50/50 to-cyan-50/50 dark:from-teal-900/8 dark:to-cyan-900/8 rounded-xl p-4 mb-4 border border-teal-200/30 dark:border-teal-700/15">
+              <div className="bg-gradient-to-r from-teal-50/50 to-cyan-50/50 dark:from-teal-900/8 dark:to-cyan-900/8 rounded-xl p-4 mb-4 border border-teal-200/30 dark:border-teal-700/15 shimmer-shine">
                 <div className="flex items-center gap-1.5 mb-1.5">
                   <Sparkles className="w-3.5 h-3.5 text-teal-500" />
                   <p className="text-xs text-teal-600 dark:text-teal-400 font-semibold uppercase tracking-wider">Leçon</p>
@@ -231,34 +245,35 @@ export default function ChapterCard({ data }: { data: ChapterData }) {
                 </p>
               </div>
 
-              {/* Activity toggle with better styling */}
+              {/* Activity toggle with better styling — gradient active state */}
               <Button
                 onClick={() => setShowActivity(!showActivity)}
                 variant="outline"
-                className="w-full mb-3 border-primary/20 hover:bg-primary/10 hover:text-primary transition-all"
-                style={showActivity ? { background: 'linear-gradient(135deg, rgba(201, 162, 39, 0.1), rgba(232, 212, 77, 0.1))' } : {}}
+                className="w-full mb-3 border-primary/20 hover:bg-primary/10 hover:text-primary transition-all duration-200"
+                style={showActivity ? { background: 'linear-gradient(135deg, rgba(201, 162, 39, 0.1), rgba(20, 184, 166, 0.08))', borderColor: 'rgba(201, 162, 39, 0.3)' } : {}}
               >
                 {showActivity ? '🔼 Cacher l\'activité' : `🎮 ${data.activityLabel}`}
               </Button>
 
-              {/* Activity content with engaging styling */}
+              {/* Activity content with engaging styling & flowing border */}
               <AnimatePresence>
                 {showActivity && (
                   <motion.div
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: 'auto', opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
-                    transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+                    transition={{ type: 'spring', stiffness: 250, damping: 28, mass: 0.8 }}
+                    className="expand-smooth"
                   >
-                    <div className="rounded-xl p-4 relative overflow-hidden"
+                    <div className="rounded-xl p-4 relative overflow-hidden activity-border-flow"
                       style={{ background: 'linear-gradient(135deg, rgba(201, 162, 39, 0.05), rgba(20, 184, 166, 0.05))' }}
                     >
                       {/* Decorative corner elements */}
                       <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-bl from-primary/5 to-transparent rounded-bl-2xl" />
                       <div className="absolute bottom-0 left-0 w-16 h-16 bg-gradient-to-tr from-secondary/5 to-transparent rounded-tr-2xl" />
                       
-                      {/* Dashed border overlay */}
-                      <div className="border-2 border-dashed border-primary/20 rounded-lg p-3">
+                      {/* Inner content with gradient border */}
+                      <div className="border-2 border-dashed border-primary/20 rounded-lg p-3 gradient-border-animated">
                         {data.activity}
                         {!progress.activityCompleted && (
                           <Button
@@ -279,6 +294,16 @@ export default function ChapterCard({ data }: { data: ChapterData }) {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Story Mode overlay */}
+      <StoryMode
+        story={data.story}
+        title={data.title}
+        adventureId={data.adventureId}
+        chapterNum={data.chapterNum}
+        isOpen={showStoryMode}
+        onClose={() => setShowStoryMode(false)}
+      />
     </Card>
   );
 }

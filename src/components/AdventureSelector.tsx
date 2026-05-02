@@ -88,9 +88,9 @@ export default function AdventureSelector() {
       <span className="text-[10px] text-muted-foreground font-medium">Ordre recommandé :</span>
       {adventures.map((adv, i) => (
         <div key={adv.id} className="flex items-center">
-          <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full transition-all ${
+          <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full transition-all duration-200 ${
             currentAdventure === adv.id
-              ? 'bg-primary/20 text-primary'
+              ? 'bg-primary/20 text-primary glow-gold'
               : 'text-muted-foreground'
           }`}>
             {adv.order}
@@ -113,21 +113,28 @@ export default function AdventureSelector() {
           <motion.button
             key={adv.id}
             onClick={() => handleClick(adv.id)}
-            className={`flex-shrink-0 px-4 py-3 rounded-2xl border-2 transition-all min-w-[130px] snap-start relative overflow-hidden ${
+            className={`flex-shrink-0 px-4 py-3 rounded-2xl border-2 transition-all duration-300 min-w-[130px] snap-start relative overflow-hidden card-glow-hover ${
               isActive
-                ? 'border-primary/60 shadow-xl scale-105'
+                ? 'border-primary/60 shadow-xl scale-105 adventure-tab-active selection-ring'
                 : 'border-border/50 bg-card hover:border-primary/40'
             }`}
             whileTap={{ scale: 0.93 }}
             whileHover={isActive ? { scale: 1.06 } : { scale: 1.02 }}
-            style={isActive ? { background: adv.gradient + '22' } : {}}
+            style={isActive ? { background: adv.gradient + '22', '--accent-shadow': adv.accentColor + '26', '--accent-shadow-light': adv.accentColor + '14' } as React.CSSProperties : {}}
           >
-            {/* Gradient background for active state */}
+            {/* Gradient background for active state — animated gradient overlay */}
             {isActive && (
-              <div 
+              <motion.div
                 className="absolute inset-0 opacity-20"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 0.2 }}
+                transition={{ duration: 0.3 }}
                 style={{ background: adv.gradient }}
               />
+            )}
+            {/* Shimmer overlay for active tab */}
+            {isActive && (
+              <div className="absolute inset-0 shimmer-shine rounded-2xl pointer-events-none" />
             )}
 
             {/* Decorative emblem watermark - different from main emoji */}
@@ -198,7 +205,7 @@ export default function AdventureSelector() {
 
             {isComplete && (
               <>
-                <motion.span 
+                <motion.span
                   className="text-[9px] font-bold block relative z-10 text-gradient-gold"
                   animate={{ scale: [1, 1.1, 1] }}
                   transition={{ duration: 1.5, repeat: Infinity }}
@@ -206,7 +213,7 @@ export default function AdventureSelector() {
                   Complété ! 🎉
                 </motion.span>
                 <motion.button
-                  className="text-[8px] px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-700/30 font-medium relative z-10 mt-0.5"
+                  className="text-[8px] px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-700/30 font-medium relative z-10 mt-0.5 hover:shadow-md transition-shadow"
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   onClick={(e) => {
@@ -219,8 +226,8 @@ export default function AdventureSelector() {
               </>
             )}
 
-            {/* Progress bar with gradient */}
-            <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-primary/10 rounded-b-2xl overflow-hidden">
+            {/* Progress bar with gradient + shimmer overlay */}
+            <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-primary/10 rounded-b-2xl overflow-hidden progress-bar-shimmer">
               <motion.div
                 className="h-full gradient-progress rounded-b-2xl"
                 initial={{ width: 0 }}

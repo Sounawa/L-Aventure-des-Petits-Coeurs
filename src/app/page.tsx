@@ -3,7 +3,9 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore } from '@/lib/store';
 import dynamic from 'next/dynamic';
+import { useState, useEffect, useRef } from 'react';
 
+// Only FloatingStars needs dynamic SSR: false (uses browser APIs)
 const FloatingStars = dynamic(() => import('@/components/FloatingStars'), { ssr: false });
 import Navigation from '@/components/Navigation';
 import HeroSection from '@/components/HeroSection';
@@ -16,7 +18,6 @@ import CelebrationOverlay from '@/components/CelebrationOverlay';
 import OnboardingFlow from '@/components/OnboardingFlow';
 import InteractiveGuide from '@/components/InteractiveGuide';
 import ErrorBoundary from '@/components/ErrorBoundary';
-import { useState, useEffect, useRef } from 'react';
 
 export default function Home() {
   return (
@@ -41,14 +42,12 @@ function AppContent() {
   const unlockedCount = badges.filter(b => b.unlockedAt).length;
 
   // Detect new badge unlocks and trigger celebration
-  // Use requestAnimationFrame to avoid synchronous setState in effect
   useEffect(() => {
     if (!_hydrated) return;
     const prevCount = prevBadgeCountRef.current;
     if (unlockedCount > prevCount && prevCount > 0) {
       const badge = badges.filter(b => b.unlockedAt).pop();
       if (badge) {
-        // Use rAF to defer setState outside the effect body (lint compliance)
         requestAnimationFrame(() => {
           setCelebration({
             active: true,

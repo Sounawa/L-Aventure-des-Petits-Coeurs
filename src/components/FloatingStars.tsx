@@ -33,7 +33,7 @@ const SEED = 42;
 function generateStars(): Star[] {
   const random = createSeededRandom(SEED);
   const generated: Star[] = [];
-  for (let i = 0; i < 30; i++) {
+  for (let i = 0; i < 12; i++) {
     generated.push({
       id: i,
       x: random() * 100,

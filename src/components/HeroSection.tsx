@@ -11,27 +11,32 @@ import MoodTracker from './MoodTracker';
 import { useRef } from 'react';
 
 // Pre-computed particle positions (deterministic, no Math.random() at render time)
+// Enhanced with varied sizes, colors, and smoother movement patterns
 const PARTICLE_POSITIONS = [
-  { left: 36.2, top: 12.5, yMove: 25, duration: 3.2, delay: 0.4 },
-  { left: 42.8, top: 28.1, yMove: 35, duration: 4.5, delay: 1.8 },
-  { left: 50.1, top: 18.7, yMove: 20, duration: 3.8, delay: 0.9 },
-  { left: 57.4, top: 35.2, yMove: 30, duration: 5.1, delay: 2.3 },
-  { left: 38.9, top: 22.4, yMove: 28, duration: 3.5, delay: 0.2 },
-  { left: 44.6, top: 38.1, yMove: 22, duration: 4.8, delay: 1.5 },
-  { left: 52.3, top: 15.3, yMove: 32, duration: 3.1, delay: 2.7 },
-  { left: 59.7, top: 26.8, yMove: 18, duration: 5.3, delay: 0.6 },
-  { left: 40.3, top: 31.6, yMove: 26, duration: 4.2, delay: 1.1 },
-  { left: 47.9, top: 19.9, yMove: 40, duration: 3.6, delay: 2.0 },
-  { left: 55.6, top: 33.5, yMove: 24, duration: 4.9, delay: 0.8 },
-  { left: 63.1, top: 24.2, yMove: 34, duration: 3.4, delay: 1.4 },
+  { left: 36.2, top: 12.5, yMove: 25, duration: 3.2, delay: 0.4, size: 1, color: 'bg-amber-300/40' },
+  { left: 42.8, top: 28.1, yMove: 35, duration: 4.5, delay: 1.8, size: 1.5, color: 'bg-yellow-200/30' },
+  { left: 50.1, top: 18.7, yMove: 20, duration: 3.8, delay: 0.9, size: 1, color: 'bg-teal-300/30' },
+  { left: 57.4, top: 35.2, yMove: 30, duration: 5.1, delay: 2.3, size: 2, color: 'bg-amber-400/25' },
+  { left: 38.9, top: 22.4, yMove: 28, duration: 3.5, delay: 0.2, size: 1, color: 'bg-pink-300/20' },
+  { left: 44.6, top: 38.1, yMove: 22, duration: 4.8, delay: 1.5, size: 1.5, color: 'bg-amber-300/35' },
+  { left: 52.3, top: 15.3, yMove: 32, duration: 3.1, delay: 2.7, size: 1, color: 'bg-yellow-300/30' },
+  { left: 59.7, top: 26.8, yMove: 18, duration: 5.3, delay: 0.6, size: 2, color: 'bg-teal-200/25' },
+  { left: 40.3, top: 31.6, yMove: 26, duration: 4.2, delay: 1.1, size: 1, color: 'bg-amber-300/40' },
+  { left: 47.9, top: 19.9, yMove: 40, duration: 3.6, delay: 2.0, size: 1.5, color: 'bg-rose-300/20' },
+  { left: 55.6, top: 33.5, yMove: 24, duration: 4.9, delay: 0.8, size: 1, color: 'bg-yellow-200/30' },
+  { left: 63.1, top: 24.2, yMove: 34, duration: 3.4, delay: 1.4, size: 2, color: 'bg-amber-400/20' },
+  { left: 33.5, top: 42.0, yMove: 22, duration: 4.7, delay: 1.3, size: 1, color: 'bg-teal-300/25' },
+  { left: 60.8, top: 10.5, yMove: 28, duration: 3.9, delay: 0.7, size: 1.5, color: 'bg-pink-200/20' },
+  { left: 48.2, top: 45.3, yMove: 18, duration: 5.5, delay: 2.5, size: 1, color: 'bg-amber-300/30' },
+  { left: 54.7, top: 8.1, yMove: 36, duration: 4.1, delay: 1.9, size: 1.5, color: 'bg-yellow-300/25' },
 ];
 
-// Feature cards with themed border-left accents
+// Feature cards with themed border-left accents + hover shadow colors
 const featureCards = [
-  { emoji: '📖', label: '3 Aventures', desc: 'Explore des mondes magiques', gradient: 'from-amber-50 to-yellow-100 dark:from-amber-900/20 dark:to-yellow-800/20', border: 'border-amber-200/50 dark:border-amber-700/30', textClass: 'text-gradient-gold', borderAccent: 'border-l-4 border-l-amber-400 dark:border-l-amber-500' },
-  { emoji: '🎮', label: '7 Activités', desc: 'Joue et apprends en t\'amusant', gradient: 'from-teal-50 to-cyan-100 dark:from-teal-900/20 dark:to-cyan-800/20', border: 'border-teal-200/50 dark:border-teal-700/30', textClass: 'text-gradient-teal', borderAccent: 'border-l-4 border-l-teal-400 dark:border-l-teal-500' },
-  { emoji: '🏅', label: '15 Badges', desc: 'Collecte des récompenses', gradient: 'from-pink-50 to-rose-100 dark:from-pink-900/20 dark:to-rose-800/20', border: 'border-pink-200/50 dark:border-pink-700/30', textClass: 'text-gradient-rose', borderAccent: 'border-l-4 border-l-rose-400 dark:border-l-rose-500' },
-  { emoji: '🤲', label: 'Prière', desc: 'Apprends à prier avec le cœur', gradient: 'from-purple-50 to-indigo-100 dark:from-purple-900/20 dark:to-indigo-800/20', border: 'border-purple-200/50 dark:border-purple-700/30', textClass: 'text-gradient-gold', borderAccent: 'border-l-4 border-l-purple-400 dark:border-l-purple-500' },
+  { emoji: '📖', label: '3 Aventures', desc: 'Explore des mondes magiques', gradient: 'from-amber-50 to-yellow-100 dark:from-amber-900/20 dark:to-yellow-800/20', border: 'border-amber-200/50 dark:border-amber-700/30', textClass: 'text-gradient-gold', borderAccent: 'border-l-4 border-l-amber-400 dark:border-l-amber-500', shadowColor: 'rgba(201, 162, 39, 0.12)' },
+  { emoji: '🎮', label: '7 Activités', desc: 'Joue et apprends en t\'amusant', gradient: 'from-teal-50 to-cyan-100 dark:from-teal-900/20 dark:to-cyan-800/20', border: 'border-teal-200/50 dark:border-teal-700/30', textClass: 'text-gradient-teal', borderAccent: 'border-l-4 border-l-teal-400 dark:border-l-teal-500', shadowColor: 'rgba(20, 184, 166, 0.12)' },
+  { emoji: '🏅', label: '15 Badges', desc: 'Collecte des récompenses', gradient: 'from-pink-50 to-rose-100 dark:from-pink-900/20 dark:to-rose-800/20', border: 'border-pink-200/50 dark:border-pink-700/30', textClass: 'text-gradient-rose', borderAccent: 'border-l-4 border-l-rose-400 dark:border-l-rose-500', shadowColor: 'rgba(236, 72, 153, 0.12)' },
+  { emoji: '🤲', label: 'Prière', desc: 'Apprends à prier avec le cœur', gradient: 'from-purple-50 to-indigo-100 dark:from-purple-900/20 dark:to-indigo-800/20', border: 'border-purple-200/50 dark:border-purple-700/30', textClass: 'text-gradient-gold', borderAccent: 'border-l-4 border-l-purple-400 dark:border-l-purple-500', shadowColor: 'rgba(139, 92, 246, 0.12)' },
 ] as const;
 
 export default function HeroSection() {
@@ -91,32 +96,37 @@ export default function HeroSection() {
         transition={{ duration: 5, repeat: Infinity, delay: 1 }}
       />
 
-      {/* Particle/star effect behind the mirror (deterministic positions) */}
+      {/* Particle/star effect behind the mirror — smoother with varied colors & sizes */}
       {PARTICLE_POSITIONS.map((p, i) => (
         <motion.div
           key={i}
-          className="absolute w-1 h-1 rounded-full bg-amber-300/40"
+          className={`absolute rounded-full ${p.color}`}
           style={{
             left: `${p.left}%`,
             top: `${p.top}%`,
-          }}
+            width: `${p.size * 4}px`,
+            height: `${p.size * 4}px`,
+            '--particle-duration': `${p.duration}s`,
+            '--particle-delay': `${p.delay}s`,
+          } as React.CSSProperties}
           animate={{
             y: [0, -p.yMove, 0],
-            opacity: [0.2, 0.8, 0.2],
-            scale: [0.5, 1.5, 0.5],
+            x: [0, (i % 2 === 0 ? 3 : -3), 0],
+            opacity: [0.15, 0.7, 0.15],
+            scale: [0.5, 1.3, 0.5],
           }}
           transition={{
             duration: p.duration,
             repeat: Infinity,
             delay: p.delay,
-            ease: 'easeInOut',
+            ease: [0.4, 0, 0.2, 1],
           }}
         />
       ))}
 
       {/* Content — increased gaps between elements */}
       <div className="relative z-10 flex flex-col items-center gap-7 max-w-lg mx-auto">
-        {/* Mirror emoji with parallax, shimmer effect, and glow ring */}
+        {/* Mirror emoji with parallax, shimmer effect, and enhanced glow rings */}
         <motion.div
           initial={{ scale: 0, rotate: -180 }}
           animate={{ scale: 1, rotate: 0 }}
@@ -124,21 +134,31 @@ export default function HeroSection() {
           className="relative mirror-shimmer"
           style={{ y: mirrorY }}
         >
-          {/* Glow ring - enhanced */}
+          {/* Outer glow ring — pulsing multi-layer glow via CSS */}
+          <div className="absolute -inset-8 rounded-full mirror-glow-outer" />
+          {/* Middle glow ring — animated gradient */}
           <motion.div
             className="absolute -inset-6 rounded-full bg-gradient-to-br from-amber-300/30 via-yellow-200/15 to-amber-400/30 blur-lg"
-            animate={{ scale: [1, 1.15, 1], opacity: [0.4, 0.7, 0.4] }}
-            transition={{ duration: 3, repeat: Infinity }}
+            animate={{ scale: [1, 1.12, 1], opacity: [0.35, 0.6, 0.35] }}
+            transition={{ duration: 3, repeat: Infinity, ease: [0.4, 0, 0.2, 1] }}
           />
+          {/* Inner glow ring — teal/pink accent */}
           <motion.div
             className="absolute -inset-3 rounded-full bg-gradient-to-tl from-teal-200/20 via-transparent to-pink-200/20 blur-md"
-            animate={{ scale: [1, 1.08, 1], opacity: [0.3, 0.5, 0.3] }}
-            transition={{ duration: 4, repeat: Infinity, delay: 1 }}
+            animate={{ scale: [1, 1.08, 1], opacity: [0.25, 0.45, 0.25] }}
+            transition={{ duration: 4, repeat: Infinity, delay: 1, ease: [0.4, 0, 0.2, 1] }}
           />
-          <span className="text-7xl sm:text-8xl block">🪞</span>
-          {/* Orbiting sparkles */}
+          {/* Rotating color halo */}
+          <motion.div
+            className="absolute -inset-4 rounded-full border border-amber-300/20 dark:border-amber-500/10"
+            animate={{ rotate: 360, opacity: [0.3, 0.6, 0.3] }}
+            transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
+            style={{ background: 'conic-gradient(from 0deg, rgba(201,162,39,0.08), rgba(20,184,166,0.06), rgba(236,72,153,0.04), rgba(201,162,39,0.08))' }}
+          />
+          <span className="text-7xl sm:text-8xl block relative z-10">🪞</span>
+          {/* Orbiting sparkles — enhanced with varied sizes and paths */}
           <motion.span
-            className="absolute text-xl"
+            className="absolute text-xl decorative-sparkle"
             animate={{ rotate: 360 }}
             transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
             style={{ originX: '50%', originY: '150%' }}
@@ -146,12 +166,21 @@ export default function HeroSection() {
             ✨
           </motion.span>
           <motion.span
-            className="absolute text-sm"
+            className="absolute text-sm decorative-sparkle"
             animate={{ rotate: -360 }}
             transition={{ duration: 12, repeat: Infinity, ease: 'linear' }}
             style={{ originX: '50%', originY: '200%' }}
           >
             ✦
+          </motion.span>
+          {/* Third orbiting sparkle — outer ring */}
+          <motion.span
+            className="absolute text-xs opacity-60"
+            animate={{ rotate: 360 }}
+            transition={{ duration: 18, repeat: Infinity, ease: 'linear' }}
+            style={{ originX: '50%', originY: '250%' }}
+          >
+            🌟
           </motion.span>
         </motion.div>
 
@@ -177,12 +206,12 @@ export default function HeroSection() {
           ✨ L&apos;Aventure des Petits Cœurs ✨
         </motion.p>
 
-        {/* Welcome card with glass-card style and glow animation */}
+        {/* Welcome card with glass-card style, shimmer-shine, and glow animation */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.9 }}
-          className="w-full glass-card rounded-2xl p-5 sm:p-6 gradient-border card-hover welcome-glow"
+          className="w-full glass-card rounded-2xl p-5 sm:p-6 gradient-border card-glow-hover shimmer-shine welcome-glow"
         >
           <div className="flex items-start justify-between gap-2 mb-2">
             <p className="text-[10px] text-primary font-semibold uppercase tracking-wider">Message de bienvenue</p>
@@ -193,18 +222,19 @@ export default function HeroSection() {
           </p>
         </motion.div>
 
-        {/* CTA Button - enhanced with gradient and pulse */}
+        {/* CTA Button - enhanced with gradient, shimmer, shadow, and pulse */}
         <motion.button
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 1.1 }}
-          whileHover={{ scale: 1.06 }}
+          whileHover={{ scale: 1.06, boxShadow: '0 12px 40px rgba(201, 162, 39, 0.35)' }}
           whileTap={{ scale: 0.94 }}
           onClick={() => setSection('aventures')}
           className="relative px-8 py-4 rounded-full text-lg sm:text-xl font-bold shadow-xl transition-all overflow-hidden pulse-gold"
           style={{
             background: 'linear-gradient(135deg, #C9A227, #E8D44D, #D4A853)',
             color: '#3D2C1E',
+            boxShadow: '0 8px 30px rgba(201, 162, 39, 0.25), 0 2px 8px rgba(201, 162, 39, 0.15)',
           }}
         >
           <span className="relative z-10">🌟 Commencer l&apos;Aventure 🌟</span>
@@ -237,8 +267,8 @@ export default function HeroSection() {
           {featureCards.map((card, idx) => (
             <motion.div
               key={idx}
-              className={`bg-gradient-to-br ${card.gradient} rounded-xl p-4 border ${card.border} ${card.borderAccent} text-center card-3d relative group`}
-              whileHover={{ scale: 1.05 }}
+              className={`bg-gradient-to-br ${card.gradient} rounded-xl p-4 border ${card.border} ${card.borderAccent} text-center card-glow-hover feature-card-shine relative group`}
+              whileHover={{ scale: 1.05, boxShadow: `0 8px 25px ${card.shadowColor}` }}
             >
               <span className="text-2xl sm:text-3xl block">{card.emoji}</span>
               <p className={`text-[10px] sm:text-xs font-bold mt-2 ${card.textClass}`}>{card.label}</p>

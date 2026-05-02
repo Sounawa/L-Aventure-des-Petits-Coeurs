@@ -17,6 +17,12 @@ export interface GratitudeEntry {
   items: string[];
 }
 
+export interface MoodEntry {
+  date: string;
+  mood: string;
+  timestamp: string;
+}
+
 export interface PracticeDay {
   date: string;
   prayers: boolean;
@@ -125,6 +131,12 @@ interface AppState {
   // Daily Mood
   dailyMood: Record<string, string>;
 
+  // Mood History
+  moodHistory: MoodEntry[];
+
+  // Prayer Counts (tasbih dhikr)
+  prayerCounts: Record<string, number>;
+
   // Hydration
   _hydrated: boolean;
   
@@ -155,6 +167,9 @@ interface AppState {
   completeDailyChallenge: (date: string) => void;
   togglePrayer: (date: string, prayerIndex: number) => void;
   setDailyMood: (date: string, mood: string) => void;
+  addMoodEntry: (mood: string) => void;
+  setPrayerCount: (dhikrKey: string, count: number) => void;
+  resetPrayerCounts: () => void;
   _hydrate: () => void;
 }
 
@@ -198,6 +213,8 @@ function saveState(state: AppState) {
       dailyChallengeCompleted: state.dailyChallengeCompleted,
       dailyPrayers: state.dailyPrayers,
       dailyMood: state.dailyMood,
+      moodHistory: state.moodHistory,
+      prayerCounts: state.prayerCounts,
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
   } catch {
@@ -300,6 +317,8 @@ const defaultState = {
   dailyChallengeCompleted: {} as Record<string, boolean>,
   dailyPrayers: {} as Record<string, boolean[]>,
   dailyMood: {} as Record<string, string>,
+  moodHistory: [] as MoodEntry[],
+  prayerCounts: {} as Record<string, number>,
   _hydrated: false,
 };
 
@@ -521,6 +540,8 @@ export const useAppStore = create<AppState>((set, get) => ({
       dailyChallengeCompleted: {} as Record<string, boolean>,
       dailyPrayers: {} as Record<string, boolean[]>,
       dailyMood: {} as Record<string, string>,
+      moodHistory: [] as MoodEntry[],
+      prayerCounts: {} as Record<string, number>,
     };
     set(newState);
     saveState({ ...get(), ...newState });
@@ -622,6 +643,36 @@ export const useAppStore = create<AppState>((set, get) => ({
     if (current === mood) return; // Same mood already set
     const newState = {
       dailyMood: { ...get().dailyMood, [date]: mood },
+    };
+    set(newState);
+    saveState({ ...get(), ...newState });
+  },
+
+  addMoodEntry: (mood: string) => {
+    const entry: MoodEntry = {
+      date: new Date().toISOString().split('T')[0],
+      mood,
+      timestamp: new Date().toISOString(),
+    };
+    const moodHistory = [...get().moodHistory, entry];
+    // Keep last 90 entries max
+    const trimmed = moodHistory.slice(-90);
+    const newState = { moodHistory: trimmed };
+    set(newState);
+    saveState({ ...get(), ...newState });
+  },
+
+  setPrayerCount: (dhikrKey: string, count: number) => {
+    const newState = {
+      prayerCounts: { ...get().prayerCounts, [dhikrKey]: count },
+    };
+    set(newState);
+    saveState({ ...get(), ...newState });
+  },
+
+  resetPrayerCounts: () => {
+    const newState = {
+      prayerCounts: {} as Record<string, number>,
     };
     set(newState);
     saveState({ ...get(), ...newState });

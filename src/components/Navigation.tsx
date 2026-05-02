@@ -23,13 +23,21 @@ function BadgePanel() {
     <>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative flex items-center gap-1 bg-primary/10 px-2 py-1 rounded-full hover:bg-primary/20 transition-all"
+        className="relative flex items-center gap-1 bg-primary/10 px-2 py-1 rounded-full hover:bg-primary/20 transition-all hover:shadow-md"
         aria-label="Badges"
       >
         <Trophy className="w-4 h-4 text-primary" />
-        <span className="text-[10px] font-bold text-primary">{unlockedCount}</span>
+        <motion.span
+          key={`badge-count-${unlockedCount}`}
+          className="text-[10px] font-bold text-primary"
+          initial={{ scale: 1 }}
+          animate={{ scale: [1, 1.3, 0.9, 1.1, 1] }}
+          transition={{ duration: 0.4, ease: 'easeOut' }}
+        >
+          {unlockedCount}
+        </motion.span>
         {unlockedCount > 0 && (
-          <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-green-400 rounded-full border border-background" />
+          <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-green-400 rounded-full border border-background animate-pulse" />
         )}
       </button>
 
@@ -47,7 +55,8 @@ function BadgePanel() {
               initial={{ opacity: 0, y: -20, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -20, scale: 0.95 }}
-              className="fixed top-14 left-4 right-4 max-w-md mx-auto bg-card rounded-2xl shadow-2xl border border-border z-[70] max-h-[70vh] overflow-y-auto custom-scrollbar"
+              transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+              className="fixed top-14 left-4 right-4 max-w-md mx-auto bg-card rounded-2xl shadow-2xl border border-border z-[70] max-h-[70vh] overflow-y-auto custom-scrollbar shimmer-shine"
             >
               <div className="p-4">
                 <div className="flex items-center justify-between mb-3">
@@ -291,21 +300,27 @@ export default function Navigation() {
                   />
                 ))}
 
-                {/* Active tab background with rounded corners, glow, and pulse */}
+                {/* Active tab background with rounded corners, gradient glow, and pulse */}
                 {isActive && (
                   <motion.div
                     layoutId="navBg"
-                    className="absolute inset-0 bg-primary/10 rounded-xl border border-primary/15 tab-glow-pulse"
+                    className="absolute inset-0 rounded-xl border border-primary/15 tab-glow-pulse"
+                    style={{
+                      background: 'linear-gradient(135deg, rgba(201, 162, 39, 0.08), rgba(201, 162, 39, 0.04), rgba(20, 184, 166, 0.03))',
+                    }}
                     transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                   />
                 )}
 
-                {/* Top indicator bar */}
+                {/* Top indicator bar — gradient with glow */}
                 {isActive && (
                   <motion.div
                     layoutId="navIndicator"
-                    className="absolute -top-1 w-10 h-1 bg-primary rounded-full"
-                    style={{ boxShadow: '0 0 8px oklch(0.55 0.12 80 / 30%)' }}
+                    className="absolute -top-1 w-10 h-1 rounded-full nav-indicator-slide"
+                    style={{
+                      background: 'linear-gradient(90deg, #C9A227, #14B8A6)',
+                      boxShadow: '0 0 8px rgba(201, 162, 39, 0.3), 0 0 4px rgba(20, 184, 166, 0.2)',
+                    }}
                     transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                   />
                 )}
@@ -328,28 +343,31 @@ export default function Navigation() {
                   {item.label}
                 </span>
 
-                {/* Active tab: small scaling dot below icon + bottom-border highlight */}
+                {/* Active tab: dot below icon with glow + selection ring pulse */}
                 {isActive && (
                   <motion.div
                     layoutId="navDot"
                     className="absolute bottom-1 left-1/2 -translate-x-1/2"
                     initial={{ scale: 0 }}
-                    animate={{ scale: [0, 1.3, 1] }}
+                    animate={{ scale: [0, 1.4, 1] }}
                     transition={{ duration: 0.4, ease: 'easeOut' }}
                   >
                     <div
-                      className="w-1.5 h-1.5 rounded-full bg-primary"
-                      style={{ boxShadow: '0 0 6px oklch(0.55 0.12 80 / 50%)' }}
+                      className="w-1.5 h-1.5 rounded-full selection-ring"
+                      style={{ background: 'linear-gradient(135deg, #C9A227, #14B8A6)' }}
                     />
                   </motion.div>
                 )}
 
-                {/* Subtle bottom-border highlight animation on tab switch */}
+                {/* Bottom-border highlight animation — gradient sweep on tab switch */}
                 {isActive && (
                   <motion.div
                     layoutId="navBorderHighlight"
-                    className="absolute bottom-0 left-1/2 h-[2px] bg-gradient-to-r from-transparent via-primary to-transparent rounded-full tab-border-highlight"
-                    style={{ transform: 'translateX(-50%)' }}
+                    className="absolute bottom-0 left-1/2 h-[2px] rounded-full tab-border-highlight"
+                    style={{
+                      transform: 'translateX(-50%)',
+                      background: 'linear-gradient(90deg, transparent, #C9A227, #14B8A6, transparent)',
+                    }}
                     transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                   />
                 )}

@@ -108,7 +108,7 @@ export default function AchievementShare() {
                   </motion.span>
                 ) : (
                   <span className="flex items-center gap-2">
-                    {navigator.share ? (
+                    {typeof navigator !== 'undefined' && navigator.share ? (
                       <Share2 className="w-4 h-4" />
                     ) : (
                       <Copy className="w-4 h-4" />

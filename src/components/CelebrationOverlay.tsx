@@ -89,7 +89,7 @@ export default function CelebrationOverlay({
                 opacity: 1,
               }}
               animate={{
-                y: window.innerHeight + 50,
+                y: typeof window !== 'undefined' ? window.innerHeight + 50 : 800,
                 x: (Math.random() - 0.5) * 200,
                 rotate: piece.rotation + 720,
                 opacity: [1, 1, 0.8, 0],
