@@ -4,8 +4,7 @@ import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore, type AdventureId } from '@/lib/store';
 import { Button } from '@/components/ui/button';
-import { X, Play, Pause, BookOpen, Gauge, Volume2, ChevronLeft, ChevronRight } from 'lucide-react';
-import AudioPlayer from './AudioPlayer';
+import { X, Play, Pause, BookOpen, Gauge, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface StoryModeProps {
   story: string;
@@ -76,7 +75,6 @@ function StoryModeContent({ story, title, adventureId, chapterNum, onClose }: Om
   const [isCompleted, setIsCompleted] = useState(false);
   const [speed, setSpeed] = useState<SpeedLevel>('medium');
   const [isManual, setIsManual] = useState(false);
-  const [isReadAloud, setIsReadAloud] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const completedRef = useRef(false);
 
@@ -178,13 +176,8 @@ function StoryModeContent({ story, title, adventureId, chapterNum, onClose }: Om
 
   const handleClose = useCallback(() => {
     setIsPlaying(false);
-    setIsReadAloud(false);
     onClose();
   }, [onClose]);
-
-  const toggleReadAloud = useCallback(() => {
-    setIsReadAloud(prev => !prev);
-  }, []);
 
   const gradient = darkMode || bedtimeMode
     ? adventureGradients[adventureId] || adventureGradients.miroir
@@ -241,21 +234,6 @@ function StoryModeContent({ story, title, adventureId, chapterNum, onClose }: Om
             </h2>
           </div>
           <div className="flex items-center gap-2">
-            {/* Read aloud button */}
-            <motion.button
-              onClick={toggleReadAloud}
-              className={`p-2 rounded-full transition-colors ${
-                isReadAloud
-                  ? 'bg-amber-400/20 text-amber-300'
-                  : isDark
-                  ? 'text-amber-200 hover:bg-white/10'
-                  : 'text-amber-800 hover:bg-amber-200/50'
-              }`}
-              whileTap={{ scale: 0.9 }}
-              aria-label={isReadAloud ? 'Arrêter la lecture' : 'Écouter l\'histoire'}
-            >
-              <Volume2 className="w-5 h-5" />
-            </motion.button>
             <Button
               variant="ghost"
               size="icon"
@@ -266,22 +244,6 @@ function StoryModeContent({ story, title, adventureId, chapterNum, onClose }: Om
             </Button>
           </div>
         </div>
-
-        {/* Read aloud audio (hidden player) */}
-        {isReadAloud && (
-          <div className="px-4 sm:px-8">
-            <div className={`rounded-xl p-2 flex items-center gap-2 ${
-              isDark ? 'bg-black/20 border border-white/10' : 'bg-white/50 border border-amber-200/50'
-            }`}>
-              <Volume2 className={`w-4 h-4 ${isDark ? 'text-amber-300' : 'text-amber-700'}`} />
-              <span className={`text-xs font-medium ${isDark ? 'text-amber-200' : 'text-amber-800'}`}>
-                Lecture en cours...
-              </span>
-              <div className="flex-1" />
-              <AudioPlayer text={story} size="sm" />
-            </div>
-          </div>
-        )}
 
         {/* Story pages with page-turn animation */}
         <div className="flex-1 overflow-hidden relative">

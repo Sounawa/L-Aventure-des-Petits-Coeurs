@@ -3,7 +3,6 @@
 import { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import AudioPlayer from '@/components/AudioPlayer';
 import { BookOpen } from 'lucide-react';
 
 interface ArabicWord {
@@ -57,8 +56,6 @@ function getDailyWord(): ArabicWord {
 
 export default function WordOfTheDay() {
   const dailyWord = useMemo(() => getDailyWord(), []);
-
-  const audioText = `${dailyWord.french}. ${dailyWord.transliteration}. ${dailyWord.explanation}`;
 
   return (
     <motion.div
@@ -134,10 +131,6 @@ export default function WordOfTheDay() {
               </p>
             </motion.div>
 
-            {/* Audio player */}
-            <div className="flex items-center justify-center">
-              <AudioPlayer text={audioText} size="md" />
-            </div>
           </CardContent>
         </div>
       </Card>

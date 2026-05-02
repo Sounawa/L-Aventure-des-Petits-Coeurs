@@ -4,7 +4,6 @@ import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import AudioPlayer from '@/components/AudioPlayer';
 import { Share2, Check, Sparkles } from 'lucide-react';
 
 interface Quote {
@@ -182,9 +181,7 @@ export default function DailyInspiration() {
             </p>
 
             {/* Action buttons */}
-            <div className="flex items-center justify-between pl-4">
-              <AudioPlayer text={dailyQuote.text + ". " + dailyQuote.source} size="sm" />
-
+            <div className="flex items-center justify-end pl-4">
               <Button
                 variant="ghost"
                 size="sm"

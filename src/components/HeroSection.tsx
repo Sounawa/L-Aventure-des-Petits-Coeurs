@@ -3,7 +3,6 @@
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useAppStore } from '@/lib/store';
 import Image from 'next/image';
-import AudioPlayer from './AudioPlayer';
 import DailyInspiration from './DailyInspiration';
 import WordOfTheDay from './WordOfTheDay';
 import DailyChallenge from './DailyChallenge';
@@ -215,7 +214,6 @@ export default function HeroSection() {
         >
           <div className="flex items-start justify-between gap-2 mb-2">
             <p className="text-[10px] text-primary font-semibold uppercase tracking-wider">Message de bienvenue</p>
-            <AudioPlayer text={welcomeText} size="sm" />
           </div>
           <p className="text-base sm:text-lg text-foreground/90 leading-relaxed">
             {welcomeText}

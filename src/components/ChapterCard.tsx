@@ -7,7 +7,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ChevronDown, Sparkles, Heart } from 'lucide-react';
 import Image from 'next/image';
-import AudioPlayer from './AudioPlayer';
 import { useSoundEffects } from './SoundEffects';
 import StoryMode from './StoryMode';
 
@@ -214,7 +213,6 @@ export default function ChapterCard({ data }: { data: ChapterData }) {
                     Histoire
                   </p>
                   <div className="flex items-center gap-1.5">
-                    <AudioPlayer text={data.story} size="sm" />
                     <motion.button
                       onClick={() => setShowStoryMode(true)}
                       className="px-2.5 py-1.5 rounded-lg text-[10px] font-bold bg-gradient-to-r from-amber-100 to-yellow-100 dark:from-amber-900/30 dark:to-yellow-900/30 border border-amber-200/50 dark:border-amber-700/30 text-amber-700 dark:text-amber-300 hover:shadow-md transition-all"

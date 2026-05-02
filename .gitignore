@@ -36,19 +36,31 @@ yarn-error.log*
 # vercel
 .vercel
 
-
 # typescript
 *.tsbuildinfo
 next-env.d.ts
 local-*
+
+# IDE / config
 .claude
 .z-ai-config
+
+# Logs
 *.log
 dev.log
 dev.out.log
+server.log
+
+# Test / prompt dirs
 test
 prompt
 
-server.log
-# Skills directory
+# Workspace / system directories (NOT part of the Next.js app)
 /skills/
+/agent-ctx/
+/mini-services/
+/prisma/*.db
+/prisma/*.db-journal
+
+# DB
+/db/

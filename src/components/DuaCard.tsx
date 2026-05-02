@@ -1,7 +1,6 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import AudioPlayer from './AudioPlayer';
 
 interface DuaCardProps {
   arabic: string;
@@ -72,7 +71,6 @@ export default function DuaCard({ arabic, transliteration, translation, context,
       {/* Emoji badge */}
       <div className="flex items-start justify-between mb-3">
         <span className="text-2xl">{emoji}</span>
-        <AudioPlayer text={`${arabic}. ${transliteration}. ${translation}`} size="sm" />
       </div>
 
       {/* Arabic text - large and centered */}
