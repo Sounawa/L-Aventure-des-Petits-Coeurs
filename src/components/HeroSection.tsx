@@ -7,6 +7,7 @@ import AudioPlayer from './AudioPlayer';
 import DailyInspiration from './DailyInspiration';
 import WordOfTheDay from './WordOfTheDay';
 import DailyChallenge from './DailyChallenge';
+import MoodTracker from './MoodTracker';
 import { useRef } from 'react';
 
 // Pre-computed particle positions (deterministic, no Math.random() at render time)
@@ -252,6 +253,9 @@ export default function HeroSection() {
 
         {/* Daily Inspiration Card */}
         <DailyInspiration />
+
+        {/* Mood Tracker */}
+        <MoodTracker />
 
         {/* Daily Challenge Card */}
         <DailyChallenge />

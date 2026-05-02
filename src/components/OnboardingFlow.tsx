@@ -288,8 +288,8 @@ export default function OnboardingFlow() {
                 animate={{
                   backgroundColor:
                     steps.indexOf(currentStep) >= i
-                      ? 'oklch(0.55 0.12 80)' // primary gold
-                      : 'oklch(0.85 0.05 80 / 50%)',
+                      ? '#C9A227' // primary gold
+                      : 'rgba(201, 162, 39, 0.25)',
                   scale: steps.indexOf(currentStep) === i ? 1.3 : 1,
                 }}
                 transition={{ duration: 0.3 }}

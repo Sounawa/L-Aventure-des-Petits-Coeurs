@@ -12,6 +12,7 @@ import FavoriteChapters from './FavoriteChapters';
 import VirtueGarden from './VirtueGarden';
 import AchievementTimeline from './AchievementTimeline';
 import StatsDashboard from './StatsDashboard';
+import PrayerCounter from './PrayerCounter';
 
 const practiceItems = [
   { id: 'prayers', label: "J'ai dit mes prières aujourd'hui", emoji: '🤲' },
@@ -512,6 +513,9 @@ export default function PracticeSection() {
         </CardContent>
       </Card>
 
+      {/* Prayer Counter Widget */}
+      <PrayerCounter />
+
       {/* Weekly view - enhanced with completed count and prominent stars */}
       <Card className="border-2 border-primary/10 overflow-hidden card-pattern">
         <CardHeader className="pb-3">
@@ -606,7 +610,7 @@ export default function PracticeSection() {
                     }`}
                     whileHover={isUnlocked ? { scale: 1.1 } : {}}
                   >
-                    <span className="text-xl">{isUnlocked ? badge.emoji : '🔒'}</span>
+                    <span className="text-xl">{isUnlocked ? badge.emoji : '✨'}</span>
                     <span className="text-[8px] font-medium mt-0.5 leading-tight">{badge.title}</span>
                   </motion.div>
                 );

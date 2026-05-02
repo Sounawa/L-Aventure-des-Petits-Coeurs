@@ -264,7 +264,7 @@ export default function StatsDashboard() {
                   animate={isCurrent ? { scale: [1, 1.05, 1] } : {}}
                   transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
                 >
-                  {isUnlocked ? def.emoji : '🔒'}
+                  {isUnlocked ? def.emoji : '🌟'}
                 </motion.div>
                 <span className={`text-[8px] sm:text-[9px] text-center leading-tight ${
                   isCurrent ? 'font-bold text-amber-600 dark:text-amber-400' : 'text-foreground/40'

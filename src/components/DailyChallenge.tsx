@@ -50,7 +50,7 @@ export default function DailyChallenge() {
       transition={{ delay: 0.2 }}
       className="w-full"
     >
-      <div className={`relative overflow-hidden rounded-2xl border-2 bg-gradient-to-br ${colorClass} p-5 sm:p-6`}>
+      <div className={`relative overflow-hidden rounded-2xl border-2 bg-gradient-to-br ${colorClass} p-5 sm:p-6 slow-gradient-border`}>
         {/* Animated border glow */}
         <motion.div
           className="absolute inset-0 rounded-2xl pointer-events-none"

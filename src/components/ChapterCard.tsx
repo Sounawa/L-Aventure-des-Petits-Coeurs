@@ -203,16 +203,22 @@ export default function ChapterCard({ data }: { data: ChapterData }) {
                 </div>
               </div>
 
-              {/* Story with audio and word-by-word fade-in */}
-              <div className="bg-gradient-to-r from-amber-50/50 to-yellow-50/50 dark:from-amber-900/8 dark:to-yellow-900/8 rounded-xl p-4 mb-4 border border-amber-200/30 dark:border-amber-700/15">
+              {/* Story with book texture, serif typography, and audio */}
+              <div className="book-texture rounded-xl p-4 mb-2 border border-amber-200/30 dark:border-amber-700/15 shadow-sm">
                 <div className="flex items-start justify-between gap-2 mb-2">
-                  <p className="text-xs text-primary font-semibold uppercase tracking-wider">Histoire</p>
+                  <p className="text-xs text-primary font-semibold uppercase tracking-wider flex items-center gap-1.5">
+                    <span className="feather-write">📜</span>
+                    Histoire
+                  </p>
                   <AudioPlayer text={data.story} size="sm" />
                 </div>
-                <div className="text-sm sm:text-base leading-relaxed text-foreground/90">
+                <div className="text-sm sm:text-base leading-[1.85] text-foreground/90" style={{ fontFamily: "'Georgia', 'Times New Roman', 'Noto Serif', serif" }}>
                   <WordByWordText text={data.story} />
                 </div>
               </div>
+
+              {/* Decorative divider between story and lesson */}
+              <div className="story-divider my-3" />
 
               {/* Lesson */}
               <div className="bg-gradient-to-r from-teal-50/50 to-cyan-50/50 dark:from-teal-900/8 dark:to-cyan-900/8 rounded-xl p-4 mb-4 border border-teal-200/30 dark:border-teal-700/15">

@@ -15,18 +15,21 @@ import HydrationProvider from '@/components/HydrationProvider';
 import CelebrationOverlay from '@/components/CelebrationOverlay';
 import OnboardingFlow from '@/components/OnboardingFlow';
 import InteractiveGuide from '@/components/InteractiveGuide';
-import { useState, useEffect } from 'react';
+import ErrorBoundary from '@/components/ErrorBoundary';
+import { useState, useEffect, useRef } from 'react';
 
 export default function Home() {
   return (
-    <HydrationProvider>
-      <AppContent />
-    </HydrationProvider>
+    <ErrorBoundary>
+      <HydrationProvider>
+        <AppContent />
+      </HydrationProvider>
+    </ErrorBoundary>
   );
 }
 
 function AppContent() {
-  const { currentSection, badges } = useAppStore();
+  const { currentSection, badges, _hydrated } = useAppStore();
   const [celebration, setCelebration] = useState<{ active: boolean; message: string; emoji: string }>({
     active: false,
     message: '',
@@ -34,23 +37,29 @@ function AppContent() {
   });
 
   // Track the previous badge count to detect new unlocks
+  const prevBadgeCountRef = useRef(0);
   const unlockedCount = badges.filter(b => b.unlockedAt).length;
-  const [prevBadgeCount, setPrevBadgeCount] = useState(0);
 
   // Detect new badge unlocks and trigger celebration
-  if (unlockedCount > prevBadgeCount && prevBadgeCount > 0) {
-    const badge = badges.filter(b => b.unlockedAt).pop();
-    if (badge) {
-      setPrevBadgeCount(unlockedCount);
-      setCelebration({
-        active: true,
-        message: `Badge débloqué : ${badge.title} !`,
-        emoji: badge.emoji,
-      });
+  // Use requestAnimationFrame to avoid synchronous setState in effect
+  useEffect(() => {
+    if (!_hydrated) return;
+    const prevCount = prevBadgeCountRef.current;
+    if (unlockedCount > prevCount && prevCount > 0) {
+      const badge = badges.filter(b => b.unlockedAt).pop();
+      if (badge) {
+        // Use rAF to defer setState outside the effect body (lint compliance)
+        requestAnimationFrame(() => {
+          setCelebration({
+            active: true,
+            message: `Badge débloqué : ${badge.title} !`,
+            emoji: badge.emoji,
+          });
+        });
+      }
     }
-  } else if (unlockedCount !== prevBadgeCount) {
-    setPrevBadgeCount(unlockedCount);
-  }
+    prevBadgeCountRef.current = unlockedCount;
+  }, [unlockedCount, badges, _hydrated]);
 
   // Auto-dismiss celebration
   useEffect(() => {

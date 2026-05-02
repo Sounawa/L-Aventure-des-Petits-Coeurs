@@ -328,14 +328,29 @@ export default function Navigation() {
                   {item.label}
                 </span>
 
-                {/* Pulsing bottom dot for active - bigger with stronger pulse */}
+                {/* Active tab: small scaling dot below icon + bottom-border highlight */}
                 {isActive && (
                   <motion.div
                     layoutId="navDot"
-                    className="absolute -bottom-0.5 w-2.5 h-2.5 bg-primary rounded-full"
-                    animate={{ scale: [1, 1.4, 1], opacity: [1, 0.6, 1] }}
-                    transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
-                    style={{ boxShadow: '0 0 8px oklch(0.55 0.12 80 / 40%)' }}
+                    className="absolute bottom-1 left-1/2 -translate-x-1/2"
+                    initial={{ scale: 0 }}
+                    animate={{ scale: [0, 1.3, 1] }}
+                    transition={{ duration: 0.4, ease: 'easeOut' }}
+                  >
+                    <div
+                      className="w-1.5 h-1.5 rounded-full bg-primary"
+                      style={{ boxShadow: '0 0 6px oklch(0.55 0.12 80 / 50%)' }}
+                    />
+                  </motion.div>
+                )}
+
+                {/* Subtle bottom-border highlight animation on tab switch */}
+                {isActive && (
+                  <motion.div
+                    layoutId="navBorderHighlight"
+                    className="absolute bottom-0 left-1/2 h-[2px] bg-gradient-to-r from-transparent via-primary to-transparent rounded-full tab-border-highlight"
+                    style={{ transform: 'translateX(-50%)' }}
+                    transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                   />
                 )}
               </motion.button>

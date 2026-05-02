@@ -119,6 +119,12 @@ interface AppState {
   // Daily Challenge
   dailyChallengeCompleted: Record<string, boolean>;
 
+  // Daily Prayers (5 prayer tracker by date)
+  dailyPrayers: Record<string, boolean[]>;
+
+  // Daily Mood
+  dailyMood: Record<string, string>;
+
   // Hydration
   _hydrated: boolean;
   
@@ -147,6 +153,8 @@ interface AppState {
   addAchievement: (type: string, emoji: string, description: string) => void;
   toggleBedtimeMode: () => void;
   completeDailyChallenge: (date: string) => void;
+  togglePrayer: (date: string, prayerIndex: number) => void;
+  setDailyMood: (date: string, mood: string) => void;
   _hydrate: () => void;
 }
 
@@ -188,6 +196,8 @@ function saveState(state: AppState) {
       achievements: state.achievements,
       bedtimeMode: state.bedtimeMode,
       dailyChallengeCompleted: state.dailyChallengeCompleted,
+      dailyPrayers: state.dailyPrayers,
+      dailyMood: state.dailyMood,
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
   } catch {
@@ -288,6 +298,8 @@ const defaultState = {
   achievements: [] as Achievement[],
   bedtimeMode: false,
   dailyChallengeCompleted: {} as Record<string, boolean>,
+  dailyPrayers: {} as Record<string, boolean[]>,
+  dailyMood: {} as Record<string, string>,
   _hydrated: false,
 };
 
@@ -507,6 +519,8 @@ export const useAppStore = create<AppState>((set, get) => ({
       guideShown: false,
       achievements: [] as Achievement[],
       dailyChallengeCompleted: {} as Record<string, boolean>,
+      dailyPrayers: {} as Record<string, boolean[]>,
+      dailyMood: {} as Record<string, string>,
     };
     set(newState);
     saveState({ ...get(), ...newState });
@@ -590,6 +604,27 @@ export const useAppStore = create<AppState>((set, get) => ({
     set(finalState);
     saveState({ ...get(), ...finalState });
     get().addAchievement('challenge', '🎯', `Défi du jour complété : ${date}`);
+  },
+
+  togglePrayer: (date: string, prayerIndex: number) => {
+    const current = get().dailyPrayers[date] || [false, false, false, false, false];
+    const updated = [...current];
+    updated[prayerIndex] = !updated[prayerIndex];
+    const newState = {
+      dailyPrayers: { ...get().dailyPrayers, [date]: updated },
+    };
+    set(newState);
+    saveState({ ...get(), ...newState });
+  },
+
+  setDailyMood: (date: string, mood: string) => {
+    const current = get().dailyMood[date];
+    if (current === mood) return; // Same mood already set
+    const newState = {
+      dailyMood: { ...get().dailyMood, [date]: mood },
+    };
+    set(newState);
+    saveState({ ...get(), ...newState });
   },
 }));
 

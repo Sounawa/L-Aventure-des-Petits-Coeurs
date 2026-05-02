@@ -67,7 +67,7 @@ export default function WordOfTheDay() {
       transition={{ delay: 1.6, duration: 0.5 }}
       className="w-full"
     >
-      <Card className="relative overflow-hidden border-0 shadow-lg">
+      <Card className="relative overflow-hidden border-0 shadow-lg slow-gradient-border">
         {/* Gradient border effect - teal/emerald theme */}
         <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-teal-400 via-emerald-300 to-teal-500 p-[2px]">
           <div className="h-full w-full rounded-xl bg-card" />
