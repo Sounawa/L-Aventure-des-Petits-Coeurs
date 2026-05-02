@@ -59,9 +59,12 @@ export default function ChapterCard({ data }: { data: ChapterData }) {
         : 'border-border/50'
     }`}>
       {/* Chapter header - always visible */}
-      <button
+      <div
+        role="button"
+        tabIndex={0}
         onClick={() => { setExpanded(!expanded); if (!progress.read) handleMarkRead(); }}
-        className="w-full text-left"
+        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setExpanded(!expanded); if (!progress.read) handleMarkRead(); } }}
+        className="w-full text-left cursor-pointer"
       >
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
@@ -101,7 +104,7 @@ export default function ChapterCard({ data }: { data: ChapterData }) {
             </div>
           </div>
         </CardHeader>
-      </button>
+      </div>
 
       {/* Expanded content */}
       <AnimatePresence>
@@ -120,6 +123,7 @@ export default function ChapterCard({ data }: { data: ChapterData }) {
                     src={chapterImage}
                     alt={data.title}
                     fill
+                    sizes="(max-width: 640px) 100vw, 672px"
                     className="object-cover"
                   />
                 ) : (

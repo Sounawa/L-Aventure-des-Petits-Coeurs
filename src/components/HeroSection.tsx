@@ -21,7 +21,7 @@ export default function HeroSection() {
           src="/images/magic-mirror-hero.png"
           alt="Miroir magique doré"
           fill
-          sizes="100vw"
+          sizes="(max-width: 640px) 100vw, 672px"
           className="object-cover opacity-15"
           priority
         />
