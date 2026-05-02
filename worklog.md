@@ -1527,3 +1527,28 @@ Stage Summary:
 - Enhanced: StoryMode (TTS read-aloud, book-turn animation), DailyChallenge (7 day-specific challenges), StatsDashboard (circular progress, weekly chart)
 - Styling: Navigation star glow, PracticeSection progress dots, HeroSection section labels, AdventureMap dotted paths
 - All text in French, responsive, dark mode compatible, lint zero errors
+
+---
+
+Task ID: 7
+Agent: Main Developer
+Task: Remove Écouter/listen functionality + Clean GitHub repo
+
+Work Log:
+- Deleted AudioPlayer.tsx component entirely
+- Removed AudioPlayer imports from 6 components: ChapterCard, StoryMode, WordOfTheDay, HeroSection, DuaCard, DailyInspiration
+- Removed Volume2 icon and isReadAloud state from StoryMode
+- Removed "Lecture en cours..." audio section from StoryMode
+- Fixed .gitignore to exclude workspace directories (skills/, agent-ctx/, mini-services/, download/, etc.)
+- Removed 467 workspace files from git tracking (skills/, agent-ctx/, download/, screenshots, QA images, etc.)
+- Removed GitHub Pages deployment workflow (incompatible with Next.js)
+- Force pushed clean repo to GitHub (437 files changed, 126,756 deletions)
+- Disabled GitHub Pages via API (was causing Jekyll build errors)
+- Verified app compiles and runs with HTTP 200
+
+Stage Summary:
+- Écouter/listen functionality completely removed from the app
+- GitHub repo is now clean: only 120 Next.js app files tracked
+- GitHub Pages disabled (no more Jekyll build errors)
+- App running on port 3000, lint clean
+- User's token remains active (not revoked per user's instruction)
