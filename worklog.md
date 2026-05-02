@@ -171,3 +171,82 @@ Une aventure magique où l'enfant découvre un miroir enchanté qui reflète la 
 - Aucun bug majeur identifié pour le moment
 - Le contenu est en français uniquement (pas de i18n)
 - La persistance est uniquement localStorage (pas de sync serveur)
+
+---
+
+## Task: Cron Review Round 1 — QA + Enhancements
+
+### Date: 2026-05-02 (Round 2)
+
+### QA Testing Results (agent-browser + VLM)
+- ✅ Homepage: Renders correctly, mirror emoji, shimmer title, CTA button
+- ✅ Aventures: 3 adventure tabs visible, chapter cards load, expand on click
+- ✅ Pratique: Daily checklist, weekly view, gratitude journal all functional
+- ✅ Activités: 5 activity cards visible (Quiz, Coloriage, Dessin, Respiration, Journal)
+- ✅ Dark mode: Toggle works, deep navy background with gold accents
+- ✅ No console errors or TypeScript/lint errors
+
+### New Features Added
+
+1. **🌙 Dark/Night Mode** — Toggle in top bar (Moon/Sun icon)
+   - Deep navy/indigo background with warm gold accents
+   - Perfect for bedtime reading
+   - Persists in localStorage
+   - Uses CSS `dark` class on `<html>`
+
+2. **🏅 Achievement Badge System** — 14 badges total
+   - `first_chapter`, `first_activity`, `first_treasure` — Milestone badges
+   - `mirror_master`, `treasure_hunter`, `light_bearer` — Adventure completion
+   - `gratitude_3`, `perfect_day` — Practice milestones
+   - `star_10`, `star_25`, `star_50` — Star milestones
+   - `quiz_master`, `breathing_3` — Activity badges
+   - `all_complete` — Ultimate badge
+   - Auto-unlock system: badges checked on every state change
+   - Badge panel accessible from top bar (Trophy icon)
+   - Badge display in Pratique section with lock/unlock states
+
+3. **✏️ Free Drawing Canvas** — New activity
+   - Full touch/mouse drawing support
+   - 15 colors + brush size selection (S/M/L)
+   - Brush and eraser tools
+   - Clear canvas button
+   - Responsive canvas (4:3 aspect ratio)
+
+4. **📊 Adventure Progress Indicators** — Visual progress in AdventureSelector
+   - Progress bar at bottom of each adventure tab
+   - Shows completed/total count (e.g., "3/5 ✨")
+   - "Complété ! 🎉" label when fully done
+   - Star emoji replaces adventure emoji when complete
+
+5. **🎨 Enhanced Styling**
+   - Updated ActivitiesSection: 5 cards with staggered entrance animation
+   - PracticeSection: Progress bar on checklist, line-through on completed items
+   - Cards: Border-2 with primary/10 for visual hierarchy
+   - QuizGame: Letter labels (A, B, C) on answer options, spring animation on trophy
+   - QuizGame: Animated progress bar
+   - Pratique: Star/badge counter card with recent badge highlight
+   - Pratique: Staggered checklist entrance animations
+   - All sections use shimmer-text for titles
+
+### Files Modified
+- `src/lib/store.ts` — Added Badge type, allBadges array, auto-unlock logic, darkMode state, toggleDarkMode action
+- `src/components/Navigation.tsx` — Added BadgePanel popup, dark mode toggle (Moon/Sun), Trophy icon
+- `src/components/DrawingCanvas.tsx` — NEW: Full drawing canvas with touch support
+- `src/components/AdventureSelector.tsx` — Added progress bar, completed count, completion label
+- `src/components/ActivitiesSection.tsx` — Added Drawing Canvas activity, staggered animations, better quiz UI
+- `src/components/PracticeSection.tsx` — Added badges display, progress bar, staggered checklist, recent badge highlight
+
+### Current Status
+- **Phase**: Enhanced MVP — All QA passing, new features working
+- **Lint**: Zero errors
+- **Compilation**: Clean
+- **Dark mode**: Verified working with VLM
+
+### Unresolved / Next Phase Recommendations
+1. **Backend API** — Save progress to database (Prisma)
+2. **Arabic text support** — RTL layout for Quranic verses
+3. **Audio narration** — Read stories aloud using TTS
+4. **PWA** — Offline mode + installable
+5. **Parent sharing** — Email/share accomplishments
+6. **More illustrations** — AI-generated images for every chapter
+7. **Certificate generation** — PDF certificate on completion

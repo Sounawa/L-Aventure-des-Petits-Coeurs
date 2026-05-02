@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { useAppStore } from '@/lib/store';
 import BreathingExercise from './BreathingExercise';
 import GratitudeJournal from './GratitudeJournal';
+import DrawingCanvas from './DrawingCanvas';
 
 // ---- Quiz Game ----
 const quizQuestions = [
@@ -53,17 +54,30 @@ function QuizGame() {
   if (finished) {
     return (
       <div className="flex flex-col items-center gap-4 py-4">
-        <span className="text-5xl">🏆</span>
+        <motion.span 
+          className="text-5xl"
+          initial={{ scale: 0, rotate: -180 }}
+          animate={{ scale: 1, rotate: 0 }}
+          transition={{ type: 'spring', stiffness: 200 }}
+        >
+          🏆
+        </motion.span>
         <h3 className="text-xl font-bold text-primary">Quiz terminé !</h3>
         <p className="text-lg">
           Score : <span className="font-bold text-primary">{quizCompleted ? quizScore : score}/{quizQuestions.length}</span>
         </p>
-        {score >= 7 && <p className="text-sm text-secondary font-medium">🌟 Bravo ! Tu connais bien les trésors du cœur !</p>}
-        {!quizCompleted && (
-          <Button onClick={() => { setCurrentQ(0); setScore(0); setSelected(null); setFinished(false); }} variant="outline">
-            🔄 Recommencer
-          </Button>
+        {(quizCompleted ? quizScore : score) >= 7 && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="bg-primary/10 rounded-xl p-3 text-center border border-primary/20"
+          >
+            <p className="text-sm font-medium text-primary">🌟 Bravo ! Tu connais bien les trésors du cœur !</p>
+          </motion.div>
         )}
+        <Button onClick={() => { setCurrentQ(0); setScore(0); setSelected(null); setFinished(false); }} variant="outline">
+          🔄 Recommencer
+        </Button>
       </div>
     );
   }
@@ -77,14 +91,18 @@ function QuizGame() {
         <span className="text-sm font-medium text-primary">{score} ⭐</span>
       </div>
       
-      <div className="w-full bg-muted rounded-full h-2">
-        <div
-          className="bg-primary rounded-full h-2 transition-all"
-          style={{ width: `${((currentQ + 1) / quizQuestions.length) * 100}%` }}
+      <div className="w-full bg-muted rounded-full h-2.5 overflow-hidden">
+        <motion.div
+          className="bg-primary rounded-full h-2.5"
+          initial={{ width: 0 }}
+          animate={{ width: `${((currentQ + 1) / quizQuestions.length) * 100}%` }}
+          transition={{ duration: 0.3 }}
         />
       </div>
 
-      <p className="text-base font-medium text-center">{q.question}</p>
+      <div className="bg-primary/5 rounded-xl p-4 border border-primary/10">
+        <p className="text-base font-medium text-center">{q.question}</p>
+      </div>
 
       <div className="space-y-2">
         {q.options.map((opt, i) => {
@@ -98,14 +116,17 @@ function QuizGame() {
               className={`w-full text-left px-4 py-3 rounded-xl text-sm font-medium transition-all ${
                 selected !== null
                   ? isCorrect
-                    ? 'bg-green-100 text-green-700 border-2 border-green-300'
+                    ? 'bg-green-100 text-green-700 border-2 border-green-300 shadow-sm'
                     : isSelected
                     ? 'bg-red-100 text-red-700 border-2 border-red-300'
                     : 'bg-muted/50 text-muted-foreground border-2 border-transparent'
-                  : 'bg-card border-2 border-border hover:border-primary/50'
+                  : 'bg-card border-2 border-border hover:border-primary/50 hover:shadow-sm'
               } ${selected !== null ? 'cursor-not-allowed' : ''}`}
               whileTap={selected === null ? { scale: 0.98 } : {}}
             >
+              <span className="mr-2 inline-block w-5 h-5 rounded-full bg-muted text-center text-xs leading-5 font-bold">
+                {String.fromCharCode(65 + i)}
+              </span>
               {opt}
               {selected !== null && isCorrect && ' ✅'}
               {selected !== null && isSelected && !isCorrect && ' ❌'}
@@ -145,14 +166,14 @@ function ColoringBook() {
   return (
     <div className="flex flex-col gap-4">
       {/* Shape selection */}
-      <div className="flex justify-center gap-3">
+      <div className="flex justify-center gap-2">
         {coloringShapes.map(s => (
           <button
             key={s.id}
             onClick={() => { setSelectedShape(s.id); setColoredRegions({}); }}
-            className={`px-3 py-2 rounded-xl text-sm font-medium transition-all ${
+            className={`px-3 py-2 rounded-xl text-xs font-medium transition-all ${
               selectedShape === s.id
-                ? 'bg-primary/20 border-2 border-primary text-primary'
+                ? 'bg-primary/20 border-2 border-primary text-primary shadow-sm'
                 : 'bg-card border border-border hover:border-primary/50'
             }`}
           >
@@ -167,7 +188,7 @@ function ColoringBook() {
           <button
             key={color}
             onClick={() => setSelectedColor(color)}
-            className={`w-8 h-8 rounded-full border-2 transition-transform ${
+            className={`w-8 h-8 rounded-full border-2 transition-transform shadow-sm ${
               selectedColor === color ? 'border-foreground scale-125' : 'border-transparent hover:scale-110'
             }`}
             style={{ backgroundColor: color }}
@@ -180,7 +201,7 @@ function ColoringBook() {
       <div className="flex justify-center">
         <svg
           viewBox="0 0 100 100"
-          className="w-64 h-64 sm:w-80 sm:h-80 bg-card rounded-2xl border-2 border-border"
+          className="w-64 h-64 sm:w-80 sm:h-80 bg-card rounded-2xl border-2 border-border shadow-inner"
         >
           {/* Background */}
           <rect
@@ -222,43 +243,47 @@ export default function ActivitiesSection() {
   const [activeActivity, setActiveActivity] = useState<string | null>(null);
 
   const activities = [
-    { id: 'quiz', name: 'Quiz des Trésors', emoji: '🏆', desc: '10 questions sur les trésors du cœur', color: 'from-amber-100 to-yellow-200' },
-    { id: 'coloring', name: 'Coloriage', emoji: '🎨', desc: 'Colorie des formes magiques', color: 'from-pink-100 to-rose-200' },
-    { id: 'breathing', name: 'Respiration Guidée', emoji: '🌬️', desc: 'Exercice de respiration 4-2-6', color: 'from-teal-100 to-cyan-200' },
-    { id: 'journal', name: 'Journal de Gratitude', emoji: '💛', desc: 'Note ce pour quoi tu es reconnaissant(e)', color: 'from-amber-100 to-orange-200' },
+    { id: 'quiz', name: 'Quiz des Trésors', emoji: '🏆', desc: '10 questions sur les trésors du cœur', color: 'from-amber-100 to-yellow-200', darkColor: 'from-amber-900/30 to-yellow-800/30' },
+    { id: 'coloring', name: 'Coloriage', emoji: '🎨', desc: 'Colorie des formes magiques', color: 'from-pink-100 to-rose-200', darkColor: 'from-pink-900/30 to-rose-800/30' },
+    { id: 'drawing', name: 'Dessin Libre', emoji: '✏️', desc: 'Dessine avec des pinceaux magiques', color: 'from-teal-100 to-cyan-200', darkColor: 'from-teal-900/30 to-cyan-800/30' },
+    { id: 'breathing', name: 'Respiration', emoji: '🌬️', desc: 'Exercice de respiration 4-2-6', color: 'from-blue-100 to-indigo-200', darkColor: 'from-blue-900/30 to-indigo-800/30' },
+    { id: 'journal', name: 'Gratitude', emoji: '💛', desc: 'Note ce pour quoi tu es reconnaissant(e)', color: 'from-amber-100 to-orange-200', darkColor: 'from-amber-900/30 to-orange-800/30' },
   ];
 
   return (
     <div className="flex flex-col gap-4">
       <div className="text-center py-2">
-        <h2 className="text-2xl font-bold text-accent">🎮 Activités</h2>
+        <h2 className="text-2xl font-bold shimmer-text">🎮 Activités</h2>
         <p className="text-sm text-muted-foreground mt-1">Amuse-toi tout en apprenant !</p>
       </div>
 
       {!activeActivity ? (
         <div className="grid grid-cols-2 gap-3">
-          {activities.map(act => (
+          {activities.map((act, i) => (
             <motion.button
               key={act.id}
               onClick={() => setActiveActivity(act.id)}
-              className={`bg-gradient-to-br ${act.color} rounded-2xl p-4 sm:p-6 text-center border-2 border-white/30 shadow-md hover:shadow-lg transition-shadow`}
+              className={`bg-gradient-to-br ${act.color} dark:${act.darkColor} rounded-2xl p-4 sm:p-5 text-center border-2 border-white/30 dark:border-white/10 shadow-md hover:shadow-lg transition-all`}
               whileTap={{ scale: 0.95 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.05 }}
             >
               <span className="text-3xl sm:text-4xl block">{act.emoji}</span>
               <p className="text-sm sm:text-base font-bold mt-2">{act.name}</p>
-              <p className="text-xs text-foreground/60 mt-1 hidden sm:block">{act.desc}</p>
+              <p className="text-[10px] sm:text-xs text-foreground/60 mt-1">{act.desc}</p>
             </motion.button>
           ))}
         </div>
       ) : (
-        <Card>
+        <Card className="border-2 border-primary/10">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-lg">
-                {activities.find(a => a.id === activeActivity)?.emoji}{' '}
+              <CardTitle className="text-lg flex items-center gap-2">
+                <span className="text-xl">{activities.find(a => a.id === activeActivity)?.emoji}</span>
                 {activities.find(a => a.id === activeActivity)?.name}
               </CardTitle>
-              <Button variant="ghost" size="sm" onClick={() => setActiveActivity(null)}>
+              <Button variant="ghost" size="sm" onClick={() => setActiveActivity(null)} className="text-muted-foreground">
                 ← Retour
               </Button>
             </div>
@@ -266,6 +291,7 @@ export default function ActivitiesSection() {
           <CardContent>
             {activeActivity === 'quiz' && <QuizGame />}
             {activeActivity === 'coloring' && <ColoringBook />}
+            {activeActivity === 'drawing' && <DrawingCanvas />}
             {activeActivity === 'breathing' && <BreathingExercise />}
             {activeActivity === 'journal' && <GratitudeJournal />}
           </CardContent>
