@@ -1447,3 +1447,83 @@ The 🔒 padlock on Trésors du Cœur was already fixed in a previous session. V
 5. **Certificate generation** — PDF certificate on adventure completion
 6. **Performance optimization** — Code splitting, lazy loading for heavy components
 7. **Arabic font** — Custom Arabic font for better rendering
+
+---
+Task ID: 1
+Agent: Bug Fixes & Styling Agent
+Task: Fix bugs and improve styling
+
+Work Log:
+- Read worklog and all key component files to understand current codebase state
+- Fixed TreasureCard expanding bug: removed `treasure-shimmer` and `discovery-shimmer` CSS classes that had `overflow: hidden` which clipped the AnimatePresence expansion content. Added `style={{ overflow: expanded ? 'visible' : undefined }}` on the Card to override when expanded.
+- Made Trésors du Cœur cards more inviting: removed "?" badge with `question-pulse` animation, replaced with animated ✨ sparkle indicator, added "Découvrir ✨" badge instead of locked look, added "Clique pour découvrir →" animated text, changed borders from dotted to warm amber/gold solid borders, added chevron indicator (▾) that rotates on expand, removed opacity reduction on emoji, changed number badge to warm amber gradient
+- Added "Histoire" and "Leçon" section labels with uppercase tracking in expanded treasure card content
+- Fixed ChunkLoadError: added retry logic to FloatingStars dynamic import with `.catch()` for automatic retry on chunk load failure, added `loading: () => null` component
+- Fixed StarReward.tsx lint error: moved `setFlyingStars`, `setSparkles`, `setFloatingText` calls from direct effect body into `requestAnimationFrame` to avoid React 19 cascading render warning
+- Enhanced HeroSection: added section header labels with decorative dividers for Daily Inspiration ("📖 Inspiration du jour"), Mood Tracker ("💫 Ton humeur"), and Word of the Day ("🌙 Mot du jour"), added staggered entrance animations for each section
+- Enhanced Navigation: improved star counter with custom gradient background, added gold glow box-shadow effect, added pulsing star animation, added emoji + label in nav tab names with short labels for mobile, added `shortLabel` field to navItems
+- Enhanced PracticeSection: added visual progress indicator (5 animated dots) in checklist header, added progress percentage label inside the progress bar, added motivational messages based on completion count ("Bon début ! Continue 💪", "Bien joué ! Encore 3 ✨", etc.), added checkbox pulse animation with green ripple effect on check, added emoji scale animation on check
+- Enhanced AdventureMap: added dotted path lines between stations (dashed borders in amber/teal), added background dotted path behind all stations for visual continuity, improved z-index layering for station nodes over path lines
+- Ran lint: zero errors
+- Dev server responding on port 3000
+
+Stage Summary:
+- Fixed 4 bugs: TreasureCard expanding (overflow:hidden from shimmer CSS), uninviting treasure cards (removed locked look), ChunkLoadError (dynamic import retry), StarReward lint error (setState in effect)
+- Improved styling across 5 components: HeroSection (section headers), Navigation (star glow, emoji tabs), PracticeSection (progress dots, motivational messages, better checkboxes), AdventureMap (dotted path connections), AdventureView/TreasureCard (inviting design)
+- All changes maintain dark mode support, French text, framer-motion animations, responsive design
+- Lint: zero errors, compilation clean
+
+---
+Task ID: 2
+Agent: Features Agent
+Task: Add new features (StarReward, StoryMode enhancement, DailyChallenge enhancement, StatsDashboard enhancement)
+
+Work Log:
+- Read existing worklog and all relevant source files to understand project state
+- Created StarReward.tsx: beautiful star reward animation component with flying stars, sparkle bursts, floating "+N ⭐" text, and useStarReward hook for easy integration
+- Enhanced StoryMode.tsx: added TTS read-aloud button with AudioPlayer, book-like page turning animation (AnimatePresence with rotateY), illustration placeholder per paragraph, previous/next page navigation arrows, large serif typography for immersive reading
+- Enhanced DailyChallenge.tsx: replaced with 7 specific challenge types (Lundi: Acte de gentillesse, Mardi: Moment de gratitude, Mercredi: Exercice de respiration, Jeudi: Lecture du Coran, Vendredi: Prière extra, Samedi: Dessin spirituel, Dimanche: Partage avec famille), each with unique emoji/title/description/gradient, weekly progress view showing completed days, streak messages
+- Enhanced StatsDashboard.tsx: added 3 circular progress SVGs (chapters/treasures/badges), weekly activity bar chart, reading time estimate, streak with fire animation, gratitude count, 8 stat cards with animated numbers, level roadmap
+- Updated store.ts: added weeklyChallenges Record<string, string> field, updated saveState/loadState/resetProgress for persistence
+- Integrated StarReward into page.tsx: tracks totalStars changes and triggers flying star animation, global StarReward component rendered alongside CelebrationOverlay
+- Ran lint: zero errors, all new files pass TypeScript checks
+
+Stage Summary:
+- Created 1 new component: StarReward.tsx (with useStarReward hook)
+- Enhanced 3 existing components: StoryMode.tsx, DailyChallenge.tsx, StatsDashboard.tsx
+- Updated 2 integration files: store.ts, page.tsx
+- All new text in French, responsive design, framer-motion animations, dark mode compatible
+- Lint: zero errors, TypeScript compilation clean for all modified files
+- StarReward triggers globally when totalStars increases (flying stars from center to star counter)
+- StoryMode now has page-by-page navigation with book-turn animation and TTS read-aloud
+- DailyChallenge has 7 unique day-specific challenges with weekly progress tracker
+- StatsDashboard has circular progress SVGs, weekly chart, streak fire, and reading time estimate
+
+---
+Task ID: 7
+Agent: Main Agent
+Task: Fix white screen, padlock issues, add features, create cron
+
+Work Log:
+- Diagnosed white screen with Z logo: caused by dev server not running (Caddy gateway shows Z.ai fallback when Next.js on port 3000 is down)
+- Started dev server with nohup to keep it persistent
+- Verified all 4 sections render correctly (Home, Aventures, Pratique, Activités)
+- Fixed padlock/locked appearance on Trésors du Cœur: replaced "?" badge with "✨ Découvrir ✨" and "Clique pour découvrir →" animated text, warm amber borders, full opacity emojis
+- Fixed TreasureCard not expanding: removed overflow:hidden from shimmer CSS classes, added overflow:visible when expanded
+- Fixed ChunkLoadError on dynamic imports: added retry logic to FloatingStars dynamic import
+- Verified dark mode works correctly
+- Verified treasure cards expand properly when clicked (content shows HISTOIRE section, Leçon section, and activity area)
+- Sub-agent 1: Fixed bugs + styling improvements (TreasureCard expanding, inviting design, HeroSection labels, Navigation star glow, PracticeSection progress dots/motivational messages, AdventureMap dotted paths)
+- Sub-agent 2: Added new features (StarReward animation, StoryMode enhancement with TTS, DailyChallenge with 7 day-specific challenges, StatsDashboard with circular progress SVGs)
+- Lint: zero errors
+- Dev server running on port 3000
+
+Stage Summary:
+- White screen fix: dev server running with nohup (process stays alive)
+- Padlock fix: Trésors cards now show "Découvrir ✨" instead of locked appearance
+- TreasureCard expanding: fixed overflow clipping issue
+- ChunkLoadError: added retry logic to dynamic imports
+- New components: StarReward.tsx (flying star animation + useStarReward hook)
+- Enhanced: StoryMode (TTS read-aloud, book-turn animation), DailyChallenge (7 day-specific challenges), StatsDashboard (circular progress, weekly chart)
+- Styling: Navigation star glow, PracticeSection progress dots, HeroSection section labels, AdventureMap dotted paths
+- All text in French, responsive, dark mode compatible, lint zero errors

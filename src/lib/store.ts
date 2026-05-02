@@ -124,6 +124,7 @@ interface AppState {
 
   // Daily Challenge
   dailyChallengeCompleted: Record<string, boolean>;
+  weeklyChallenges: Record<string, string>;
 
   // Daily Prayers (5 prayer tracker by date)
   dailyPrayers: Record<string, boolean[]>;
@@ -211,6 +212,7 @@ function saveState(state: AppState) {
       achievements: state.achievements,
       bedtimeMode: state.bedtimeMode,
       dailyChallengeCompleted: state.dailyChallengeCompleted,
+      weeklyChallenges: state.weeklyChallenges,
       dailyPrayers: state.dailyPrayers,
       dailyMood: state.dailyMood,
       moodHistory: state.moodHistory,
@@ -315,6 +317,7 @@ const defaultState = {
   achievements: [] as Achievement[],
   bedtimeMode: false,
   dailyChallengeCompleted: {} as Record<string, boolean>,
+  weeklyChallenges: {} as Record<string, string>,
   dailyPrayers: {} as Record<string, boolean[]>,
   dailyMood: {} as Record<string, string>,
   moodHistory: [] as MoodEntry[],
@@ -538,6 +541,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       guideShown: false,
       achievements: [] as Achievement[],
       dailyChallengeCompleted: {} as Record<string, boolean>,
+      weeklyChallenges: {} as Record<string, string>,
       dailyPrayers: {} as Record<string, boolean[]>,
       dailyMood: {} as Record<string, string>,
       moodHistory: [] as MoodEntry[],

@@ -70,7 +70,17 @@ export default function AdventureMap() {
 
   return (
     <div className="py-4">
-      <div className="flex items-center justify-between">
+      {/* Dotted path between stations - rendered first as background */}
+      <div className="relative">
+        {/* Dotted path lines behind the stations */}
+        <div className="absolute top-1/2 left-0 right-0 -translate-y-1/2 flex items-center px-12 sm:px-16 pointer-events-none" aria-hidden="true">
+          <div className="flex-1 border-t-2 border-dashed border-amber-300/30 dark:border-amber-600/20" />
+          <div className="w-20 sm:w-24" />
+          <div className="flex-1 border-t-2 border-dashed border-teal-300/30 dark:border-teal-600/20" />
+        </div>
+      </div>
+
+      <div className="relative flex items-center justify-between">
         {stations.map((station, index) => {
           const progress = getProgress(station.id);
           const isComplete = progress === station.totalItems;
@@ -78,11 +88,11 @@ export default function AdventureMap() {
           const percent = station.totalItems > 0 ? (progress / station.totalItems) * 100 : 0;
 
           return (
-            <div key={station.id} className="flex items-center flex-1">
+            <div key={station.id} className="flex items-center flex-1 relative">
               {/* Station node */}
               <motion.button
                 onClick={() => setAdventure(station.id)}
-                className="relative flex flex-col items-center gap-1.5 flex-shrink-0 cursor-pointer"
+                className="relative flex flex-col items-center gap-1.5 flex-shrink-0 cursor-pointer z-10"
                 whileTap={{ scale: 0.92 }}
                 whileHover={{ scale: 1.05 }}
               >
@@ -171,14 +181,16 @@ export default function AdventureMap() {
                 </div>
               </motion.button>
 
-              {/* Connection line to next station */}
+              {/* Dotted path connector between stations */}
               {index < stations.length - 1 && (
-                <div className="flex-1 flex items-center justify-center px-1 sm:px-2 relative min-w-[30px] sm:min-w-[50px]">
-                  <div className="w-full h-1 bg-gradient-to-r from-border/60 to-border/40 relative overflow-hidden rounded-full">
+                <div className="flex-1 flex items-center justify-center px-1 sm:px-2 relative min-w-[30px] sm:min-w-[50px] z-10">
+                  <div className="w-full relative">
+                    {/* Dotted path background */}
+                    <div className="w-full h-0 border-t-2 border-dashed border-amber-300/30 dark:border-amber-600/20 rounded-full" />
                     {/* Animated progress fill */}
                     {isComplete && (
                       <motion.div
-                        className={`absolute inset-y-0 left-0 bg-gradient-to-r ${station.bgColor} rounded-full`}
+                        className={`absolute inset-y-0 left-0 bg-gradient-to-r ${station.bgColor} rounded-full border-t-2 border-solid`}
                         initial={{ width: 0 }}
                         animate={{ width: '100%' }}
                         transition={{ duration: 0.8, delay: 0.3 }}

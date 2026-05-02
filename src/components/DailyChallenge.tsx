@@ -5,25 +5,95 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore } from '@/lib/store';
 import { Button } from '@/components/ui/button';
 
+// 7 different challenge types, one for each day of the week
 const dailyChallenges = [
-  { day: 0, dayName: 'Lundi', emoji: '🌬️', text: "Fais 3 respirations calmes aujourd'hui", category: 'Respiration' },
-  { day: 1, dayName: 'Mardi', emoji: '🙏', text: "Dis 'merci' à 3 personnes aujourd'hui", category: 'Gratitude' },
-  { day: 2, dayName: 'Mercredi', emoji: '🌸', text: 'Fais un acte de gentillesse pour quelqu\'un', category: 'Gentillesse' },
-  { day: 3, dayName: 'Jeudi', emoji: '💜', text: 'Écoute ton cœur pendant 2 minutes de silence', category: 'Méditation' },
-  { day: 4, dayName: 'Vendredi', emoji: '🤲', text: 'Apprends une nouvelle prière aujourd\'hui', category: 'Prière' },
-  { day: 5, dayName: 'Samedi', emoji: '🎨', text: 'Dessine quelque chose qui te rend heureux', category: 'Créativité' },
-  { day: 6, dayName: 'Dimanche', emoji: '📖', text: 'Partage une belle histoire avec ta famille', category: 'Partage' },
+  {
+    day: 0,
+    dayName: 'Lundi',
+    emoji: '🤝',
+    title: 'Acte de gentillesse',
+    text: 'Fais un acte de gentillesse pour quelqu\'un aujourd\'hui. Un sourire, un mot doux, ou aide quelqu\'un !',
+    description: 'La gentillesse rend le monde plus beau 💛',
+    category: 'Gentillesse',
+    gradient: 'from-pink-100 to-rose-100 dark:from-pink-900/20 dark:to-rose-900/20',
+    border: 'border-pink-200/50 dark:border-pink-700/30',
+    accent: '#EC4899',
+  },
+  {
+    day: 1,
+    dayName: 'Mardi',
+    emoji: '🙏',
+    title: 'Moment de gratitude',
+    text: 'Prends un moment pour dire "Alhamdulillah" et penser à 3 choses pour lesquelles tu es reconnaissant(e).',
+    description: 'La gratitude illumine le cœur ✨',
+    category: 'Gratitude',
+    gradient: 'from-amber-100 to-yellow-100 dark:from-amber-900/20 dark:to-yellow-900/20',
+    border: 'border-amber-200/50 dark:border-amber-700/30',
+    accent: '#C9A227',
+  },
+  {
+    day: 2,
+    dayName: 'Mercredi',
+    emoji: '🌬️',
+    title: 'Exercice de respiration',
+    text: 'Fais 3 respirations calmes : inspire 4 secondes, retiens 2 secondes, expire 6 secondes.',
+    description: 'La respiration apaise l\'âme 🌊',
+    category: 'Respiration',
+    gradient: 'from-sky-100 to-cyan-100 dark:from-sky-900/20 dark:to-cyan-900/20',
+    border: 'border-sky-200/50 dark:border-sky-700/30',
+    accent: '#0EA5E9',
+  },
+  {
+    day: 3,
+    dayName: 'Jeudi',
+    emoji: '📖',
+    title: 'Lecture du Coran',
+    text: 'Lis au moins une page du Coran aujourd\'hui, même une petite sourate !',
+    description: 'Le Coran est la lumière de Dieu 🌟',
+    category: 'Coran',
+    gradient: 'from-emerald-100 to-green-100 dark:from-emerald-900/20 dark:to-green-900/20',
+    border: 'border-emerald-200/50 dark:border-emerald-700/30',
+    accent: '#10B981',
+  },
+  {
+    day: 4,
+    dayName: 'Vendredi',
+    emoji: '🤲',
+    title: 'Prière extra',
+    text: 'Fais une prière supplémentaire aujourd\'hui, même juste 2 rak\'ahs avec le cœur.',
+    description: 'La prière rapproche de Dieu 💜',
+    category: 'Prière',
+    gradient: 'from-teal-100 to-cyan-100 dark:from-teal-900/20 dark:to-cyan-900/20',
+    border: 'border-teal-200/50 dark:border-teal-700/30',
+    accent: '#14B8A6',
+  },
+  {
+    day: 5,
+    dayName: 'Samedi',
+    emoji: '🎨',
+    title: 'Dessin spirituel',
+    text: 'Dessine quelque chose qui te rend reconnaissant(e) : une étoile, un cœur, une fleur...',
+    description: 'L\'art exprime la beauté du cœur 🎨',
+    category: 'Créativité',
+    gradient: 'from-orange-100 to-amber-100 dark:from-orange-900/20 dark:to-amber-900/20',
+    border: 'border-orange-200/50 dark:border-orange-700/30',
+    accent: '#F59E0B',
+  },
+  {
+    day: 6,
+    dayName: 'Dimanche',
+    emoji: '👨‍👩‍👧‍👦',
+    title: 'Partage avec famille',
+    text: 'Partage quelque chose avec ta famille : une histoire, un dessin, un moment de prière ensemble.',
+    description: 'La famille est un trésor 🏠',
+    category: 'Partage',
+    gradient: 'from-rose-100 to-pink-100 dark:from-rose-900/20 dark:to-pink-900/20',
+    border: 'border-rose-200/50 dark:border-rose-700/30',
+    accent: '#F43F5E',
+  },
 ];
 
-const categoryColors: Record<string, string> = {
-  Respiration: 'from-sky-100 to-cyan-100 dark:from-sky-900/20 dark:to-cyan-900/20 border-sky-200/50 dark:border-sky-700/30',
-  Gratitude: 'from-amber-100 to-yellow-100 dark:from-amber-900/20 dark:to-yellow-900/20 border-amber-200/50 dark:border-amber-700/30',
-  Gentillesse: 'from-pink-100 to-rose-100 dark:from-pink-900/20 dark:to-rose-900/20 border-pink-200/50 dark:border-pink-700/30',
-  Méditation: 'from-purple-100 to-violet-100 dark:from-purple-900/20 dark:to-violet-900/20 border-purple-200/50 dark:border-purple-700/30',
-  Prière: 'from-teal-100 to-emerald-100 dark:from-teal-900/20 dark:to-emerald-900/20 border-teal-200/50 dark:border-teal-700/30',
-  Créativité: 'from-orange-100 to-amber-100 dark:from-orange-900/20 dark:to-amber-900/20 border-orange-200/50 dark:border-orange-700/30',
-  Partage: 'from-rose-100 to-pink-100 dark:from-rose-900/20 dark:to-pink-900/20 border-rose-200/50 dark:border-rose-700/30',
-};
+const dayEmojis = ['🌅', '☀️', '🌿', '🌤️', '🌟', '🌙', '✨'];
 
 export default function DailyChallenge() {
   const { dailyChallengeCompleted, completeDailyChallenge } = useAppStore();
@@ -41,7 +111,30 @@ export default function DailyChallenge() {
 
   const isCompleted = dailyChallengeCompleted[today] || false;
 
-  const colorClass = categoryColors[challenge.category] || categoryColors.Respiration;
+  // Calculate weekly progress (which days this week are completed)
+  const weeklyProgress = useMemo(() => {
+    const result: { day: string; dayShort: string; completed: boolean; isToday: boolean; emoji: string }[] = [];
+    const now = new Date();
+    const dayOfWeek = (now.getDay() + 6) % 7; // Monday=0
+
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(now);
+      d.setDate(d.getDate() - dayOfWeek + i);
+      const dateStr = d.toISOString().split('T')[0];
+      const dayNames = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
+
+      result.push({
+        day: dailyChallenges[i].dayName,
+        dayShort: dayNames[i],
+        completed: !!dailyChallengeCompleted[dateStr],
+        isToday: dateStr === today,
+        emoji: dayEmojis[i],
+      });
+    }
+    return result;
+  }, [dailyChallengeCompleted, today]);
+
+  const completedDays = weeklyProgress.filter(d => d.completed).length;
 
   return (
     <motion.div
@@ -50,12 +143,12 @@ export default function DailyChallenge() {
       transition={{ delay: 0.2 }}
       className="w-full"
     >
-      <div className={`relative overflow-hidden rounded-2xl border-2 bg-gradient-to-br ${colorClass} p-5 sm:p-6 slow-gradient-border`}>
+      <div className={`relative overflow-hidden rounded-2xl border-2 bg-gradient-to-br ${challenge.gradient} ${challenge.border} p-5 sm:p-6 slow-gradient-border`}>
         {/* Animated border glow */}
         <motion.div
           className="absolute inset-0 rounded-2xl pointer-events-none"
           style={{
-            background: 'linear-gradient(135deg, rgba(201, 162, 39, 0.1), transparent, rgba(201, 162, 39, 0.1))',
+            background: `linear-gradient(135deg, ${challenge.accent}15, transparent, ${challenge.accent}15)`,
             backgroundSize: '200% 200%',
           }}
           animate={{
@@ -66,6 +159,7 @@ export default function DailyChallenge() {
 
         {/* Content */}
         <div className="relative z-10">
+          {/* Header */}
           <div className="flex items-center gap-2 mb-3">
             <span className="text-2xl">🎯</span>
             <h3 className="text-sm font-bold uppercase tracking-wider text-foreground/70">
@@ -76,7 +170,8 @@ export default function DailyChallenge() {
             </span>
           </div>
 
-          <div className="flex items-start gap-3 mb-4">
+          {/* Challenge content */}
+          <div className="flex items-start gap-3 mb-3">
             <motion.span
               className="text-4xl sm:text-5xl flex-shrink-0"
               animate={isCompleted ? { scale: [1, 1.15, 1], rotate: [0, 10, -10, 0] } : {}}
@@ -85,19 +180,28 @@ export default function DailyChallenge() {
               {challenge.emoji}
             </motion.span>
             <div className="flex-1">
-              <p className="text-lg sm:text-xl font-semibold text-foreground/90 leading-relaxed">
+              <h4 className="text-lg sm:text-xl font-bold text-foreground/90 mb-1">
+                {challenge.title}
+              </h4>
+              <p className="text-sm sm:text-base text-foreground/80 leading-relaxed">
                 {challenge.text}
               </p>
-              <span className={`inline-block mt-2 text-[10px] font-bold px-2.5 py-0.5 rounded-full ${
-                isCompleted
-                  ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
-                  : 'bg-foreground/5 text-foreground/50'
-              }`}>
-                {challenge.category}
-              </span>
+              <div className="flex items-center gap-2 mt-2">
+                <span className={`inline-block text-[10px] font-bold px-2.5 py-0.5 rounded-full ${
+                  isCompleted
+                    ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                    : 'bg-foreground/5 text-foreground/50'
+                }`}>
+                  {challenge.category}
+                </span>
+                <span className="text-[10px] text-foreground/40">
+                  {challenge.description}
+                </span>
+              </div>
             </div>
           </div>
 
+          {/* Completion button */}
           <AnimatePresence mode="wait">
             {isCompleted ? (
               <motion.div
@@ -115,7 +219,7 @@ export default function DailyChallenge() {
                   ✅
                 </motion.span>
                 <span className="text-base font-bold text-green-700 dark:text-green-400">
-                  Bravo ! Tu as relevé le défi ! 🌟
+                  Bravo ! Défi relevé ! 🌟
                 </span>
               </motion.div>
             ) : (
@@ -135,6 +239,59 @@ export default function DailyChallenge() {
               </motion.div>
             )}
           </AnimatePresence>
+
+          {/* Weekly progress */}
+          <div className="mt-4 pt-3 border-t border-foreground/5">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-[10px] font-semibold text-foreground/50 uppercase tracking-wider">
+                Cette semaine
+              </p>
+              <p className="text-[10px] font-bold text-foreground/60">
+                {completedDays}/7 défis
+              </p>
+            </div>
+            <div className="flex items-center gap-1">
+              {weeklyProgress.map((day, idx) => (
+                <div key={idx} className="flex-1 flex flex-col items-center gap-1">
+                  <motion.div
+                    className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs transition-all ${
+                      day.completed
+                        ? 'bg-gradient-to-br from-green-300 to-emerald-400 shadow-sm shadow-green-200/50'
+                        : day.isToday
+                        ? 'bg-primary/15 border-2 border-primary/40 pulse-soft'
+                        : 'bg-foreground/5'
+                    }`}
+                    animate={day.isToday && !day.completed ? { scale: [1, 1.05, 1] } : {}}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  >
+                    {day.completed ? (
+                      <span className="text-white text-[10px] font-bold">✓</span>
+                    ) : (
+                      <span className="text-[9px]">{day.emoji}</span>
+                    )}
+                  </motion.div>
+                  <span className={`text-[8px] ${
+                    day.isToday ? 'font-bold text-primary' : 'text-foreground/40'
+                  }`}>
+                    {day.dayShort}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            {/* Streak message */}
+            {completedDays >= 3 && (
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-center text-[10px] text-foreground/50 mt-2"
+              >
+                {completedDays === 7
+                  ? '🌟 Semaine parfaite ! Tu es incroyable !'
+                  : `🔥 ${completedDays} jours de suite ! Continue !`}
+              </motion.p>
+            )}
+          </div>
         </div>
       </div>
     </motion.div>

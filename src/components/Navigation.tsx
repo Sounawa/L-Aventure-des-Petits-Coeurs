@@ -7,11 +7,11 @@ import { useState, useRef } from 'react';
 import SettingsPanel from './SettingsPanel';
 import { useSoundEffects } from './SoundEffects';
 
-const navItems: { id: Section; label: string; icon: React.ReactNode; emoji: string }[] = [
-  { id: 'accueil', label: 'Accueil', icon: <Home className="w-4 h-4" />, emoji: '🏠' },
-  { id: 'aventures', label: 'Aventures', icon: <BookOpen className="w-4 h-4" />, emoji: '📖' },
-  { id: 'pratique', label: 'Pratique', icon: <Star className="w-4 h-4" />, emoji: '⭐' },
-  { id: 'activites', label: 'Activités', icon: <Gamepad2 className="w-4 h-4" />, emoji: '🎮' },
+const navItems: { id: Section; label: string; icon: React.ReactNode; emoji: string; shortLabel: string }[] = [
+  { id: 'accueil', label: 'Accueil', icon: <Home className="w-4 h-4" />, emoji: '🏠', shortLabel: 'Accueil' },
+  { id: 'aventures', label: 'Aventures', icon: <BookOpen className="w-4 h-4" />, emoji: '📖', shortLabel: 'Aventures' },
+  { id: 'pratique', label: 'Pratique', icon: <Star className="w-4 h-4" />, emoji: '⭐', shortLabel: 'Pratique' },
+  { id: 'activites', label: 'Activités', icon: <Gamepad2 className="w-4 h-4" />, emoji: '🎮', shortLabel: 'Activités' },
 ];
 
 function BadgePanel() {
@@ -202,7 +202,7 @@ export default function Navigation() {
               <span className="hidden sm:inline text-[8px] text-muted-foreground mt-0.5">Badges</span>
             </div>
 
-            {/* Star count with gold glow + bounce animation on change - consistent icon size */}
+            {/* Star count with enhanced gold glow + bounce animation on change */}
             <div className="flex flex-col items-center">
               <motion.div
                 key={`stars-${totalStars}`}
@@ -210,9 +210,19 @@ export default function Navigation() {
                 initial={{ scale: 1 }}
                 animate={{ scale: [1, 1.4, 0.9, 1.15, 1] }}
                 transition={{ duration: 0.5, ease: 'easeOut' }}
-                className="relative flex items-center gap-1 bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/20 px-2.5 py-1 rounded-full border border-amber-200/40 dark:border-amber-700/20 glow-gold"
+                className="relative flex items-center gap-1.5 px-3 py-1 rounded-full border border-amber-200/50 dark:border-amber-700/30"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(201, 162, 39, 0.12), rgba(232, 212, 77, 0.08))',
+                  boxShadow: totalStars > 0 
+                    ? '0 0 12px rgba(201, 162, 39, 0.2), 0 0 24px rgba(201, 162, 39, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.15)' 
+                    : 'none',
+                }}
               >
-                <span className="text-yellow-500 text-xs">⭐</span>
+                <motion.span 
+                  className="text-sm"
+                  animate={totalStars > 0 ? { scale: [1, 1.2, 1] } : {}}
+                  transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+                >⭐</motion.span>
                 <span className="font-bold text-gradient-gold text-xs">{totalStars}</span>
                 {/* Gold particle burst */}
                 {totalStars > 0 && (
@@ -339,8 +349,10 @@ export default function Navigation() {
                     item.icon
                   )}
                 </span>
-                <span className={`text-[10px] sm:text-xs mt-0.5 transition-all duration-200 relative z-10 ${isActive ? 'text-primary font-bold' : 'text-muted-foreground'}`}>
-                  {item.label}
+                <span className={`text-[10px] sm:text-xs mt-0.5 transition-all duration-200 relative z-10 flex items-center gap-0.5 ${isActive ? 'text-primary font-bold' : 'text-muted-foreground'}`}>
+                  <span className="text-[10px] sm:text-xs">{item.emoji}</span>
+                  <span className="hidden sm:inline">{item.label}</span>
+                  <span className="sm:hidden">{item.shortLabel.slice(0, 4)}</span>
                 </span>
 
                 {/* Active tab: dot below icon with glow + selection ring pulse */}

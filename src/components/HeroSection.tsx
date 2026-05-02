@@ -281,17 +281,60 @@ export default function HeroSection() {
           ))}
         </motion.div>
 
-        {/* Daily Inspiration Card */}
-        <DailyInspiration />
+        {/* Daily Inspiration Card - with enhanced wrapper */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.5 }}
+          className="w-full"
+        >
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-lg">📖</span>
+            <h3 className="text-sm font-bold text-amber-700 dark:text-amber-300 uppercase tracking-wider">Inspiration du jour</h3>
+            <div className="flex-1 h-px bg-gradient-to-r from-amber-200/60 to-transparent dark:from-amber-700/30" />
+          </div>
+          <DailyInspiration />
+        </motion.div>
 
-        {/* Mood Tracker */}
-        <MoodTracker />
+        {/* Mood Tracker - with enhanced wrapper */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.6 }}
+          className="w-full"
+        >
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-lg">💫</span>
+            <h3 className="text-sm font-bold text-teal-700 dark:text-teal-300 uppercase tracking-wider">Ton humeur</h3>
+            <div className="flex-1 h-px bg-gradient-to-r from-teal-200/60 to-transparent dark:from-teal-700/30" />
+          </div>
+          <MoodTracker />
+        </motion.div>
 
-        {/* Daily Challenge Card */}
-        <DailyChallenge />
+        {/* Daily Challenge Card - with enhanced wrapper */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.7 }}
+          className="w-full"
+        >
+          <DailyChallenge />
+        </motion.div>
 
-        {/* Word of the Day in Arabic */}
-        <WordOfTheDay />
+        {/* Word of the Day in Arabic - with enhanced wrapper */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.8 }}
+          className="w-full"
+        >
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-lg">🌙</span>
+            <h3 className="text-sm font-bold text-teal-700 dark:text-teal-300 uppercase tracking-wider">Mot du jour</h3>
+            <div className="flex-1 h-px bg-gradient-to-r from-teal-200/60 to-transparent dark:from-teal-700/30" />
+          </div>
+          <WordOfTheDay />
+        </motion.div>
 
         {/* Progress indicator if returning user */}
         {totalStars > 0 && (

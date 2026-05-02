@@ -6,7 +6,13 @@ import dynamic from 'next/dynamic';
 import { useState, useEffect, useRef } from 'react';
 
 // Only FloatingStars needs dynamic SSR: false (uses browser APIs)
-const FloatingStars = dynamic(() => import('@/components/FloatingStars'), { ssr: false });
+const FloatingStars = dynamic(() => import('@/components/FloatingStars').catch(() => {
+  // Retry once on chunk load failure
+  return import('@/components/FloatingStars');
+}), {
+  ssr: false,
+  loading: () => null,
+});
 import Navigation from '@/components/Navigation';
 import HeroSection from '@/components/HeroSection';
 import AdventureView from '@/components/AdventureView';
@@ -18,6 +24,8 @@ import CelebrationOverlay from '@/components/CelebrationOverlay';
 import OnboardingFlow from '@/components/OnboardingFlow';
 import InteractiveGuide from '@/components/InteractiveGuide';
 import ErrorBoundary from '@/components/ErrorBoundary';
+import StarReward from '@/components/StarReward';
+import { useStarReward } from '@/components/StarReward';
 
 export default function Home() {
   return (
@@ -30,12 +38,27 @@ export default function Home() {
 }
 
 function AppContent() {
-  const { currentSection, badges, _hydrated } = useAppStore();
+  const { currentSection, badges, _hydrated, totalStars } = useAppStore();
   const [celebration, setCelebration] = useState<{ active: boolean; message: string; emoji: string }>({
     active: false,
     message: '',
     emoji: '',
   });
+
+  // Star reward hook
+  const { triggerStarReward, starRewardProps } = useStarReward();
+  const prevStarsRef = useRef(0);
+
+  // Track star changes and trigger star reward animation
+  useEffect(() => {
+    if (!_hydrated) return;
+    if (totalStars > prevStarsRef.current && prevStarsRef.current > 0) {
+      const diff = totalStars - prevStarsRef.current;
+      // Trigger from center of screen
+      triggerStarReward(diff);
+    }
+    prevStarsRef.current = totalStars;
+  }, [totalStars, _hydrated, triggerStarReward]);
 
   // Track the previous badge count to detect new unlocks
   const prevBadgeCountRef = useRef(0);
@@ -81,6 +104,9 @@ function AppContent() {
         emoji={celebration.emoji}
         onComplete={() => setCelebration(prev => ({ ...prev, active: false }))}
       />
+
+      {/* Star reward animation */}
+      <StarReward {...starRewardProps} />
 
       {/* Onboarding overlay for first-time users */}
       <OnboardingFlow />

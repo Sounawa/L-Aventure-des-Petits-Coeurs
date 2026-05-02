@@ -282,41 +282,73 @@ function TreasureCard({
   const isCollected = treasuresProgress[treasureId]?.collected;
 
   return (
-    <Card className={`transition-all duration-300 ${
-      isCollected
-        ? 'border-2 border-amber-400/60 bg-gradient-to-br from-amber-50/50 to-yellow-50/30 dark:from-amber-900/15 dark:to-yellow-900/10 shadow-md shadow-amber-200/20 treasure-shimmer'
-        : 'border-2 border-dotted border-amber-300/30 dark:border-amber-600/20 bg-amber-50/20 dark:bg-amber-900/5 discovery-shimmer border-glow-pulse'
-    }`}>
-      <button onClick={() => setExpanded(!expanded)} className="w-full text-left">
+    <Card 
+      className={`transition-all duration-300 ${
+        isCollected
+          ? 'border-2 border-amber-400/60 bg-gradient-to-br from-amber-50/50 to-yellow-50/30 dark:from-amber-900/15 dark:to-yellow-900/10 shadow-md shadow-amber-200/20'
+          : 'border-2 border-amber-300/50 dark:border-amber-600/30 bg-gradient-to-br from-amber-50/30 to-yellow-50/20 dark:from-amber-900/8 dark:to-yellow-900/5 hover:border-amber-400/60 dark:hover:border-amber-500/40 hover:shadow-md hover:shadow-amber-200/15'
+      }`}
+      style={{ overflow: expanded ? 'visible' : undefined }}
+    >
+      <button onClick={() => setExpanded(!expanded)} className="w-full text-left" type="button">
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="relative">
-                <span className={`text-3xl transition-all duration-300 ${isCollected ? 'drop-shadow-sm' : 'opacity-80'}`}>{emoji}</span>
+                <span className={`text-3xl transition-all duration-300 ${isCollected ? 'drop-shadow-sm' : ''}`}>{emoji}</span>
                 {/* Numbered circle */}
                 <span className={`absolute -top-1.5 -left-1.5 w-5 h-5 flex items-center justify-center text-[10px] font-bold rounded-full shadow-sm ${
                   isCollected
                     ? 'bg-gradient-to-br from-amber-400 to-yellow-300 text-amber-900'
-                    : 'bg-muted text-muted-foreground'
+                    : 'bg-gradient-to-br from-amber-200 to-yellow-200 dark:from-amber-700/40 dark:to-yellow-700/30 text-amber-700 dark:text-amber-300'
                 }`}>
                   {index + 1}
                 </span>
+                {/* Découvrir sparkle indicator for uncollected */}
                 {!isCollected && (
-                  <span className="absolute -top-1 -right-2 text-[10px] bg-muted text-muted-foreground px-1 py-0.5 rounded-full question-pulse">?</span>
+                  <motion.span 
+                    className="absolute -top-1 -right-3 text-xs"
+                    animate={{ scale: [1, 1.3, 1], rotate: [0, 15, -15, 0] }}
+                    transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+                  >
+                    ✨
+                  </motion.span>
                 )}
               </div>
-              <div>
-                <CardTitle className={`text-base transition-colors ${isCollected ? 'text-foreground' : 'text-muted-foreground'}`}>{title}</CardTitle>
+              <div className="flex-1">
+                <CardTitle className={`text-base transition-colors ${isCollected ? 'text-foreground' : 'text-foreground/90'}`}>{title}</CardTitle>
                 <p className="text-xs text-muted-foreground">{arabicName}</p>
+                {!isCollected && !expanded && (
+                  <motion.p 
+                    className="text-[10px] font-medium text-amber-600/70 dark:text-amber-400/60 mt-0.5"
+                    animate={{ opacity: [0.5, 1, 0.5] }}
+                    transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
+                  >
+                    Clique pour découvrir →
+                  </motion.p>
+                )}
               </div>
             </div>
-            {isCollected && (
-              <span className="text-[10px] font-bold px-2.5 py-1 rounded-full shadow-sm"
-                style={{ background: 'linear-gradient(135deg, #C9A227, #E8D44D)', color: '#3D2C1E' }}
+            <div className="flex items-center gap-2">
+              {isCollected ? (
+                <span className="text-[10px] font-bold px-2.5 py-1 rounded-full shadow-sm"
+                  style={{ background: 'linear-gradient(135deg, #C9A227, #E8D44D)', color: '#3D2C1E' }}
+                >
+                  💎 Collecté
+                </span>
+              ) : (
+                <span className="text-[10px] font-semibold px-2.5 py-1 rounded-full bg-amber-100/80 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 border border-amber-200/50 dark:border-amber-700/30">
+                  Découvrir ✨
+                </span>
+              )}
+              <motion.span
+                className="text-muted-foreground text-sm"
+                animate={{ rotate: expanded ? 180 : 0 }}
+                transition={{ duration: 0.3 }}
               >
-                💎 Collecté
-              </span>
-            )}
+                ▾
+              </motion.span>
+            </div>
           </div>
         </CardHeader>
       </button>
@@ -328,19 +360,22 @@ function TreasureCard({
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+            style={{ overflow: 'visible' }}
           >
             <CardContent className="pt-0">
               <div className="bg-gradient-to-r from-amber-50/60 to-yellow-50/40 dark:from-amber-900/10 dark:to-yellow-900/8 rounded-xl p-4 mb-3 border border-amber-200/30 dark:border-amber-700/15">
+                <p className="text-xs font-semibold text-amber-600/70 dark:text-amber-400/60 uppercase tracking-wider mb-1">Histoire</p>
                 <p className="text-sm leading-relaxed">{story}</p>
               </div>
               <div className="bg-gradient-to-r from-teal-50/50 to-cyan-50/40 dark:from-teal-900/10 dark:to-cyan-900/8 rounded-xl p-3 mb-3 border border-teal-200/30 dark:border-teal-700/15">
+                <p className="text-xs font-semibold text-teal-600/70 dark:text-teal-400/60 uppercase tracking-wider mb-1">Leçon</p>
                 <p className="text-sm font-medium text-foreground/80">💡 {lesson}</p>
               </div>
               <Button variant="outline" onClick={() => setShowActivity(!showActivity)} className="w-full mb-2">
                 {showActivity ? '🔼 Cacher' : `🎮 ${activityLabel}`}
               </Button>
               {showActivity && (
-                <div className="border-2 border-dashed border-primary/20 rounded-xl p-4 bg-primary/5 mt-2">
+                <div className="border-2 border-primary/20 rounded-xl p-4 bg-primary/5 mt-2">
                   {activity}
                   {!isCollected && (
                     <Button onClick={() => collectTreasure(treasureId)} className="w-full mt-4" size="sm"

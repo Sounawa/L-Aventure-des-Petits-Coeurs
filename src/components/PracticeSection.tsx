@@ -565,9 +565,26 @@ export default function PracticeSection() {
           <CardTitle className="text-lg flex items-center gap-2">
             <span>📋</span>
             <span>Aujourd&apos;hui</span>
-            <span className="ml-auto text-sm font-normal text-muted-foreground">
-              {completedCount}/5
-            </span>
+            <div className="ml-auto flex items-center gap-2">
+              {/* Visual progress indicator - 5 dots */}
+              <div className="flex items-center gap-1">
+                {[0, 1, 2, 3, 4].map((i) => (
+                  <motion.div
+                    key={i}
+                    className={`w-2.5 h-2.5 rounded-full transition-all ${
+                      i < completedCount
+                        ? 'bg-gradient-to-br from-amber-400 to-yellow-300 shadow-sm shadow-amber-300/30'
+                        : 'bg-muted/50 border border-muted-foreground/15'
+                    }`}
+                    animate={i < completedCount ? { scale: [1, 1.2, 1] } : {}}
+                    transition={{ duration: 0.3, delay: i * 0.05 }}
+                  />
+                ))}
+              </div>
+              <span className="text-sm font-normal text-muted-foreground">
+                {completedCount}/5
+              </span>
+            </div>
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -579,10 +596,37 @@ export default function PracticeSection() {
               animate={{ width: `${(completedCount / 5) * 100}%` }}
               transition={{ duration: 0.3 }}
             />
+            {/* Progress percentage label inside the bar */}
+            {completedCount > 0 && (
+              <motion.span 
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-[9px] font-bold text-white/90"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+              >
+                {Math.round((completedCount / 5) * 100)}%
+              </motion.span>
+            )}
           </div>
-          <p className="text-[10px] text-muted-foreground text-right mb-4">
-            {Math.round((completedCount / 5) * 100)}% complété
-          </p>
+
+          {/* Motivational message based on progress */}
+          {completedCount > 0 && completedCount < 5 && (
+            <motion.p 
+              className="text-[10px] text-primary/70 text-center mb-3 mt-1 font-medium"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              key={completedCount}
+            >
+              {completedCount === 1 && "Bon début ! Continue 💪"}
+              {completedCount === 2 && "Bien joué ! Encore 3 ✨"}
+              {completedCount === 3 && "Plus que 2 ! Tu y es presque 🌟"}
+              {completedCount === 4 && "Un dernier effort ! 🏆"}
+            </motion.p>
+          )}
+          {completedCount === 0 && (
+            <p className="text-[10px] text-muted-foreground text-center mb-3 mt-1">
+              Coche les activités pour gagner des étoiles ⭐
+            </p>
+          )}
 
           <div className="space-y-2">
             {practiceItems.map((item, idx) => {
@@ -599,12 +643,22 @@ export default function PracticeSection() {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: idx * 0.05 }}
                 >
-                  <Checkbox
-                    checked={isChecked}
-                    onCheckedChange={() => toggleItem(item.id)}
-                  />
-                  <span className="text-lg">{item.emoji}</span>
-                  <span className={`text-sm flex-1 ${isChecked ? 'line-through text-muted-foreground' : ''}`}>{item.label}</span>
+                  <div className="relative">
+                    <Checkbox
+                      checked={isChecked}
+                      onCheckedChange={() => toggleItem(item.id)}
+                      className={`${isChecked ? 'data-[state=checked]:bg-emerald-500 data-[state=checked]:border-emerald-500' : ''}`}
+                    />
+                    {isChecked && (
+                      <motion.div
+                        className="absolute inset-0 rounded-md bg-emerald-400/20"
+                        animate={{ scale: [1, 1.5, 0], opacity: [0.5, 0.3, 0] }}
+                        transition={{ duration: 0.5 }}
+                      />
+                    )}
+                  </div>
+                  <span className={`text-lg transition-all ${isChecked ? 'scale-110' : ''}`}>{item.emoji}</span>
+                  <span className={`text-sm flex-1 transition-all ${isChecked ? 'line-through text-muted-foreground' : ''}`}>{item.label}</span>
                   {isChecked && (
                     <motion.span 
                       initial={{ scale: 0, rotate: -45 }} 
