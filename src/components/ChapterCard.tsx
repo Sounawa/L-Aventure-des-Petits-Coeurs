@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ChevronDown, ChevronUp, Sparkles } from 'lucide-react';
 import Image from 'next/image';
+import AudioPlayer from './AudioPlayer';
 
 interface ChapterData {
   chapterNum: number;
@@ -64,9 +65,13 @@ export default function ChapterCard({ data }: { data: ChapterData }) {
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <span className="text-2xl w-10 h-10 flex items-center justify-center rounded-xl bg-primary/10">
+              <motion.span 
+                className="text-2xl w-10 h-10 flex items-center justify-center rounded-xl bg-primary/10"
+                animate={progress.activityCompleted ? { rotate: [0, 5, -5, 0] } : {}}
+                transition={{ duration: 0.5, repeat: progress.activityCompleted ? 2 : 0 }}
+              >
                 {progress.read ? (progress.activityCompleted ? '🌟' : '📖') : '📜'}
-              </span>
+              </motion.span>
               <div>
                 <CardTitle className="text-base sm:text-lg">
                   Chapitre {data.chapterNum} : {data.title}
@@ -117,8 +122,12 @@ export default function ChapterCard({ data }: { data: ChapterData }) {
                 </div>
               </div>
 
-              {/* Story */}
+              {/* Story with audio */}
               <div className="bg-primary/5 rounded-xl p-4 mb-4 border border-primary/10">
+                <div className="flex items-start justify-between gap-2 mb-2">
+                  <p className="text-xs text-primary font-semibold uppercase tracking-wider">Histoire</p>
+                  <AudioPlayer text={data.story} size="sm" />
+                </div>
                 <p className="text-sm sm:text-base leading-relaxed text-foreground/90">
                   {data.story}
                 </p>
@@ -136,7 +145,7 @@ export default function ChapterCard({ data }: { data: ChapterData }) {
               <Button
                 onClick={() => setShowActivity(!showActivity)}
                 variant="outline"
-                className="w-full mb-3 border-primary/20 hover:bg-primary/10 hover:text-primary"
+                className="w-full mb-3 border-primary/20 hover:bg-primary/10 hover:text-primary transition-all"
               >
                 {showActivity ? '🔼 Cacher l\'activité' : `🎮 ${data.activityLabel}`}
               </Button>

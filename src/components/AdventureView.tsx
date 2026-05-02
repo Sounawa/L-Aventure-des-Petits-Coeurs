@@ -11,6 +11,7 @@ import GratitudeJournal from './GratitudeJournal';
 import LightChain from './LightChain';
 import DivineNames from './DivineNames';
 import StarGazing from './StarGazing';
+import DuaCard, { DuaCollection } from './DuaCard';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -683,6 +684,19 @@ export default function AdventureView() {
                 }}
               />
             ))}
+            
+            {/* Dua/Prayer cards section */}
+            <Card className="border-2 border-primary/10">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <span className="text-xl">🤲</span>
+                  Belles Prières à Apprendre
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <DuaCollection />
+              </CardContent>
+            </Card>
           </div>
         )}
       </motion.div>

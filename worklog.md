@@ -250,3 +250,81 @@ Une aventure magique où l'enfant découvre un miroir enchanté qui reflète la 
 5. **Parent sharing** — Email/share accomplishments
 6. **More illustrations** — AI-generated images for every chapter
 7. **Certificate generation** — PDF certificate on completion
+
+---
+
+## Task: Cron Review Round 2 — TTS + Duas + Celebration + Polish
+
+### Date: 2026-05-02 (Round 3)
+
+### QA Testing Results
+- ✅ All 4 sections render correctly
+- ✅ Lint: Zero errors (fixed React 19 strict rules for setState in render)
+- ✅ Compilation: Clean
+- ✅ Dark mode + light mode both functional
+- ✅ Drawing canvas, quiz, coloring, breathing, journal all functional
+
+### New Features Added
+
+1. **🔊 TTS Audio Narration** — Backend API + Audio Player component
+   - `POST /api/tts` route using z-ai-web-dev-sdk TTS
+   - `AudioPlayer` component with play/pause, loading state, animated waveform
+   - Integrated in: HeroSection (welcome message), ChapterCard (story narration)
+   - Touch-friendly button sizes (sm/md/lg)
+   - Error handling with fallback message
+
+2. **🎉 Celebration/Confetti Overlay** — Triggered on badge unlock
+   - 40 animated confetti pieces (circles, squares, stars)
+   - Colors from app palette
+   - Central celebration card with badge emoji + title
+   - Auto-dismiss after 4.5 seconds
+   - Badge unlock detection via state comparison (React 19 compliant)
+
+3. **🤲 Dua/Prayer Cards with Arabic Text** — 6 prayers included
+   - Arabic text (right-to-left, large font)
+   - Transliteration for pronunciation
+   - French translation
+   - Context/usage note
+   - Audio player for each Dua
+   - Integrated in Lumière adventure as "Belles Prières à Apprendre" section
+   - Duas: Bismillah, Alhamdulillah, Rabbi zidni ilma, Rabbi ishrah li sadri, Allahumma innaka Afuwwun, Subhanallahi wa bihamdihi
+
+4. **🌟 Enhanced HeroSection**
+   - Animated glow ring around mirror emoji
+   - Two orbiting sparkle elements (different speeds/directions)
+   - Breathing decorative circles (scale + opacity animation)
+   - Audio player for welcome message
+   - 4 feature cards (3 Aventures, 5 Activités, 14 Badges, Prière)
+   - Progress indicators for returning users (stars + badges count)
+
+5. **🎨 Micro-interaction Polish**
+   - ChapterCard: Wobble animation on completed badge
+   - "HISTOIRE" label with uppercase tracking
+   - Improved button hover states with shadow transitions
+   - Cleaner section headers
+
+### Files Created
+- `src/app/api/tts/route.ts` — TTS API endpoint
+- `src/components/AudioPlayer.tsx` — Reusable audio player component
+- `src/components/CelebrationOverlay.tsx` — Confetti celebration + useCelebration hook
+- `src/components/DuaCard.tsx` — Dua/Prayer card + DuaCollection component
+
+### Files Modified
+- `src/app/page.tsx` — Added CelebrationOverlay, badge unlock detection, auto-dismiss
+- `src/components/HeroSection.tsx` — Enhanced animations, audio player, 4 feature cards
+- `src/components/ChapterCard.tsx` — Added AudioPlayer, "HISTOIRE" label, wobble animation
+- `src/components/AdventureView.tsx` — Added DuaCollection in Lumiere adventure
+
+### Current Status
+- **Phase**: Feature-rich MVP — TTS, Duas, Celebrations all working
+- **Lint**: Zero errors
+- **Compilation**: Clean
+- **All features verified with agent-browser + VLM**
+
+### Unresolved / Next Phase Recommendations
+1. **Certificate generation** — PDF certificate on adventure completion using pdf skill
+2. **Arabic text font** — Custom Arabic font for better rendering
+3. **PWA** — Service worker, offline mode, installable
+4. **Parent dashboard** — Progress sharing via email/link
+5. **Sound effects** — Short feedback sounds for interactions
+6. **Onboarding flow** — First-time user tutorial

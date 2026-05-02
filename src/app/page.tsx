@@ -10,6 +10,8 @@ import PracticeSection from '@/components/PracticeSection';
 import ActivitiesSection from '@/components/ActivitiesSection';
 import Footer from '@/components/Footer';
 import HydrationProvider from '@/components/HydrationProvider';
+import CelebrationOverlay from '@/components/CelebrationOverlay';
+import { useState, useEffect } from 'react';
 
 export default function Home() {
   return (
@@ -20,12 +22,54 @@ export default function Home() {
 }
 
 function AppContent() {
-  const { currentSection } = useAppStore();
+  const { currentSection, badges } = useAppStore();
+  const [celebration, setCelebration] = useState<{ active: boolean; message: string; emoji: string }>({
+    active: false,
+    message: '',
+    emoji: '',
+  });
+
+  // Track the previous badge count to detect new unlocks
+  const unlockedCount = badges.filter(b => b.unlockedAt).length;
+  const [prevBadgeCount, setPrevBadgeCount] = useState(0);
+
+  // Detect new badge unlocks and trigger celebration
+  if (unlockedCount > prevBadgeCount && prevBadgeCount > 0) {
+    const badge = badges.filter(b => b.unlockedAt).pop();
+    if (badge) {
+      setPrevBadgeCount(unlockedCount);
+      setCelebration({
+        active: true,
+        message: `Badge débloqué : ${badge.title} !`,
+        emoji: badge.emoji,
+      });
+    }
+  } else if (unlockedCount !== prevBadgeCount) {
+    setPrevBadgeCount(unlockedCount);
+  }
+
+  // Auto-dismiss celebration
+  useEffect(() => {
+    if (celebration.active) {
+      const timer = setTimeout(() => {
+        setCelebration(prev => ({ ...prev, active: false }));
+      }, 4500);
+      return () => clearTimeout(timer);
+    }
+  }, [celebration.active]);
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <FloatingStars />
       
+      {/* Celebration overlay */}
+      <CelebrationOverlay
+        isActive={celebration.active}
+        message={celebration.message}
+        emoji={celebration.emoji}
+        onComplete={() => setCelebration(prev => ({ ...prev, active: false }))}
+      />
+
       {/* Main content */}
       <main className="flex-1 relative z-10 pt-14 pb-20">
         <div className="px-4 max-w-2xl mx-auto w-full">
